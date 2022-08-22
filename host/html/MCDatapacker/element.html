@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Element - MCDatapacker</title>
+	<link rel="stylesheet" type="text/css" href="element.css">
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/dist/jsoneditor.min.js"></script>
+	<script type="text/javascript" src="itempicker.js"></script>
+	<script type="text/javascript" src="generators.js"></script>
+	<script type="text/javascript" src="element.js"></script>
+</head>
+<body>
+	<li id="back" onclick="location.replace('project.html?' + projId)">Back</li>
+	<h1><i style="font-weight: normal">Edit <span id="type">element</span></i> <span id="name" contenteditable onblur="renameElement(this)" onkeydown="if (['Enter', '\n'].includes(event.key)) {event.preventDefault(); renameElement(this)}">Loading...</span></h1>
+	<div id="edit-function" class="edit-form">
+		<textarea spellcheck="false" id="edit-function-text" placeholder="say Hello world!"></textarea>
+	</div>
+	<div id="edit-advancement" class="edit-form">
+		<fieldset>
+			<legend>Display</legend>
+			<fieldset>
+				<legend>Icon</legend>
+				Item: <div id="edit-advancement-icon-item" value="minecraft:air"></div>
+				<br>
+				NBT: <input spellcheck="false" type="text" class="code" id="edit-advancement-icon-nbt" placeholder="{CustomModelData: 1}">
+			</fieldset>
+			Title: <input type="text" id="edit-advancement-title">
+			<br>
+			Description: <input type="text" id="edit-advancement-desc">
+			<br>
+			Frame:
+			<select id="edit-advancement-frame">
+				<option value="task">Default</option>
+				<option value="goal">Goal</option>
+				<option value="challenge" style="color: purple">Challenge</option>
+			</select>
+			<br>
+			Hide in advancements? <input type="checkbox" id="edit-advancement-hidden">
+			<br>
+			Announce to chat when completed? <input type="checkbox" id="edit-advancement-announce-to-chat" checked>
+		</fieldset>
+		Parent advancement: <i class="gray">Leave empty for root advancement</i>
+		<br>
+		<input onkeyup="Generators.advancement.enableRootBackgroundInput(this.value)" placeholder="minecraft:story/root" spellcheck="false" class="code" type="text" id="edit-advancement-parent">
+		<br>
+		Background: <i class="gray">This is available only if this is a root advancement</i>
+		<br>
+		<input placeholder="minecraft:block/dirt" type="text" id="edit-advancement-background" class="code">
+		<fieldset>
+			<legend>Criteria</legend>
+			<select id="edit-advancement-criteria" onchange="elm.data.criteria.requirement.trigger = this.value; Generators.advancement.newCriteriaEditor(elm)">
+				<option value="minecraft:placed_block">Block is placed</option>
+				<option value="minecraft:impossible">Through commands</option>
+				<option value="minecraft:tick">Each tick</option>
+				<option value="minecraft:levitation">Levitating</option>
+				<option value="minecraft:enter_block">Collide with block</option>
+				<option value="minecraft:item_durability_changed">Item durability changed</option>
+			</select>
+			<div id="edit-advancement-criteria-conditions"></div>
+		</fieldset>
+		<fieldset>
+			<legend>Rewards</legend>
+			Loot tables: <i class="gray">Seperate with new lines</i>
+			<br>
+			<textarea spellcheck="false" id="edit-advancement-rewards-loot" placeholder="minecraft:chests/stronghold_library"></textarea>
+			<br>
+			Recipes: <i class="gray">Seperate with new lines</i>
+			<br>
+			<textarea spellcheck="false" id="edit-advancement-rewards-recipes" placeholder="minecraft:crafting_table"></textarea>
+			<br>
+			Function ID: <i class="gray">Leave empty for no function</i>
+			<br>
+			<input size="25" placeholder="namespace:path/to/function" class="code" spellcheck="false" type="text" id="edit-advancement-rewards-function">
+			<br>
+			Experience:
+			<br>
+			<input type="number" id="edit-advancement-rewards-xp" min="0">
+		</fieldset>
+	</div>
+	<div id="edit-predicate" class="edit-form">
+		<p>
+			<button onclick="Generators.predicate.newPredicateItem({condition: this.nextElementSibling.value})">New</button>
+			<select id="edit-predicate-new">
+				<option value="random_chance">Random chance</option>
+				<option value="random_chance_with_looting">Random chance (with looting)</option>
+				<option value="survives_explosion">Can survive explosion</option>
+				<option value="killed_by_player">Executer is a player</option>
+				<option value="time_check">Time</option>
+				<option value="weather_check">Weather</option>
+			</select>
+		</p>
+		Predicates:
+		<ol id="edit-predicate-predicates"></ol>
+	</div>
+	<div id="edit-recipe" class="edit-form">
+		<select id="edit-recipe-type" onchange="elm.data.type = this.value; Generators.recipe.generateRecipeEditor(elm.data)">
+			<option value="minecraft:blasting">Blast Furnace</option>
+			<option value="minecraft:campfire_cooking">Campfire</option>
+			<option value="minecraft:crafting_shaped">Crafting Table</option>
+			<option value="minecraft:crafting_shapeless">Crafting Table (shapeless)</option>
+			<option value="minecraft:smelting">Furnace</option>
+			<option value="minecraft:smithing">Smithing Table</option>
+			<option value="minecraft:smoking">Smoker</option>
+			<option value="minecraft:stonecutting">Stonecutter</option>
+		</select>
+		<input type="text" id="edit-recipe-group" placeholder="Group" class="code">
+		<div id="edit-recipe-crafting"></div>
+	</div>
+	<div id="edit-structure" class="edit-form">
+		<button id="edit-structure-upload" onclick="Generators.structure.readStructure(elm)">Upload</button>
+		<button id="edit-structure-download" onclick="Generators.structure.saveStructure(elm)">Download</button>
+	</div>
+	<div id="edit-tag" class="edit-form">
+		Type:
+		<select id="edit-tag-folder">
+			<option value="blocks">Blocks</option>
+			<option value="entity_types">Entities</option>
+			<option value="fluids">Fluids</option>
+			<option value="functions">Functions</option>
+			<option value="game_events">Game events</option>
+			<option value="items">Items</option>
+		</select>
+		<br>
+		Replace existing tag? <i class="gray">Or add values to existing tag?</i>
+		<input type="checkbox" id="edit-tag-replace">
+		<br>
+		Values: <i class="gray">Seperate with new lines</i><br>
+		<textarea id="edit-tag-values" spellcheck="false"></textarea>
+	</div>
+	<button id="save" onclick="saveElement()">✔ Save</button>
+	<span id="saved">Saved</span>
+</body>
+</html>

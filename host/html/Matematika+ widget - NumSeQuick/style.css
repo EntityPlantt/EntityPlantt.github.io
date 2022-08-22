@@ -1,0 +1,181 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+:root {
+	--clicker-border-radius: 5vh;
+}
+body {
+	margin: 0;
+	font-family: Montserrat;
+	user-select: none;
+}
+#title {
+	text-align: center;
+	margin: 0;
+	font-size: 1cm;
+}
+#numbers {
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 10vw;
+	background-color: whitesmoke;
+}
+.number {
+	display: inline-block;
+	width: 10vw;
+	height: 10vw;
+	background-size: cover;
+	font-size: 8vw;
+	color: white;
+	text-align: center;
+	animation: NumberGetInPlace 0.6s 1;
+}
+@keyframes NumberGetInPlace {
+	from {
+		right: 0;
+	}
+}
+.number.yellow {
+	background-image: url("assets/yellow.png");
+}
+.number.red {
+	background-image: url("assets/red.png");
+}
+.number.blue {
+	background-image: url("assets/blue.png");
+}
+.number.green {
+	background-image: url("assets/green.png");
+}
+#clicker {
+	position: absolute;
+	left: 50vw;
+	bottom: 5vh;
+	transform: translateX(-50%);
+	border-collapse: collapse;
+}
+#clicker > tbody > tr > * {
+	width: 20vh;
+	height: 20vh;
+	background-size: 75%;
+	background-repeat: no-repeat;
+	background-position: center;
+	transition: transform 0.6s;
+}
+#red-clicker {
+	background-color: #f00;
+	border-top-left-radius: var(--clicker-border-radius);
+	background-image: url("assets/red-shape.png");
+}
+#yellow-clicker {
+	background-color: #ff0;
+	border-bottom-left-radius: var(--clicker-border-radius);
+	background-image: url("assets/yellow-shape.png");
+}
+#green-clicker {
+	background-color: #0f0;
+	border-top-right-radius: var(--clicker-border-radius);
+	background-image: url("assets/green-shape.png");
+}
+#blue-clicker {
+	background-color: #00f;
+	border-bottom-right-radius: var(--clicker-border-radius);
+	background-image: url("assets/blue-shape.png");
+}
+#counter {
+	position: absolute;
+	top: calc(10vw + 10px);
+	right: 10px;
+	font-size: 10vh;
+}
+#progress {
+	height: 10vh;
+	width: 50vw;
+	position: relative;
+	top: 10px;
+	left: 50%;
+	transform: translateX(-50%);
+	border-collapse: collapse;
+}
+#main-screen {
+	position: fixed;
+	width: 90vw;
+	height: calc(100vh - 10vw);
+	padding: 5vw;
+	top: 0;
+	left: 0;
+	background-color: rgba(0, 0, 0, 0.8);
+	color: white;
+	overflow: auto;
+}
+#main-screen::-webkit-scrollbar {
+	width: 15px;
+}
+#main-screen::-webkit-scrollbar-track {
+	background-color: transparent;
+}
+#main-screen::-webkit-scrollbar-thumb {
+	background-color: rgba(0, 0, 0, 0.5);
+	border-radius: 5px;
+}
+#main-screen-tabs {
+	border-collapse: collapse;
+	height: 50px;
+	text-align: center;
+}
+.main-screen-tab, #start, #lang {
+	border: solid 2.5px white;
+	padding: 10px;
+	background: linear-gradient(0, rgba(0, 0, 0, 0.5), rgba(128, 128, 128, 0.5));
+	transition: background 0.6s;
+	color: inherit;
+	font: inherit;
+}
+.main-screen-tab:hover, #start:hover, #lang:hover {
+	background: linear-gradient(0, black, #808080);
+}
+.mode-desc, #lastgame {
+	width: 85vw;
+	padding: 2.5vw;
+	border: solid 2.5px white;
+	background: rgba(0, 0, 0, 0.5);
+}
+.mode-desc input, .mode-desc select {
+	background: transparent;
+	color: inherit;
+	border: inherit;
+}
+.mode-desc input:hover, .mode-desc select:hover {
+	background-color: black;
+}
+#start, .mode-desc, #lastgame {
+	margin-top: 2.5vh;
+}
+.progress {
+	border: solid 2px black;
+	background-color: rgba(0, 0, 0, 0.9);
+}
+.progress.red {
+	background-color: #f00;
+}
+.progress.yellow {
+	background-color: #ff0;
+}
+.progress.green {
+	background-color: #0f0;
+}
+.progress.blue {
+	background-color: #00f;
+}
+#lastgame {
+	display: none;
+}
+#fraction {
+	position: absolute;
+	top: calc(20px + 10vw + 10vh);
+	left: 50vw;
+	transform: translateX(-50%);
+	font-size: 7.5vh;
+}
+#lang {
+	margin-bottom: 2.5vh;
+}

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Rubik's Cube</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script type="text/javascript" src="https://threejs.org/build/three.js"></script>
+	<script type="text/javascript" src="three-lib/TextGeometry.js"></script>
+	<script type="text/javascript" src="three-lib/FontLoader.js"></script>
+	<script type="text/javascript" src="three-lib/MontserratFont.js"></script>
+	<script type="text/javascript" src="main.js"></script>
+</head>
+<body oncontextmenu="return false">
+	<progress id="progress"></progress>
+	<div id="invalid">
+		<img src="warning-sign.png">
+		This cube is invalid.
+	</div>
+	<table id="colorpicker">
+		<tbody>
+			<tr>
+				<td tabindex="0" onclick="selectClr(0)" class="cp-red cp-selected"></td>
+				<td tabindex="0" onclick="selectClr(1)" class="cp-org"></td>
+				<td tabindex="0" onclick="selectClr(2)" class="cp-wht"></td>
+			</tr>
+			<tr>
+				<td tabindex="0" onclick="selectClr(3)" class="cp-ylw"></td>
+				<td tabindex="0" onclick="selectClr(4)" class="cp-grn"></td>
+				<td tabindex="0" onclick="selectClr(5)" class="cp-blu"></td>
+			</tr>
+		</tbody>
+	</table>
+	<table id="options">
+		<tbody>
+			<tr>
+				<td tabindex="1" onclick="toggleColorPicker(this)">Brush</td>
+				<td tabindex="1" onclick="reset()">Reset</td>
+			</tr>
+			<tr>
+				<td tabindex="1" onclick="randomize(this)">Randomize</td>
+				<td tabindex="1" onclick="solve(this)">Solve</td>
+			</tr>
+			<tr>
+				<td tabindex="1" onclick="showHelp(this)">Help</td>
+				<td tabindex="1" onclick="credits(this)">Credits</td>
+			</tr>
+		</tbody>
+	</table>
+	<div id="moves-wrapper">
+		<table id="moves">
+			<tbody>
+				<tr id="moves-row"></tr>
+			</tbody>
+		</table>
+	</div>
+	<div id="help-blur" onclick="hideHelp(document.querySelector('#options tbody tr:nth-child(3) td'))"></div>
+	<div id="help">
+		<h1>Help</h1>
+		<p>Click on the rotators to rotate the cube.</p>
+		<ul>
+			<li>Left click to rotate counter-clockwise</li>
+			<li>Right click to rotate clockwise</li>
+		</ul>
+		<p>Click on the button <b>"Brush"</b> to open the color picker.</p>
+		<ol>
+			<li>Choose a color.</li>
+			<li>Click on a small cube's side to color that side</li>
+		</ol>
+		<p><b>Warining</b>: you cannot click the button <b>"Solve"</b> unless your cube is valid</p>
+	</div>
+</body>
+</html>

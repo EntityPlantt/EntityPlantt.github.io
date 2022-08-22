@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>NumSeQuick</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script type="text/javascript" src="main.js"></script>
+</head>
+<body>
+	<div id="numbers"></div>
+	<table id="clicker">
+		<tbody>
+			<tr>
+				<td id="red-clicker" onclick="clickerClicked('red')"></td>
+				<td id="green-clicker" onclick="clickerClicked('green')"></td>
+			</tr>
+			<tr>
+				<td id="yellow-clicker" onclick="clickerClicked('yellow')"></td>
+				<td id="blue-clicker" onclick="clickerClicked('blue')"></td>
+			</tr>
+		</tbody>
+	</table>
+	<div id="counter">0</div>
+	<table id="progress">
+		<tbody id="progress-body"></tbody>
+	</table>
+	<div id="fraction"></div>
+	<div id="main-screen">
+		<h1 id="title">NumSeQuick</h1>
+		<button id="lang" onclick="toggleLang()">EN</button>
+		<table id="main-screen-tabs">
+			<tbody>
+				<tr>
+					<td class="main-screen-tab" onclick="mainScreenChangeTo('fixed')">Фиксирано</td>
+					<td class="main-screen-tab" onclick="mainScreenChangeTo('infinite')">Бесконечно</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="mode-desc" id="mode-desc-fixed">
+			<h1>Фиксирано</h1>
+			<p>
+				Има фиксирано број на бројки што ќе се покажат.
+				<br>
+				Победа е кога ќе се погодат сите бројки точно.
+				<br>
+				Се губи ако се згреши едно.
+			</p>
+			Број на броеви:&nbsp;
+			<input type="number" id="settings-number-of-numbers" size="1" value="3" min="1" max="10" step="1">
+		</div>
+		<div class="mode-desc" id="mode-desc-infinite" style="display:none">
+			<h1>Бесконечно</h1>
+			<p>
+				Има бесконечно бројки коишто доаѓаат од горе.
+				<br>
+				Се губи ако бројките го пополнат целото место.
+			</p>
+			Ако се згреши:&nbsp;
+			<select id="settings-if-wrong">
+				<option value="0">Се започнува бројот од почеток</option>
+				<option value="1">Се губи играта</option>
+			</select>
+		</div>
+		<button id="start" onclick="startGame()">Започни</button>
+		<div id="lastgame"></div>
+	</div>
+</body>
+</html>

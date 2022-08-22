@@ -1,0 +1,73 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@font-face {
+	font-family: "Droid Sans Mono";
+	src: url("DroidSansMono.ttf") format("truetype");
+}
+body {
+	margin: 0;
+	background-color: #222;
+	color: white;
+	font-family: Roboto;
+}
+#back {
+	list-style-type: circle;
+	list-style-image: url(images/back_arrow.png);
+	user-select: none;
+	margin: 10px;
+	cursor: pointer;
+}
+.edit-form {
+	padding: 10px;
+	margin: 10px;
+	background-color: #111;
+	display: none;
+}
+select, button, textarea, input:not([type=range]) {
+	color: white;
+	background-color: #222;
+	border: solid 2px currentColor;
+	transition: background 0.6s;
+	padding: 5px 10px 5px 10px;
+	font: inherit;
+}
+button {
+	cursor: pointer;
+}
+#save {
+	padding: 10px 15px 10px 15px;
+	background-color: green;
+	color: white;
+}
+#saved {
+	background-color: #151515;
+	color: whitesmoke;
+	animation: saved 2s 1 linear;
+	display: none;
+	padding: 5px 10px 5px 10px;
+	border-radius: 5px;
+}
+@keyframes saved {
+	from, to {
+		opacity: 0;
+		filter: blur(10px);
+	}
+	20%, 90% {
+		opacity: 1;
+		filter: blur(0);
+	}
+}
+.gray {
+	color: gray;
+}
+textarea {
+	width: calc(100% - 30px);
+	resize: vertical;
+	height: 100px;
+	font-family: Droid Sans Mono;
+}
+.code {
+	font-family: Droid Sans Mono !important;
+}
+:disabled {
+	filter: brightness(0.5);
+}

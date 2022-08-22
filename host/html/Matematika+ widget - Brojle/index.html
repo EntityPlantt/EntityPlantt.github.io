@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Бројле</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script type="text/javascript" src="numbers.js"></script>
+	<script type="text/javascript" src="main.js"></script>
+</head>
+<body>
+	<noscript>
+		Ве молиме уклучете Javascript за страната <code>github.io</code>.
+	</noscript>
+	<table id="guessing-table">
+		<tr class="guessing-table-row"></tr>
+		<tr class="guessing-table-row"></tr>
+		<tr class="guessing-table-row"></tr>
+		<tr class="guessing-table-row"></tr>
+		<tr class="guessing-table-row"></tr>
+		<tr class="guessing-table-row"></tr>
+	</table>
+	<div id="settings">
+		<h1>
+			Бројле
+			<button id="help" onclick="showGameTutorial()">?</button>
+		</h1>
+		<p>
+			Број на цифри:
+			<select id="digit-count">
+				<option value="3dig">3</option>
+				<option value="4dig" selected>4</option>
+				<option value="5dig">5</option>
+			</select>
+		</p>
+		<p>
+			Повторување на цифри:
+			<select id="digit-repeat">
+				<option value="repeat">Да</option>
+				<option value="norepeat" selected>Не</option>
+			</select>
+		</p>
+		<button onclick="startGame(this)">Започни</button>
+		<button id="copyright-button">
+			©
+			<span id="copyright-popup">
+				Од Никола Стојковски (<a href="https://github.com/EntityPlantt" target="_blank">@EntityPlantt</a>)
+			</span>
+		</button>
+	</div>
+	<div id="endscreen" style="display: none;">
+		<h1 id="endscreen-text"></h1>
+		<button onclick="location.reload(true)">Пробај пак</button>
+	</div>
+	<div id="game-tutorial" style="display: none;">
+		<h1>
+			Како се игра Бројле
+			<button id="close-game-tutorial" onclick="hideGameTutorial()">&times;</button>
+		</h1>
+		<p>На почетокот, одбери број на цифри (3, 4 или 5) и повторување на цифри (Не или Да). Потоа кликни на „Започни“.</p>
+		<p>Треба да го погодите <b>БРОЈЛЕ</b> во 6 обиди.</p>
+		<p>Секој обид мора да биде валиден број од избраниот број на цифри. Притиснете го копчето ENTER да направите обид.</p>
+		<p>По секој обид, бојата на квадратите ќе се менува да ви покаже колку вашиот обид е блиску до бараниот збор.</p>
+		<hr>
+		<b>Примери</b>
+		<div class="separator"></div>
+		<table>
+			<tr>
+				<td class="guessing-table-cell right">1</td>
+				<td class="guessing-table-cell">2</td>
+				<td class="guessing-table-cell">3</td>
+				<td class="guessing-table-cell">4</td>
+			</tr>
+		</table>
+		<span>Цифрата <b>1</b> е во бројот и на <b>точна</b> позиција.</span>
+		<div class="separator"></div>
+		<table>
+			<tr>
+				<td class="guessing-table-cell">9</td>
+				<td class="guessing-table-cell misplaced">3</td>
+				<td class="guessing-table-cell">8</td>
+				<td class="guessing-table-cell">7</td>
+			</tr>
+		</table>
+		<span>Цифрата <b>3</b> е во бројот но на <b>погрешна</b> позиција.</span>
+		<div class="separator"></div>
+		<table>
+			<tr>
+				<td class="guessing-table-cell">2</td>
+				<td class="guessing-table-cell">0</td>
+				<td class="guessing-table-cell wrong">1</td>
+				<td class="guessing-table-cell">4</td>
+			</tr>
+		</table>
+		<span>Цифрата <b>1</b> не е во бројот на ниту една позиција.</span>
+		<hr>
+		<p>Нов <b>БРОЈЛЕ</b> е достапен секој ден за секоја поставка.</p>
+		<p>© Никола Стојковски 2022</p>
+		<div style="height:50vh"></div>
+	</div>
+	<table id="keyboard">
+		<tr>
+			<td class="keyboard-key" onclick="fireKeyboardEvent('Enter')">↵</td>
+			<td class="keyboard-key" onclick="fireKeyboardEvent('1')">1</td>
+			<td class="keyboard-key" onclick="fireKeyboardEvent('2')">2</td>
+			<td class="keyboard-key" onclick="fireKeyboardEvent('3')">3</td>
+			<td class="keyboard-key" onclick="fireKeyboardEvent('4')">4</td>
+			<td class="keyboard-key" onclick="fireKeyboardEvent('5')">5</td>
+			<td class="keyboard-key" onclick="fireKeyboardEvent('6')">6</td>
+			<td class="keyboard-key" onclick="fireKeyboardEvent('7')">7</td>
+			<td class="keyboard-key" onclick="fireKeyboardEvent('8')">8</td>
+			<td class="keyboard-key" onclick="fireKeyboardEvent('9')">9</td>
+			<td class="keyboard-key" onclick="fireKeyboardEvent('0')">0</td>
+			<td class="keyboard-key" onclick="fireKeyboardEvent('Backspace')">⌫</td>
+		</tr>
+	</table>
+</body>
+</html>

@@ -1,0 +1,171 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
+:root {
+	--theme: #419bc9;
+}
+.guessing-table-cell {
+	width: calc(100vh / 9);
+	height: calc(100vh / 9);
+	border: solid 2.5px #ddd;
+	border-radius: calc(100vh / 36);
+	font-size: calc(60vh / 9);
+	text-align: center;
+}
+.guessing-table-cell.wrong {
+	background-color: #444;
+}
+.guessing-table-cell.misplaced {
+	background-color: goldenrod;
+}
+.guessing-table-cell.right {
+	background-color: lime;
+}
+.guessing-table-cell.wrong,
+.guessing-table-cell.misplaced,
+.guessing-table-cell.right {
+	color: white;
+}
+body {
+	margin: 0;
+	font: 15px Montserrat;
+}
+noscript {
+	position: fixed;
+	width: 100vw;
+	height: 100vh;
+	top: 0;
+	left: 0;
+	background-color: var(--theme);
+	color: white;
+	font-size: 1cm;
+}
+#settings, #endscreen, #game-tutorial {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translateX(-50%) translateY(-50%);
+	background-color: var(--theme);
+	color: white;
+	border: solid 5px white;
+	border-radius: 0.5cm;
+	padding: 1cm;
+	animation: settingsAnim 1s 1;
+}
+/*
+@keyframes settingsAnim {
+	from {
+		opacity: 0;
+		top: 0;
+		transform: translateY(0) translateX(-50%);
+	}
+}
+*/
+#settings > h1, #endscreen > h1 {
+	margin-top: 0;
+}
+#settings > p > select {
+	float: right;
+	margin-left: 1cm;
+}
+#settings > p > select, button {
+	background-color: var(--theme);
+	color: inherit;
+	border: solid 2px white;
+	font: inherit;
+	transition: filter 0.6s;
+	border-radius: 3px;
+}
+#settings > p > select:hover, button:hover {
+	filter: brightness(0.8);
+}
+body :not(.selectable) {
+	user-select: none;
+}
+#help, #close-game-tutorial, #copyright-button {
+	float: right;
+	position: relative;
+	font-size: 15px;
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+}
+#help {
+	top: -0.9cm;
+	right: -0.9cm;
+}
+#close-game-tutorial {
+	right: 0.5cm;
+}
+#game-tutorial {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	border: none;
+	border-radius: initial;
+	overflow-x: auto;
+}
+#game-tutorial > * {
+	margin-left: 1em;
+}
+#guessing-table {
+	transform: translateX(-50%);
+	left: 50%;
+	position: relative;
+}
+div.separator {
+	height: 0.3cm;
+}
+::-webkit-scrollbar {
+	width: 15px;
+}
+::-webkit-scrollbar-track {
+	background-color: white;
+}
+::-webkit-scrollbar-thumb {
+	background-color: #ddd;
+	border-radius: 5px;
+}
+#copyright-button {
+	float: right;
+	position: relative;
+	top: 0.9cm;
+	left: 0.9cm;
+}
+#copyright-popup {
+	display: inline-block;
+	border-radius: 10px;
+	position: relative;
+	transform: translateX(-50%);
+	background-color: rgba(0, 0, 0, 0.5);
+	transition: opacity 0.6s;
+	opacity: 0;
+	padding: 0.25cm;
+	width: 20em;
+}
+#copyright-button:hover #copyright-popup {
+	opacity: 1;
+	cursor: help;
+}
+#copyright-popup a {
+	color: inherit;
+}
+#keyboard {
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	border-collapse: collapse;
+}
+.keyboard-key {
+	border: solid 2px var(--theme);
+	width: calc(100vw / 9);
+	text-align: center;
+	height: calc(100vw / 9);
+	font-size: calc(30vw / 9);
+}
+.keyboard-key:hover {
+	background-color: var(--theme);
+	color: white;
+}
+select, button, a, .keyboard-key {
+	cursor: pointer;
+}

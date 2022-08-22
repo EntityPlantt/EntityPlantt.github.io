@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Snake Game</title>
+	<script type="text/javascript" src="main.js"></script>
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+	<table id="t"></table>
+	<div id="pts"></div>
+	<div id="main">
+		<h1>Snake Game</h1>
+		<button onclick="startGame()" id="start">Start</button>
+		<button onclick="document.getElementById('settings').classList.toggle('shown')">Settings</button>
+		<div id="endgame" class="modal">
+			<h1>
+				Game Over
+				<button onclick="document.getElementById('endgame').classList.remove('shown')">Close</button>
+			</h1>
+			Points: <span id="eg-pts"></span>
+		</div>
+		<br>
+		<table id="controls">
+			<tr>
+				<td></td>
+				<td onclick="direction = 1">↑</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td onclick="direction = 0">←</td>
+				<td></td>
+				<td onclick="direction = 2">→</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td onclick="direction = 3">↓</td>
+				<td></td>
+			</tr>
+		</table>
+	</div>
+	<div id="settings" class="modal">
+		<h1>
+			Settings
+			<button onclick="document.getElementById('settings').classList.remove('shown')">Close</button>
+		</h1>
+		Size: <input type="number" min="5" max="50" step="1" onchange="changeSize(parseInt(this.value))" id="table-size">
+	</div>
+</body>
+</html>

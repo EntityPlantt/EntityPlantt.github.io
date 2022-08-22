@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script type="text/javascript" src="main.js"></script>
+	<title>Click.io</title>
+</head>
+<body>
+	<div id="counter">0</div>
+	<div id="timer">3:00</div>
+	<input type="range" id="volume" min="0" max="100" value="100" onchange="window.localStorage.setItem('click-io-volume', this.value);">
+	<div class="gui">
+		<div class="gui-title">Click.io</div>
+		<div class="gui-desc">Loading...</div>
+		<button class="gui-button" onclick="startGame(this)">Start</button>
+		<div class="gui-footer">Music: <a href="http://dig.ccmixter.org/files/airtone/63513" target="_blank">blackSnow</a> by airtone (c) copyright 2021 Licensed under a Creative Commons <a href="http://creativecommons.org/licenses/by/3.0/" target="_blank">Attribution (3.0)</a> license<br>Sound FX by <a href="https://scratch.org/" target="_blank">Scratch</a>: Collect<br>Font family: <a href="https://fonts.google.com/specimen/Montserrat" target="_blank">Montserrat</a> by <a href="https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL" target="_blank">Open Font license</a></div>
+	</div>
+</body>
+<template id="endscreen">
+	<div class="gui">
+		<div class="gui-title">Game over</div>
+		<div class="gui-desc">Loading...</div>
+		<button class="gui-button" onclick="location.reload(true);">Play again</button>
+	</div>
+</template>
+</html>

@@ -1,0 +1,23 @@
+body {
+	margin: 0;
+	user-select: none;
+}
+canvas#threejs-canvas {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translateX(-50%) translateY(-50%);
+}
+div#menu {
+	top: 10px;
+	right: 10px;
+	position: fixed;
+	padding: 8px;
+	border: solid 2.5px antiquewhite;
+	color: white;
+	font: 15px monospace;
+	background-color: rgba(0, 0, 0, 0.5);
+}
+data {
+	display: none;
+}

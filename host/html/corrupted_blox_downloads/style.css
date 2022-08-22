@@ -1,0 +1,43 @@
+body {
+	background: #222;
+	color: white;
+	font-family: sans-serif;
+}
+body ul {
+	padding-left: 30px;
+}
+#back {
+	float: right;
+}
+a {
+	color: red;
+	text-decoration: none;
+}
+a[beta] {
+	color: darkred;
+}
+a:hover, a:focus {
+	text-decoration: underline;
+}
+a:hover::after, a:focus::after {
+	opacity: 1;
+}
+a::after {
+	opacity: 0;
+	transition: opacity 0.2s;
+}
+a[version="1.17.1"]::after {
+	content: " - 1.17.1";
+}
+a[version="1.17.1"][beta]::after {
+	content: " - 1.17.1 Beta";
+}
+.description {
+	position: relative;
+	animation: description 1s 1;
+}
+@keyframes description {
+	from {
+		opacity: 0;
+	}
+}

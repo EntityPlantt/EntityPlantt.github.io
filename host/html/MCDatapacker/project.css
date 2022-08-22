@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+body {
+	margin: 0;
+	background-color: #222;
+	color: white;
+	font-family: Roboto;
+}
+#contents, #add-element {
+	user-select: none;
+}
+#contents {
+	margin: 0;
+	padding: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: #222;
+}
+#contents tbody tr:empty::before {
+	content: "Add new stuff by clicking on the \"+\"";
+	color: gray;
+}
+#add-element, #options {
+	background-color: white;
+	color: black;
+	position: absolute;
+	padding: 20px;
+	right: 3px;
+	border-radius: 50%;
+	font-weight: bold;
+	font-size: 20px;
+	transition: background 0.6s;
+	cursor: pointer;
+	max-width: 50px;
+	max-height: 50px;
+	border: solid 2px black;
+}
+#add-element {
+	bottom: 3px;
+}
+#options {
+	bottom: 80px;
+}
+#add-element:hover, #options:hover {
+	background-color: lightgray;
+}
+#add-element-prompt, #credits {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translateX(-50%) translateY(-50%);
+	background-color: #111;
+	padding: 20px;
+}
+input, select, button {
+	background-color: #222;
+	color: white;
+	border: solid 2px currentColor;
+}
+button {
+	cursor: pointer;
+}
+input {
+	cursor: text;
+}
+select {
+	cursor: context-menu;
+}
+.element {
+	width: 200px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	display: inline-block;
+	cursor: pointer;
+	vertical-align: top;
+}
+.element:hover {
+	background-color: gray;
+}
+.element img, .element {
+	height: 32px;
+}

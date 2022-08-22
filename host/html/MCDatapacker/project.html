@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Project - MCDatapacker</title>
+	<link rel="stylesheet" type="text/css" href="project.css">
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/eligrey/FileSaver.js@master/dist/FileSaver.min.js"></script>
+	<script type="text/javascript" src="https://stuk.github.io/jszip/dist/jszip.js"></script>
+	<script type="text/javascript" src="generators.js"></script>
+	<script type="text/javascript" src="project.js"></script>
+</head>
+<body>
+	<table id="contents"><tr></tr></table>
+	<span id="add-element" onclick="addElementPrompt()" style="display: block">+</span>
+	<select id="options" onchange="executeOption(this.value)">
+		<option>Options</option>
+		<option value="0">Change name</option>
+		<option value="1">Change description</option>
+		<option value="5">Change namespace</option>
+		<option value="2">Change version</option>
+		<option value="3">Export as .zip</option>
+		<option value="4">---</option>
+		<option value="4">Credits</option>
+	</select>
+	<div id="add-element-prompt" style="display: none">
+		<p>
+			Name: <input type="text" id="add-element-name">
+			<br>
+			Type: <select id="add-element-type">
+				<option value="advancement">Advancement</option>
+				<option value="function">Function</option>
+				<option value="loot_table">Loot table</option>
+				<option value="predicate">Predicate</option>
+				<option value="recipe">Recipe</option>
+				<option value="structure">Structure</option>
+				<option value="tag">Tag</option>
+			</select>
+		</p>
+		<button onclick="closeElementPrompt()">Hide</button>
+		<button onclick="createElementFromPrompt()">Create</button>
+	</div>
+	<div id="credits" style="display: none;">
+		<span style="float: right; user-select: none; font-size: 20px; cursor: pointer;" onclick="this.parentElement.style.display = 'none'">&times;</span>
+		<h1>Credits</h1>
+		<img src="images/back_arrow.png" width="30">
+		<div>Icon made from <a target="_top" href="http://www.onlinewebfonts.com/icon">Icon Fonts</a> is licensed by CC BY 3.0</div>
+		<p><a target="_top" href="https://github.com/Stuk/jszip/blob/master/LICENSE.markdown">License</a> for JSZIP - used to zip the datapack</p>
+		<p><a target="_top" href="https://github.com/eligrey/FileSaver.js/blob/master/LICENSE.md">License</a> for FileSaver - used to download the datapack</p>
+		<p><a target="_top" href="https://github.com/json-editor/json-editor">@json-editor/json-editor</a> to make editing elements simpler to code</p>
+		<p><a target="_top" href="https://www.fontsquirrel.com/fonts/droid-sans-mono">Droid Sans Mono</a> is the monospace font used in this project</p>
+		<p><a target="_top" href="https://minecraftitemids.com/">Minecraft Item IDs</a> for the Minecraft item icons</p>
+	</div>
+</body>
+</html>

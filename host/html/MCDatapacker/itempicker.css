@@ -1,0 +1,63 @@
+@keyframes item-picker {
+	from {
+		opacity: 0;
+		top: 150vh;
+	}
+}
+.item-picker {
+	display: block;
+	position: fixed;
+	top: 50vh;
+	left: 50vw;
+	transform: translateX(-50%) translateY(-50%);
+	padding: 20px;
+	background-color: #222;
+	width: 290px;
+	height: 300px;
+	overflow-y: auto;
+	animation: item-picker 1s 1;
+}
+.item-picker::-webkit-scrollbar {
+	width: initial;
+}
+.item-picker::-webkit-scrollbar-track {
+	background-color: #222;
+}
+.item-picker::-webkit-scrollbar-thumb {
+	background-color: #151515;
+}
+.item-picker.disappear {
+	animation: item-picker 1s 1 reverse;
+}
+.item-picker-item {
+	height: 30px;
+	width: 30px;
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: center;
+	display: inline-block;
+	cursor: pointer;
+	white-space: nowrap;
+	background-color: #222;
+}
+.item-picker-item:hover {
+	background-color: #333;
+}
+.item-picker-item:focus {
+	background-color: darkgray;
+}
+.item-picker-blurrer {
+	width: 100vw;
+	height: 100vh;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background-color: rgba(0, 0, 0, 0.5);
+	animation: fadeIn 1s 1;
+	cursor: pointer;
+}
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+}

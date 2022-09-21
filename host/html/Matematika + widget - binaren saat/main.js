@@ -82,7 +82,6 @@ window.onload = function() {
 			time[0] -= 12;
 		}
 		if (time[0] == 0) time[0] = 12;
-		console.log([time, pm]);
 		[
 			["H8", time[0] % 16 >= 8],
 			["H4", time[0] % 8 >= 4],
@@ -116,4 +115,7 @@ window.onload = function() {
 		renderer.render(scene, camera);
 	}
 	frame();
+}
+function toggleMenu() {
+	document.getElementById("menu").classList.toggle("shown");
 }

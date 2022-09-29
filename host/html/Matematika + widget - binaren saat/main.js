@@ -108,8 +108,10 @@ window.onload = function() {
 		requestAnimationFrame(frame);
 		if (document.getElementById("rd-setTime-sync").checked || document.getElementById("inp-set-time").value == "") {
 			var d = new Date(), oldD = document.getElementById("inp-set-time").value;
-			document.getElementById("inp-set-time").value = d.getHours() + ":" + ((d.getMinutes() > 9) ? d.getMinutes() : ("0" + d.getMinutes()));
-			if (oldD != d.getHours() + ":" + ((d.getMinutes() > 9) ? d.getMinutes() : ("0" + d.getMinutes()))) {document.getElementById("inp-set-time").onchange()}
+			document.getElementById("inp-set-time").value = `${(d.getHours() > 9 ? "" : "0")}${d.getHours()}:${d.getMinutes() > 9 ? "" : "0"}${d.getMinutes()}`;
+			if (oldD != document.getElementById("inp-set-time").value) {
+				document.getElementById("inp-set-time").onchange();
+			}
 		}
 		renderer.setSize(innerSmaller(), innerSmaller());
 		renderer.render(scene, camera);

@@ -1,0 +1,6 @@
+C:\Users\Filip\Desktop\Cubic equation solver\Cubic equation solver\obj\Debug\Cubic equation solver.njsproj.AssemblyReference.cache
+C:\Users\Filip\Desktop\Cubic equation solver\Cubic equation solver\obj\Debug\Cubic equation solver.njsproj.CoreCompileInputs.cache
+C:\Users\Filip\Desktop\Cubic equation solver\Cubic equation solver\bin\Microsoft.NodejsTools.WebRole.dll
+C:\Nikola\Viber\Downloads\Cubic equation solver\Cubic equation solver\obj\Debug\Cubic equation solver.njsproj.AssemblyReference.cache
+C:\Nikola\Viber\Downloads\Cubic equation solver\Cubic equation solver\obj\Debug\Cubic equation solver.njsproj.CoreCompileInputs.cache
+C:\Nikola\Viber\Downloads\Cubic equation solver\Cubic equation solver\bin\Microsoft.NodejsTools.WebRole.dll

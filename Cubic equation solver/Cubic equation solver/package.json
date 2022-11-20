@@ -1,0 +1,7 @@
+{
+  "name": "cubic-equation-solver",
+  "version": "0.0.0",
+  "description": "Cubic equation solver",
+  "main": "app.js",
+  "authors": ["Nikola", "Filip"]
+}

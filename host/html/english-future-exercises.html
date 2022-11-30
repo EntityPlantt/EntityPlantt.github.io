@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Future tense exercises</title>
+	<style type="text/css">
+		body {
+			background: #00c418;
+			font-family: sans-serif;
+		}
+		#exercises {
+			position: absolute;
+			top: 50px;
+			left: 50%;
+			transform: translate(-50%);
+			background: white;
+			width: 50%;
+			padding: 20px;
+		}
+		input[correct] {
+			border: none;
+			border-bottom: solid 1px currentColor;
+			text-align: center;
+			font: inherit;
+			color: inherit;
+			width: 150px;
+		}
+		input[correct].correct {
+			color: #080;
+		}
+		input[correct].wrong {
+			color: #800;
+			background: #fbb;
+		}
+		input[correct]:hover {
+			background: #f8f8f8;
+		}
+		input[correct]:focus {
+			background: #eee;
+		}
+		input[correct]:hover:focus {
+			background: #d8d8d8;
+		}
+		#check {
+			background: #00c418;
+			color: white;
+			font: inherit;
+			padding: 10px 20px;
+			border: solid 0 white;
+			border-radius: 10px;
+			cursor: pointer;
+			margin: 5px;
+			transition: margin .5s, border .5s, background .5s;
+			font-weight: bold;
+		}
+		#check:hover, #check:focus {
+			background: #00b307;
+			border: solid 5px #00c418;
+			margin: 0;
+		}
+		#result {
+			background: #ff8;
+			color: #880;
+			padding: 10px 20px;
+			border: dotted 3px currentColor;
+			border-radius: 5px;
+			margin-top: 10px;
+		}
+		ol li {
+			margin-top: 5px;
+		}
+	</style>
+	<script type="text/javascript">
+		function check() {
+			var correct = 0, all = 0;
+			for (var i of document.querySelectorAll("input[correct]")) {
+				if (i.value == i.getAttribute("correct")) {
+					i.className = "correct";
+					correct++;
+				}
+				else {
+					i.className = "wrong";
+				}
+				all++;
+			}
+			document.getElementById("result-percentage").innerText = Math.floor(correct / all * 1000) / 10;
+			document.getElementById("result-correct").innerText = correct;
+			document.getElementById("result-all").innerText = all;
+			document.getElementById("result").style.display = "";
+		}
+	</script>
+</head>
+<body>
+	<div id="exercises">
+		<h1>Future tense exercises</h1>
+		Write <b>one to five words</b> in each gap. The <b>bold</b> phrases are obvious hints that can help you solve the task.
+		<ol>
+			<li>Amelia won't <input correct="go"> (go) to school tomorrow.</li>
+			<li>The bus <input correct="leaves"> (leave) in half an hour. I think we should go now.</li>
+			<li>She saw that there's no milk in the fridge, so she immediately said: "I <input correct="will"> get milk tomorrow."</li>
+			<li>"Are you free for lunch tomorrow?" "Sorry, but I'm <input correct="playing"> tennis tomorrow.</li>
+			<li>German class <input correct="starts"> (start) at 3.30 pm.</li>
+			<li>"Have you <b>decided</b> what to do about your broken car?" "Yes. I <input correct="am going to"> fix it on Sunday."</li>
+			<li>"John borrowed your bycicle." "What? I <input correct="will kill"> (kill) him!"</li>
+			<li>"Your phone rang." "<b>I know.</b> I <input correct="am going to call"> (call) them later."</li>
+			<li>"Can you help me fix my computer?" "I <input correct="will have"> (have) a look at it after dinner."</li>
+			<li>The plane <input correct="takes off"> (take off) at 6 am. We should be at the airport at 5 am.</li>
+			<li>I think Croatia <input correct="will win"> (win) the World Cup.</li>
+			<li>It <input correct="is going to rain"> (rain) <b>if it continues to be cloudy</b>.</li>
+			<li>"I'm not ready yet." "That's OK, I <input correct="will wait">."</li>
+			<li>This is <b>the plan</b>: you <input correct="are going to go"> (go) from the front, and I - from the back.</li>
+			<li>I'm busy. I <input correct="am playing"> (play) the guitar at the concert tonight.</li>
+			<li><input correct="Are you going to play"> (you/play) basketball after school? Because I<b>'m going to play</b> cricket.</li>
+			<li>Let's ask John how to solve this problem. He <input correct="will know"> (know).</li>
+			<li><input correct="Are you doing"> (you/do) anything on Saturday evening? We thought we might go to the cinema.</li>
+			<li>I'll go to the party when school <input correct="ends"> (end).</li>
+			<li>"We <input correct="are going to paint"> (paint) the bedroom walls blue." "That'll be nice."</li>
+		</ol>
+		<button id="check" onclick="check()">Check</button>
+		<div id="result" style="display:none">You got <span id="result-correct"></span> of <span id="result-all"></span> correct. (<span id="result-percentage"></span>%)</div>
+		<!-- AddToAny BEGIN -->
+		<div class="a2a_kit a2a_kit_size_32 a2a_default_style" data-a2a-url="https://entityplantt.github.io/host/html/english-future-exercises.html" data-a2a-title="Future tense exercises" style="margin-top:20px">
+			<a class="a2a_dd" href="https://www.addtoany.com/share"></a>
+			<a class="a2a_button_copy_link"></a>
+			<a class="a2a_button_email"></a>
+			<a class="a2a_button_facebook a2a_counter"></a>
+			<a class="a2a_button_blogger"></a>
+			<a class="a2a_button_reddit a2a_counter"></a>
+			<a class="a2a_button_microsoft_teams"></a>
+			<a class="a2a_button_snapchat"></a>
+			<a class="a2a_button_skype"></a>
+			<a class="a2a_button_pinterest a2a_counter"></a>
+		</div>
+		<script async src="https://static.addtoany.com/menu/page.js"></script>
+		<!-- AddToAny END -->
+		<br>
+		<a href="/">Home</a>
+	</div>
+</body>
+</html>

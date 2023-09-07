@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      28
+// @version      29
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -10,8 +10,8 @@
 // @grant        none
 // @license      CC-BY-ND
 // ==/UserScript==
- 
-const VERSION = 28;
+
+const VERSION = 29;
 console.log("%cMENDO.MK Enhancement%c loaded", "color:magenta;text-decoration:underline", "");
 var loadingSuccess = 0;
 setTimeout(() => {
@@ -111,6 +111,21 @@ display: block;
 from {color: #4f4}
 to {color: white}
 }
+.progbar {
+background: #0004;
+margin-top: .5em;
+border-radius: 5px;
+padding: 2.5px;
+width: 50vw;
+}
+.progbar > div {
+background: #bfb;
+border: solid 1px gray;
+border-radius: 2.5px;
+height: 100%;
+position: relative;
+padding: 5px;
+}
 `;
 		document.head.appendChild(style);
 		logFinish("inject style sheet");
@@ -180,6 +195,16 @@ to {color: white}
 			document.querySelectorAll("div.main-content > div > div > table > tbody > tr > td:nth-child(2) > a").forEach(e => void(e.target = "_blank"));
 			logFinish("make task links open in another window");
 			if (document.URL.includes("/Training.do")) {
+                var solved = 0, total = 0, progbar = document.createElement("div");
+                document.querySelectorAll("body > div.page-container > div.main > div.main-content > div > div > table > tbody > tr").forEach(elm => {
+                    if (elm.children.length < 2 || elm.children[0].nodeName.toUpperCase() == "TH") return;
+                    if (elm.querySelector("td.solved")) solved++;
+                    total++;
+                });
+                progbar.className = "progbar";
+                progbar.innerHTML = `<div style="width:${solved / total * 100}%">${solved} / ${total} (${Math.floor(solved / total * 100)}%)</div>`;
+                document.querySelector("body > div.page-container > div.main > div.main-content > div > div > table > caption").appendChild(progbar);
+                logFinish("task solved percentage");
 				var taskShare = document.createElement("div");
 				taskShare.style.marginBottom = "10px";
 				taskShare.innerHTML = `
@@ -308,7 +333,7 @@ function taskSolveCinematic(solved) {
 	`;
 	preCinematicScreen.innerHTML = `
 	<div style="color: black; position: fixed; top: 50vh; left: 50vw; transform: translate(-50%, -50%);">[ ${document.cookie.includes("mkjudge_language=en") ? "Reveal" : "Откриј"} ]</div>
-	<div style="color: black; position: fixed; top: 10px; right: 10px;" id=skip-cinematic>${document.cookie.includes("mkjudge_language=en") ? "Skip if correct?" : "Скокни ако точно?"}&gt;&gt;</div>
+	<div style="color: black; position: fixed; top: 10px; right: 10px;" id=skip-cinematic>${document.cookie.includes("mkjudge_language=en") ? "Skip if correct" : "Скокни ако точно"} &gt;&gt;</div>
 	`;
 	preCinematicScreen.onclick = () => {
 	    preCinematicScreen.remove();

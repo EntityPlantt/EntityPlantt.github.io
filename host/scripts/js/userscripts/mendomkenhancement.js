@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      29
+// @version      32
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -9,9 +9,11 @@
 // @icon         https://mendo.mk/img/favicon.ico
 // @grant        none
 // @license      CC-BY-ND
+// @downloadURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.user.js
+// @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 29;
+const VERSION = 32;
 console.log("%cMENDO.MK Enhancement%c loaded", "color:magenta;text-decoration:underline", "");
 var loadingSuccess = 0;
 setTimeout(() => {
@@ -31,6 +33,9 @@ ${ // Dark mode
 localStorage.getItem("mendo-mk-enhancement-theme") == "dark" ? `
 html, img, svg, #cboxOverlay, .copy-io-btn span {
 filter: invert(1) hue-rotate(180deg);
+}
+.copy-io-btn span:before {
+content: "📃";
 }
 body, img, svg {
 background: white;
@@ -116,7 +121,7 @@ background: #0004;
 margin-top: .5em;
 border-radius: 5px;
 padding: 2.5px;
-width: 50vw;
+width: 100%;
 }
 .progbar > div {
 background: #bfb;
@@ -125,6 +130,7 @@ border-radius: 2.5px;
 height: 100%;
 position: relative;
 padding: 5px;
+box-sizing: border-box;
 }
 `;
 		document.head.appendChild(style);
@@ -133,14 +139,15 @@ padding: 5px;
 			document.querySelector(".sitename h1").innerHTML += " <a href='https://entityplantt.cyclic.app/r/mendo-mk-enhancement' id=enhancement-logo><em><b>Enhanced</b></em></a>";
 		}
 		logFinish("complete site logo");
-		var cfUpdt = await fetch("https://greasyfork.org/scripts/450985-mendo-mk-enhancement/code/MENDOMK%20Enhancement.user.js").then(x => x.text());
-		if (parseInt(/@version *?(\d+)/.exec(cfUpdt)[1]) > VERSION) {
-			if (document.getElementById("enhancement-logo")) {
-				document.getElementById("enhancement-logo").classList.add("update-available");
-				document.querySelector("#enhancement-logo b").innerText = "Update to v" + VERSION;
+		fetch("https://greasyfork.org/scripts/450985-mendo-mk-enhancement/code/MENDOMK%20Enhancement.user.js").then(x => x.text()).then(cfUpdt => {
+			if (parseInt(/@version *?(\d+)/.exec(cfUpdt)[1]) > VERSION) {
+				if (document.getElementById("enhancement-logo")) {
+					document.getElementById("enhancement-logo").classList.add("update-available");
+					document.querySelector("#enhancement-logo b").innerText = "Update to v" + VERSION;
+				}
 			}
-		}
-		logFinish("check for updates");
+			logFinish("check for updates");
+		});
 		if (document.URL.includes("/Training.do") || document.URL.includes("/User_Competition.do")) {
 			var search = document.createElement("form");
 			search.className = "content-search";
@@ -210,23 +217,25 @@ padding: 5px;
 				taskShare.innerHTML = `
 <button id=solved-tasks-save>${document.cookie.includes("mkjudge_language=en") ? "Share solved tasks" : "Сподели решени задачи"}</button>
 <button id=solved-tasks-load>${document.cookie.includes("mkjudge_language=en") ? "Load shared solved tasks" : "Лоадирај споделени решени задачи"}</button>`;
+				let taskshcode = "mendo-reseni-zadaci" + /^https(:\/\/.*?)#.*?$/.exec(document.URL)[1];
 				taskShare.querySelector("#solved-tasks-save").onclick = () => {
 					var array = [];
 					document.querySelectorAll("body > div.page-container > div.main > div.main-content > div:nth-child(5) > div > table > tbody > tr > td:first-child").forEach(td => {
-						if (td.className == "solved") array.push(td.innerText.substr(0, td.innerText.length - 1));
+						if (td.classList.contains("solved")) array.push(td.innerText.substr(0, td.innerText.length - 1));
 					});
-					array.unshift("mendo-reseni-zadaci");
+					array.unshift(taskshcode);
 					navigator.clipboard.writeText(array.join(","));
 				};
 				taskShare.querySelector("#solved-tasks-load").onclick = async() => {
 					var array = prompt(document.cookie.includes("mkjudge_language=en") ? "Enter code..." : "Внеси код...").split(",");
-					if (array[0] != "mendo-reseni-zadaci") {
-						alert(document.cookie.includes("mkjudge_language=en") ? "Invalid task solve share schema!" : "Невалидна шема на споделени решени задачи!");
+					if (array[0] != taskshcode) {
+						alert(document.cookie.includes("mkjudge_language=en") ? "Invalid task solve share schema! / Invalid site!" : "Невалидна шема на споделени решени задачи! / Невалидна страна!");
 						return;
 					}
 					array.shift();
 					document.querySelectorAll("body > div.page-container > div.main > div.main-content > div:nth-child(5) > div > table > tbody > tr > td:first-child").forEach(td => {
-						if (array.includes(td.innerText.substr(0, td.innerText.length - 1))) td.classList.add("share-solved"); else td.classList.remove("share-solved");
+						if (array.includes(td.innerText.substr(0, td.innerText.length - 1))) td.classList.add("share-solved");
+						else td.classList.remove("share-solved");
 					});
 				};
 				document.querySelector(".main-content").prepend(taskShare);
@@ -249,7 +258,7 @@ padding: 5px;
 			document.querySelectorAll("body > div.page-container > div.main > div.main-content > div.column1-unit.taskContentView > table pre").forEach(pre => {
 				var text = pre.innerText.substr(pre.innerText.indexOf("\n") + 1);
 				var copyIoBtn = document.createElement("span");
-				copyIoBtn.innerHTML = "<span>📃</span>";
+				copyIoBtn.innerHTML = "<span></span>";
 				copyIoBtn.setAttribute("onclick", `navigator.clipboard.writeText(${JSON.stringify(text)})`);
 				copyIoBtn.className = "copy-io-btn";
 				pre.parentElement.appendChild(copyIoBtn);

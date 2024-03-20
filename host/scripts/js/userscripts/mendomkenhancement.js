@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      32
+// @version      34
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -13,7 +13,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 32;
+const VERSION = 34;
 console.log("%cMENDO.MK Enhancement%c loaded", "color:magenta;text-decoration:underline", "");
 var loadingSuccess = 0;
 setTimeout(() => {
@@ -94,8 +94,8 @@ background: #e8e8e8;
 box-shadow: 0 0 2.5px 2.5px black;
 }
 @keyframes gta-cinematic-image {
-0%, 50% {filter: blur(500px);}
-10%, 40% {filter: blur(0px);}
+0%, 50% {filter: blur(500px); opacity: 0;}
+10%, 40% {filter: blur(0px); opacity: 1;}
 }
 td.share-solved {
 background: #ac0 !important;
@@ -148,6 +148,12 @@ box-sizing: border-box;
 			}
 			logFinish("check for updates");
 		});
+		/* if (document.querySelector(".main-navigation > ul") && !document.URL.includes("Help.do")) {
+			let elm = document.createElement("li");
+			elm.innerHTML = `<a href="/simple_jsp/report_bug.jsp" class="cbrbm cboxElement">${true ? "Пријави Грешка" : "Report Bug"}</a>`;
+			document.querySelector(".main-navigation > ul").appendChild(elm);
+			logFinish("add report bug form");
+		} */
 		if (document.URL.includes("/Training.do") || document.URL.includes("/User_Competition.do")) {
 			var search = document.createElement("form");
 			search.className = "content-search";
@@ -217,7 +223,8 @@ box-sizing: border-box;
 				taskShare.innerHTML = `
 <button id=solved-tasks-save>${document.cookie.includes("mkjudge_language=en") ? "Share solved tasks" : "Сподели решени задачи"}</button>
 <button id=solved-tasks-load>${document.cookie.includes("mkjudge_language=en") ? "Load shared solved tasks" : "Лоадирај споделени решени задачи"}</button>`;
-				let taskshcode = "mendo-reseni-zadaci" + /^https(:\/\/.*?)#.*?$/.exec(document.URL)[1];
+				let taskshcode = "mendo-reseni-zadaci" + /^https?(.*)$/.exec(document.URL)[1];
+				if (taskshcode.includes("#")) taskshcode = taskshcode.slice(0, taskshcode.indexOf("#"));
 				taskShare.querySelector("#solved-tasks-save").onclick = () => {
 					var array = [];
 					document.querySelectorAll("body > div.page-container > div.main > div.main-content > div:nth-child(5) > div > table > tbody > tr > td:first-child").forEach(td => {

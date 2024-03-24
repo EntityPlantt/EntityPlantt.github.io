@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      34
+// @version      35
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -13,7 +13,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 34;
+const VERSION = 35;
 console.log("%cMENDO.MK Enhancement%c loaded", "color:magenta;text-decoration:underline", "");
 var loadingSuccess = 0;
 setTimeout(() => {
@@ -34,9 +34,6 @@ localStorage.getItem("mendo-mk-enhancement-theme") == "dark" ? `
 html, img, svg, #cboxOverlay, .copy-io-btn span {
 filter: invert(1) hue-rotate(180deg);
 }
-.copy-io-btn span:before {
-content: "📃";
-}
 body, img, svg {
 background: white;
 }
@@ -52,6 +49,7 @@ background: #111;
 ::-webkit-scrollbar-thumb {
 background: #ddd;
 }
+` : ""}
 body::-webkit-scrollbar-thumb {
 background: #222;
 }
@@ -61,7 +59,9 @@ background: #bfb !important;
 td.wrong {
 background: #fbb !important;
 }
-` : ""}
+.copy-io-btn span:before {
+content: "📃";
+}
 #search {
 font-family: consolas;
 }

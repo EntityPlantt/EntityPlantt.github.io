@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      35
+// @version      36
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -13,7 +13,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 35;
+const VERSION = 36, AprilFools = new Date().getMonth() == 3 && new Date().getDate() == 1;
 console.log("%cMENDO.MK Enhancement%c loaded", "color:magenta;text-decoration:underline", "");
 var loadingSuccess = 0;
 setTimeout(() => {
@@ -53,12 +53,20 @@ background: #ddd;
 body::-webkit-scrollbar-thumb {
 background: #222;
 }
+${AprilFools ? `
+td.solved, td.wrong {
+background: #bfb !important;
+}
+td.correct {
+background: #fbb !important;
+}` : `
 td.solved, td.correct {
 background: #bfb !important;
 }
 td.wrong {
 background: #fbb !important;
 }
+`}
 .copy-io-btn span:before {
 content: "📃";
 }
@@ -132,6 +140,13 @@ position: relative;
 padding: 5px;
 box-sizing: border-box;
 }
+/* April Fools! */
+html.mirrored {
+transform: rotateY(1620deg) rotateX(-10deg);z
+}
+html {
+transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
+}
 `;
 		document.head.appendChild(style);
 		logFinish("inject style sheet");
@@ -143,7 +158,7 @@ box-sizing: border-box;
 			if (parseInt(/@version *?(\d+)/.exec(cfUpdt)[1]) > VERSION) {
 				if (document.getElementById("enhancement-logo")) {
 					document.getElementById("enhancement-logo").classList.add("update-available");
-					document.querySelector("#enhancement-logo b").innerText = "Update to v" + VERSION;
+					document.querySelector("#enhancement-logo b").innerText = "Update to v" + /@version *?(\d+)/.exec(cfUpdt)[1];
 				}
 			}
 			logFinish("check for updates");
@@ -169,12 +184,14 @@ box-sizing: border-box;
 				hashChange();
 			}
 			function hashChange() {
-				if (document.activeElement == search.querySelector("#search")) {
-					return;
-				}
-				var kw = unescape(location.hash.substr(1));
+				// if (document.activeElement == search.querySelector("#search")) {
+				// 	return;
+				// }
+				let kw = unescape(location.hash.substr(1));
 				search.querySelector("#search").value = kw;
 				kw = kw.toLowerCase();
+				if (kw.includes("mirror")) document.body.parentElement.classList.add("mirrored");
+				else document.body.parentElement.classList.remove("mirrored");
 				document.querySelectorAll("body > div.page-container > div.main > div.main-content > div > div > table > tbody > tr").forEach(elm => {
 					if (!elm.querySelector("td:nth-child(2) > a")) {
 						return;
@@ -186,9 +203,25 @@ box-sizing: border-box;
 						elm.style.display = "none";
 					}
 				});
+				if (AprilFools) {
+					document.querySelectorAll("body > div.page-container > div.main > div.main-content > div > div > table > tbody").forEach(elm => {
+						let afa = Array.from(elm.querySelectorAll("tr")).slice(1);
+						function shuffle(array) {
+							let currentIndex = array.length;
+							while (currentIndex != 0) {
+								let randomIndex = Math.floor(Math.random() * currentIndex);
+								currentIndex--;
+								[array[currentIndex], array[randomIndex]] = [
+									array[randomIndex], array[currentIndex]];
+							}
+						}
+						shuffle(afa);
+						afa.forEach(x => elm.appendChild(x));
+					});
+				}
 			}
-			window.onhashcange = hashChange;
-			setInterval(hashChange, 500);
+			window.onhashchange = hashChange;
+			hashChange();
 			document.querySelector(".main-content").prepend(search);
 			logFinish("add task search bar");
 			document.querySelector("body > div.page-container > div.main > div.main-content > div:nth-child(3)").innerHTML += `<a href="./Training.do?cid=5">[ ${document.cookie.includes("mkjudge_language=en") ? "Other tasks" : "Други задачи"} ]</a>&nbsp;&nbsp;`;
@@ -299,7 +332,7 @@ box-sizing: border-box;
 		};
 		logFinish("dark mode button");
 		loadingSuccess = 1;
-		if (/^https?:\/\/mendo\.mk\/.+\.do/.test(document.URL) && Math.random() < .01) {
+		/* if (/^https?:\/\/mendo\.mk\/.+\.do/.test(document.URL) && Math.random() < .01) {
 			document.querySelector(".sitelogo").style.backgroundImage = "url(https://i1.sndcdn.com/artworks-TWCDacMc5lCrZIPb-2W7mgg-t500x500.jpg)";
 			document.querySelector(".sitelogo").style.backgroundSize = "contain";
 			document.querySelector(".sitename h1 a").innerText = "𝐎 𝐁 𝐀 𝐌 𝐈 𝐔 𝐌";
@@ -313,7 +346,7 @@ box-sizing: border-box;
 			document.querySelector("link[rel*=icon]").removeAttribute("type");
 			document.title = "𝐎 𝐁 𝐀 𝐌 𝐈 𝐔 𝐌";
 			logFinish("obamium");
-		}
+		} */
 		if (/^https?:\/\/mendo\.mk\/.*?User_Submission.do\?/.test(document.URL)) {
 			var ok = false;
 			for (var elm of document.querySelectorAll("img")) {
@@ -321,6 +354,11 @@ box-sizing: border-box;
 					ok = true;
 					break;
 				}
+			}
+			if (AprilFools) {
+				let congrattd = document.querySelector(".submission-content tr[align=right] td");
+				if (congrattd && congrattd.innerText.includes("Congratulations!")) congrattd.innerHTML = "April Fools!";
+				if (congrattd && congrattd.innerText.includes("Честитки!")) congrattd.innerHTML = "Априлилили!";
 			}
 			function checkForCinematic() {
 				var usubTBody = document.querySelector("body > div.page-container > div.main > div.main-content > div > div > table:nth-child(6) > tbody");
@@ -334,6 +372,12 @@ box-sizing: border-box;
 			if (ok) checkForCinematic();
 			logFinish("task solve cinematic setup");
 		}
+		/* April Fools!
+		let mirror = document.createElement("div");
+		mirror.innerHTML = "??";
+		mirror.style = "position: fixed; top: 0; right: 0; margin: 20px; background: blue; color: white; padding: 10px; cursor: pointer; user-select: none; font-size: 30px";
+		mirror.onclick = () => document.body.parentElement.classList.toggle("mirrored");
+		document.body.appendChild(mirror); */
 	}
 	catch (_) {
 		console.error(_);
@@ -349,22 +393,32 @@ function taskSolveCinematic(solved) {
 	`;
 	preCinematicScreen.innerHTML = `
 	<div style="color: black; position: fixed; top: 50vh; left: 50vw; transform: translate(-50%, -50%);">[ ${document.cookie.includes("mkjudge_language=en") ? "Reveal" : "Откриј"} ]</div>
-	<div style="color: black; position: fixed; top: 10px; right: 10px;" id=skip-cinematic>${document.cookie.includes("mkjudge_language=en") ? "Skip if correct" : "Скокни ако точно"} &gt;&gt;</div>
+	<div style="color: black; position: fixed; top: 10px; right: 10px;" id=skip-cinematic>${document.cookie.includes("mkjudge_language=en") ? "Skip" : "Скокни"} &gt;&gt;</div>
 	`;
 	preCinematicScreen.onclick = () => {
 	    preCinematicScreen.remove();
-		if (window.event.target.id == "skip-cinematic" || !solved) return;
-		var cinematics = [() => {
-			var img = document.createElement("img");
+		if (window.event.target.id == "skip-cinematic") return;
+		const cinematics = [() => {
+			let img = document.createElement("img");
 			img.src = "https://i.ibb.co/b7WW8Q3/mission-passed.png";
 			img.style = "animation: gta-cinematic-image 15s 1 linear; position: fixed; top: 0; left: 0; width: 100vw; background: transparent !important";
-			var audio = document.createElement("audio");
+			let audio = document.createElement("audio");
 			audio.src = "https://dl.sndup.net/fmjm/mission%20passed%20audio.mp3";
 			audio.play();
 			document.body.appendChild(img);
 			setTimeout(() => img.remove(), 10000);
+		}], failCinematics = [() => {
+			let audio = document.createElement("audio");
+			audio.src = "https://www.myinstants.com/media/sounds/erro.mp3";
+			audio.play();
+			let img = document.createElement("img");
+			img.src = "https://i.kym-cdn.com/photos/images/original/000/918/810/a22.jpg";
+			img.style = "position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(.5); background: transparent !important; box-shadow: black 10px 10px 5px";
+			document.body.appendChild(img);
+			img.onclick = () => img.remove();
 		}];
-		cinematics[Math.floor(Math.random() * cinematics.length)]();
+		if (solved) cinematics[Math.floor(Math.random() * cinematics.length)]();
+		else failCinematics[Math.floor(Math.random() * failCinematics.length)]();
 	};
 	document.body.appendChild(preCinematicScreen);
 }

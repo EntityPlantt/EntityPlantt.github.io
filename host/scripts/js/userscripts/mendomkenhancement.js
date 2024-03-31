@@ -13,7 +13,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 36, AprilFools = new Date().getMonth() == 3 && new Date().getDate() == 1;
+const VERSION = 36, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
 console.log("%cMENDO.MK Enhancement%c loaded", "color:magenta;text-decoration:underline", "");
 var loadingSuccess = 0;
 setTimeout(() => {

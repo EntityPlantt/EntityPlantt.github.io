@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      36
+// @version      37
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -13,7 +13,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 36, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
+const VERSION = 37, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
 console.log("%cMENDO.MK Enhancement%c loaded", "color:magenta;text-decoration:underline", "");
 var loadingSuccess = 0;
 setTimeout(() => {
@@ -332,52 +332,29 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 		};
 		logFinish("dark mode button");
 		loadingSuccess = 1;
-		/* if (/^https?:\/\/mendo\.mk\/.+\.do/.test(document.URL) && Math.random() < .01) {
-			document.querySelector(".sitelogo").style.backgroundImage = "url(https://i1.sndcdn.com/artworks-TWCDacMc5lCrZIPb-2W7mgg-t500x500.jpg)";
-			document.querySelector(".sitelogo").style.backgroundSize = "contain";
-			document.querySelector(".sitename h1 a").innerText = "𝐎 𝐁 𝐀 𝐌 𝐈 𝐔 𝐌";
-			document.querySelector(".sitename h2 a").innerText = "𝐋𝐞𝐭 𝐎𝐛𝐚𝐦𝐢𝐮𝐦 𝐛𝐥𝐞𝐬𝐬 𝐲𝐨𝐮";
-			(document.querySelector(".footer") || {}).innerHTML = "<p>𝐋𝐞𝐭 𝐎𝐛𝐚𝐦𝐢𝐮𝐦 𝐛𝐥𝐞𝐬𝐬 𝐲𝐨𝐮</p>";
-			document.querySelectorAll("img").forEach(elm => {
-				elm.src = "https://i1.sndcdn.com/artworks-TWCDacMc5lCrZIPb-2W7mgg-t500x500.jpg";
-				elm.width = elm.height ||= 50;
-			});
-			document.querySelector("link[rel*=icon]").href = "https://i1.sndcdn.com/artworks-TWCDacMc5lCrZIPb-2W7mgg-t500x500.jpg";
-			document.querySelector("link[rel*=icon]").removeAttribute("type");
-			document.title = "𝐎 𝐁 𝐀 𝐌 𝐈 𝐔 𝐌";
-			logFinish("obamium");
-		} */
 		if (/^https?:\/\/mendo\.mk\/.*?User_Submission.do\?/.test(document.URL)) {
-			var ok = false;
-			for (var elm of document.querySelectorAll("img")) {
+			let ok = false;
+			for (let elm of document.querySelectorAll("img")) {
 				if (elm.src.includes("loadingAnimation")) {
 					ok = true;
 					break;
 				}
 			}
-			if (AprilFools) {
-				let congrattd = document.querySelector(".submission-content tr[align=right] td");
-				if (congrattd && congrattd.innerText.includes("Congratulations!")) congrattd.innerHTML = "April Fools!";
-				if (congrattd && congrattd.innerText.includes("Честитки!")) congrattd.innerHTML = "Априлилили!";
-			}
 			function checkForCinematic() {
-				var usubTBody = document.querySelector("body > div.page-container > div.main > div.main-content > div > div > table:nth-child(6) > tbody");
-				if (!ok) return;
+				let usubTBody = document.querySelector("div.main-content > div > div > table:nth-child(6) > tbody");
+				if (!ok) {
+					taskSolveCinematic(0);
+					return;
+				}
 				if (!usubTBody) {
 					requestAnimationFrame(checkForCinematic);
 				}
-				else if (usubTBody.querySelectorAll("tr td.correct:first-child").length + 1 >= usubTBody.querySelectorAll("tr").length) taskSolveCinematic(true);
-				else taskSolveCinematic(false);
+				else if (usubTBody.querySelectorAll("tr td.correct:first-child").length + 1 >= usubTBody.querySelectorAll("tr").length) taskSolveCinematic(1);
+				else taskSolveCinematic(2);
 			}
-			if (ok) checkForCinematic();
+			checkForCinematic();
 			logFinish("task solve cinematic setup");
 		}
-		/* April Fools!
-		let mirror = document.createElement("div");
-		mirror.innerHTML = "??";
-		mirror.style = "position: fixed; top: 0; right: 0; margin: 20px; background: blue; color: white; padding: 10px; cursor: pointer; user-select: none; font-size: 30px";
-		mirror.onclick = () => document.body.parentElement.classList.toggle("mirrored");
-		document.body.appendChild(mirror); */
 	}
 	catch (_) {
 		console.error(_);
@@ -385,7 +362,43 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 	}
 	console.groupEnd();
 }
-function taskSolveCinematic(solved) {
+function taskSolveCinematic(showType) {
+	if (AprilFools) {
+		let congrattd = document.querySelector(".submission-content tr[align=right] td");
+		if (congrattd && congrattd.innerText.includes("Congratulations!")) congrattd.innerHTML = "April Fools!";
+		if (congrattd && congrattd.innerText.includes("Честитки!")) congrattd.innerHTML = "Априлилили!";
+	}
+	let tcs = document.querySelector("div.main-content > div > div > table:nth-child(6) > tbody");
+	let tclist = Array.from(tcs.children);
+	let tr;
+	for (let tc of tclist) {
+		if (!tr || tr.children.length == 5) {
+			tr = document.createElement("tr");
+			tcs.appendChild(tr);
+		}
+		let td = tc.querySelector("td");
+		if (td) {
+			if (tc.innerText.includes("Runtime Error")) {
+				td.innerText += " RE";
+				td.classList.add("verdict-re");
+			}
+			if (tc.innerText.includes("Wrong") || tc.innerText.includes("Погрешен")) {
+				td.innerText += " WA";
+				td.classList.add("verdict-wa");
+			}
+			if (tc.innerText.includes("Time") || tc.innerText.includes("време")) {
+				td.innerText += " TLE";
+				td.classList.add("verdict-tle");
+			}
+			if (tc.innerText.includes("Точен") || tc.innerText.includes("Correct")) {
+				td.innerText += " AC (" + /[\d.]+/.exec(tc.children[1].innerText)[0] + ")";
+				td.classList.add("verdict-ac");
+			}
+			tr.appendChild(td);
+		}
+		tc.remove();
+	}
+	if (!showType) return;
 	var preCinematicScreen = document.createElement("div");
 	preCinematicScreen.style = `
 	top: 0px; left: 0px; position: fixed; width: 100vw; height: 100vh;
@@ -417,7 +430,7 @@ function taskSolveCinematic(solved) {
 			document.body.appendChild(img);
 			img.onclick = () => img.remove();
 		}];
-		if (solved) cinematics[Math.floor(Math.random() * cinematics.length)]();
+		if (showType == 1) cinematics[Math.floor(Math.random() * cinematics.length)]();
 		else failCinematics[Math.floor(Math.random() * failCinematics.length)]();
 	};
 	document.body.appendChild(preCinematicScreen);

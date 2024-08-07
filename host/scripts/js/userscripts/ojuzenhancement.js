@@ -1,13 +1,15 @@
 // ==UserScript==
 // @name         OJ.UZ enhancement
 // @namespace    ojuzenhancement
-// @version      v1
+// @version      v2
 // @description  Enhances OJ.UZ
 // @author       EntityPlantt
 // @match        https://oj.uz/*
 // @icon         http://oj.uz/favicon.ico
 // @grant        none
 // @run-at       document-start
+// @downloadURL https://update.greasyfork.org/scripts/474544/OJUZ%20enhancement.user.js
+// @updateURL https://update.greasyfork.org/scripts/474544/OJUZ%20enhancement.meta.js
 // ==/UserScript==
 addEventListener("DOMContentLoaded", () => {
 	var style = document.createElement("style");
@@ -32,9 +34,20 @@ addEventListener("DOMContentLoaded", () => {
 	.progressbar > .bar {
 	animation: progressbargradient 2s linear infinite;
 	}
+	#my-score canvas {
+	animation: myscore_s 10s linear infinite, myscore_r 10s ease infinite;
+	}
 	@keyframes progressbargradient {
 	from { background-position-x: 0% }
 	to { background-position-x: 200% }
+	}
+	@keyframes myscore_s {
+	from, to, 50% { scale: 1 }
+	25%, 75% { scale: 1.05 }
+	}
+	@keyframes myscore_r {
+	from, to { transform: rotate(-10deg) }
+	50% { transform: rotate(10deg) }
 	}
 	body::-webkit-scrollbar { width: 15px; height: 15px }
 	body::-webkit-scrollbar-track { background: #222 }

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         OJ.UZ enhancement
 // @namespace    ojuzenhancement
-// @version      v3
+// @version      v4
 // @description  Enhances OJ.UZ
 // @author       EntityPlantt
 // @match        https://oj.uz/*
@@ -12,7 +12,7 @@
 // @updateURL https://update.greasyfork.org/scripts/474544/OJUZ%20enhancement.meta.js
 // ==/UserScript==
 addEventListener("DOMContentLoaded", () => {
-	if (localStorage.dark == "true") document.body.parentElement.classList.add("dark");
+	setTheme();
 	var style = document.createElement("style");
 	style.innerHTML = `
 	html.dark, .dark img, .dark iframe, .dark object { filter: invert(1) hue-rotate(180deg) }
@@ -79,4 +79,9 @@ addEventListener("DOMContentLoaded", () => {
 	li.innerHTML = "<a href='javascript:toggleTheme()'>Toggle theme</a>";
 	document.querySelector(".login-bar").prepend(li);
 	window.toggleTheme = () => void(localStorage.dark = document.body.parentElement.classList.toggle("dark"));
+	addEventListener("storage", setTheme);
 });
+function setTheme() {
+	if (localStorage.dark == "true") document.body.parentElement.classList.add("dark");
+	else document.body.parentElement.classList.remove("dark");
+}

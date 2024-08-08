@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         OJ.UZ enhancement
 // @namespace    ojuzenhancement
-// @version      v2
+// @version      v3
 // @description  Enhances OJ.UZ
 // @author       EntityPlantt
 // @match        https://oj.uz/*
@@ -12,9 +12,10 @@
 // @updateURL https://update.greasyfork.org/scripts/474544/OJUZ%20enhancement.meta.js
 // ==/UserScript==
 addEventListener("DOMContentLoaded", () => {
+	if (localStorage.dark == "true") document.body.parentElement.classList.add("dark");
 	var style = document.createElement("style");
 	style.innerHTML = `
-	html, img, iframe, object { filter: invert(1) hue-rotate(180deg) }
+	html.dark, .dark img, .dark iframe, .dark object { filter: invert(1) hue-rotate(180deg) }
 	footer, body { background: #e9e9e9 }
 	* {
 	transition: none !important;
@@ -36,6 +37,12 @@ addEventListener("DOMContentLoaded", () => {
 	}
 	#my-score canvas {
 	animation: myscore_s 10s linear infinite, myscore_r 10s ease infinite;
+	}
+	.label {
+	text-transform: uppercase;
+	color: black !important;
+	float: right;
+	margin-left: .5em;
 	}
 	@keyframes progressbargradient {
 	from { background-position-x: 0% }
@@ -64,4 +71,12 @@ addEventListener("DOMContentLoaded", () => {
 		document.querySelector("#my-score canvas").style.filter = `hue-rotate(-${(1 - score[0] / score[1]) * 90}deg)`;
 		document.getElementById("my-score").parentElement.style.background = `hsl(${score[0] / score[1] * 90}, 57%, 95%)`;
 	}
+	let li = document.createElement("li");
+	li.className = "divider";
+	document.querySelector(".login-bar").prepend(li);
+	document.querySelector(".login-bar").prepend(document.createTextNode("\n"));
+	li = document.createElement("li");
+	li.innerHTML = "<a href='javascript:toggleTheme()'>Toggle theme</a>";
+	document.querySelector(".login-bar").prepend(li);
+	window.toggleTheme = () => void(localStorage.dark = document.body.parentElement.classList.toggle("dark"));
 });

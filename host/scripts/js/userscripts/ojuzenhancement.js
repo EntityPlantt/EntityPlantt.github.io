@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         OJ.UZ enhancement
 // @namespace    ojuzenhancement
-// @version      v4
+// @version      v5
 // @description  Enhances OJ.UZ
 // @author       EntityPlantt
 // @match        https://oj.uz/*
@@ -23,6 +23,7 @@ addEventListener("DOMContentLoaded", () => {
 	-moz-transition: none !important;
 	-o-transition: none !important;
 	}
+	.navbar { background: #daecda }
 	.progressbar {
 	background: #eee;
 	box-shadow: none;
@@ -32,18 +33,16 @@ addEventListener("DOMContentLoaded", () => {
 	color: #333;
 	top: -20px !important;
 	}
-	.progressbar > .bar {
-	animation: progressbargradient 2s linear infinite;
-	}
-	#my-score canvas {
-	animation: myscore_s 10s linear infinite, myscore_r 10s ease infinite;
-	}
+	.progressbar > .bar { animation: progressbargradient 2s linear infinite; }
+	#my-score canvas { animation: myscore_s 10s linear infinite, myscore_r 10s ease infinite; }
 	.label {
 	text-transform: uppercase;
 	color: black !important;
 	float: right;
 	margin-left: .5em;
 	}
+	ul.footer-nav li a:hover { color: black !important; }
+	footer p { color: #222; }
 	@keyframes progressbargradient {
 	from { background-position-x: 0% }
 	to { background-position-x: 200% }
@@ -61,11 +60,15 @@ addEventListener("DOMContentLoaded", () => {
 	body::-webkit-scrollbar-thumb { background: #444; border-radius: 7.5px }
 	`;
 	document.querySelector("head").appendChild(style);
-	document.querySelectorAll(".progressbar > .bar").forEach(elm => {
-		var hue = parseFloat(elm.style.width.substring(0, elm.style.width.length - 1)) * 1.2;
-		elm.style.background = `linear-gradient(90deg, hsl(${hue}, 57%, 53%), hsl(${hue}, 83%, 60%), hsl(${hue}, 57%, 53%))`;
-		elm.style.backgroundSize = "200%";
-	});
+	function setProgressBars() {
+		document.querySelectorAll(".progressbar > .bar").forEach(elm => {
+			let hue = parseFloat(elm.style.width.substring(0, elm.style.width.length - 1)) * 1.2;
+			elm.style.background = `linear-gradient(90deg, hsl(${hue}, 57%, 53%), hsl(${hue}, 83%, 60%), hsl(${hue}, 57%, 53%))`;
+			elm.style.backgroundSize = "200%";
+		});
+		requestAnimationFrame(setProgressBars);
+	}
+	setProgressBars();
 	if (document.getElementById("my-score")) {
 		var score = document.getElementById("my-score").parentElement.nextElementSibling.querySelector("td").innerText.split(" / ").map(x => parseInt(x));
 		document.querySelector("#my-score canvas").style.filter = `hue-rotate(-${(1 - score[0] / score[1]) * 90}deg)`;
@@ -80,6 +83,8 @@ addEventListener("DOMContentLoaded", () => {
 	document.querySelector(".login-bar").prepend(li);
 	window.toggleTheme = () => void(localStorage.dark = document.body.parentElement.classList.toggle("dark"));
 	addEventListener("storage", setTheme);
+	if (Math.random() < .03) document.querySelector(".search-side li:last-child a").innerText = "Spanish";
+	document.querySelector(".page-banner").remove();
 });
 function setTheme() {
 	if (localStorage.dark == "true") document.body.parentElement.classList.add("dark");

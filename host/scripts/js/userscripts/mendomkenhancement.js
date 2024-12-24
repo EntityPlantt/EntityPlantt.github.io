@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      37
+// @version      38
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -13,7 +13,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 37, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
+const VERSION = 38, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
 console.log("%cMENDO.MK Enhancement%c loaded", "color:magenta;text-decoration:underline", "");
 var loadingSuccess = 0;
 setTimeout(() => {
@@ -140,6 +140,9 @@ position: relative;
 padding: 5px;
 box-sizing: border-box;
 }
+.hidden {
+display: none;
+}
 /* April Fools! */
 html.mirrored {
 transform: rotateY(1620deg) rotateX(-10deg);z
@@ -255,9 +258,15 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 				taskShare.style.marginBottom = "10px";
 				taskShare.innerHTML = `
 <button id=solved-tasks-save>${document.cookie.includes("mkjudge_language=en") ? "Share solved tasks" : "Сподели решени задачи"}</button>
-<button id=solved-tasks-load>${document.cookie.includes("mkjudge_language=en") ? "Load shared solved tasks" : "Лоадирај споделени решени задачи"}</button>`;
+<button id=solved-tasks-load>${document.cookie.includes("mkjudge_language=en") ? "Load shared solved tasks" : "Лоадирај споделени решени задачи"}</button>
+<button id=hide-solved-tasks>${document.cookie.includes("mkjudge_language=en") ? "Hide/Show solved tasks" : "Скриј/Откриј решени задачи"}</button>`;
 				let taskshcode = "mendo-reseni-zadaci" + /^https?(.*)$/.exec(document.URL)[1];
 				if (taskshcode.includes("#")) taskshcode = taskshcode.slice(0, taskshcode.indexOf("#"));
+                taskShare.querySelector("#hide-solved-tasks").onclick = () => {
+					document.querySelectorAll("body > div.page-container > div.main > div.main-content > div:nth-child(5) > div > table > tbody > tr").forEach(td => {
+						if (td.childNodes[0].classList.contains("solved")) td.classList.toggle("hidden");
+					});
+                };
 				taskShare.querySelector("#solved-tasks-save").onclick = () => {
 					var array = [];
 					document.querySelectorAll("body > div.page-container > div.main > div.main-content > div:nth-child(5) > div > table > tbody > tr > td:first-child").forEach(td => {

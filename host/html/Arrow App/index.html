@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Arrows</title>
+	<style>
+		body {
+			margin: 0;
+			background: lightsalmon;
+		}
+
+		img {
+			image-rendering: pixelated;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			translate: -50% -50%;
+			width: 90vmin;
+			height: 90vmin;
+		}
+
+		img.anim {
+			animation: anim 1s ease-out 1;
+		}
+
+		@keyframes anim {
+			from {
+				opacity: 0;
+			}
+
+			to {
+				opacity: 1;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<img>
+	<script>
+		const images = ["arrow-right.png", "arrow-left.png", "cross.png"];
+		function show() {
+			let img = document.querySelector("img");
+			img.classList.add("anim");
+			img.onanimationend = () => img.classList.remove("anim");
+			img.src = images[Math.floor(Math.random() * 3)];
+			setTimeout(show, Math.floor(Math.random() * 1e4) + 5e3);
+		}
+		show();
+	</script>
+</body>
+
+</html>

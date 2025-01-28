@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      39
+// @version      40
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -13,7 +13,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 39, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
+const VERSION = 40, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
 console.log("%cMENDO.MK Enhancement%c loaded", "color:magenta;text-decoration:underline", "");
 var loadingSuccess = 0;
 setTimeout(() => {
@@ -162,11 +162,11 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
         document.head.appendChild(style);
         logFinish("inject style sheet");
         if (document.querySelector(".sitename h1 a")) {
-            document.querySelector(".sitename h1").innerHTML += " <a href='https://entityplantt.cyclic.app/r/mendo-mk-enhancement' id=enhancement-logo><em><b>Enhanced</b></em></a>";
+            document.querySelector(".sitename h1").innerHTML += " <a href='https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement' id=enhancement-logo><em><b>Enhanced</b></em></a>";
         }
         logFinish("complete site logo");
-        fetch("https://greasyfork.org/scripts/450985-mendo-mk-enhancement/code/MENDOMK%20Enhancement.user.js").then(x => x.text()).then(cfUpdt => {
-            if (parseInt(/@version *?(\d+)/.exec(cfUpdt)[1]) > VERSION) {
+        fetch("https://greasyfork.org/scripts/450985-mendo-mk-enhancement/code/MENDOMK%20Enhancement.meta.js").then(x => x.text()).then(cfUpdt => {
+            if (parseInt(/@version *(\d+)/.exec(cfUpdt)[1]) > VERSION) {
                 if (document.getElementById("enhancement-logo")) {
                     document.getElementById("enhancement-logo").classList.add("update-available");
                     document.querySelector("#enhancement-logo b").innerText = "Update to v" + /@version *?(\d+)/.exec(cfUpdt)[1];
@@ -358,13 +358,13 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
                 var scode = document.getElementById("solutionCode");
                 if (!scode.value.includes("// online judge") && !scode.value.includes("#define ONLINE_JUDGE") && scode.value.length) {
                     scode.value = "#define ONLINE_JUDGE // online judge\n" + scode.value;
-                    document.querySelector("label[for=solutionCode]").innerHTML += `<a href="https://entityplantt.cyclic.app/r/mendo-mk-enhancement" class=ojtxt>${document.cookie.includes("mkjudge_language=en") ? "This macro was automatically added" : "Ова макро беше автоматски додадено"}: <code>ONLINE_JUDGE</code></a>`;
+                    document.querySelector("label[for=solutionCode]").innerHTML += `<a href="https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement" class=ojtxt>${document.cookie.includes("mkjudge_language=en") ? "This macro was automatically added" : "Ова макро беше автоматски додадено"}: <code>ONLINE_JUDGE</code></a>`;
                     setTimeout(() => document.querySelector(".ojtxt:last-child").remove(), 3000);
                 }
             }, 500);
             logFinish("#define ONLINE_JUDGE");
         }
-        (document.querySelector(".footer") ?? {}).innerHTML += `<p class="credits"><a href="https://entityplantt.cyclic.app/r/mendo-mk-enhancement">MENDO.MK Enhancement</a> <a href="javascript:toggleTheme()">🎨</a></p>`;
+        (document.querySelector(".footer") ?? {}).innerHTML += `<p class="credits"><a href="https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement">MENDO.MK Enhancement</a> <a href="javascript:toggleTheme()">🎨</a></p>`;
         window.toggleTheme = () => {
             localStorage.setItem("mendo-mk-enhancement-theme", localStorage.getItem("mendo-mk-enhancement-theme") == "dark" ? "light" : "dark");
             location.reload();
@@ -382,14 +382,14 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
             function checkForCinematic() {
                 let usubTBody = document.querySelector("div.main-content > div > div > table:nth-child(6) > tbody");
                 if (!ok) {
-                    taskSolveCinematic(0);
+                    taskSolveCinematic(0, true);
                     return;
                 }
                 if (!usubTBody) {
                     requestAnimationFrame(checkForCinematic);
                 }
-                else if (usubTBody.querySelectorAll("tr td.correct:first-child").length + 1 >= usubTBody.querySelectorAll("tr").length) taskSolveCinematic(1);
-                else taskSolveCinematic(2);
+                else if (usubTBody.querySelectorAll("tr td.correct:first-child").length + 1 >= usubTBody.querySelectorAll("tr").length) taskSolveCinematic(1, true);
+                else taskSolveCinematic(2, true);
             }
             checkForCinematic();
             logFinish("task solve cinematic setup");
@@ -401,41 +401,43 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
     }
     console.groupEnd();
 }
-function taskSolveCinematic(showType) {
+function taskSolveCinematic(showType, reformatTcs = false) {
     if (AprilFools) {
         let congrattd = document.querySelector(".submission-content tr[align=right] td");
         if (congrattd && congrattd.innerText.includes("Congratulations!")) congrattd.innerHTML = "April Fools!";
         if (congrattd && congrattd.innerText.includes("Честитки!")) congrattd.innerHTML = "Априлилили!";
     }
-    let tcs = document.querySelector("div.main-content > div > div > table:nth-child(6) > tbody");
-    let tclist = Array.from(tcs.children);
-    let tr;
-    for (let tc of tclist) {
-        if (!tr || tr.children.length == 5) {
-            tr = document.createElement("tr");
-            tcs.appendChild(tr);
+    if (reformatTcs) {
+        let tcs = document.querySelector("div.main-content > div > div > table:nth-child(6) > tbody");
+        let tclist = Array.from(tcs.children);
+        let tr;
+        for (let tc of tclist) {
+            if (!tr || tr.children.length == 5) {
+                tr = document.createElement("tr");
+                tcs.appendChild(tr);
+            }
+            let td = tc.querySelector("td");
+            if (td) {
+                if (tc.innerText.includes("Runtime Error")) {
+                    td.innerText += " RE";
+                    td.classList.add("verdict-re");
+                }
+                if (tc.innerText.includes("Wrong") || tc.innerText.includes("Погрешен")) {
+                    td.innerText += " WA";
+                    td.classList.add("verdict-wa");
+                }
+                if (tc.innerText.includes("Time") || tc.innerText.includes("време")) {
+                    td.innerText += " TLE";
+                    td.classList.add("verdict-tle");
+                }
+                if (tc.innerText.includes("Точен") || tc.innerText.includes("Correct")) {
+                    td.innerText += " AC (" + /[\d.]+/.exec(tc.children[1].innerText)[0] + ")";
+                    td.classList.add("verdict-ac");
+                }
+                tr.appendChild(td);
+            }
+            tc.remove();
         }
-        let td = tc.querySelector("td");
-        if (td) {
-            if (tc.innerText.includes("Runtime Error")) {
-                td.innerText += " RE";
-                td.classList.add("verdict-re");
-            }
-            if (tc.innerText.includes("Wrong") || tc.innerText.includes("Погрешен")) {
-                td.innerText += " WA";
-                td.classList.add("verdict-wa");
-            }
-            if (tc.innerText.includes("Time") || tc.innerText.includes("време")) {
-                td.innerText += " TLE";
-                td.classList.add("verdict-tle");
-            }
-            if (tc.innerText.includes("Точен") || tc.innerText.includes("Correct")) {
-                td.innerText += " AC (" + /[\d.]+/.exec(tc.children[1].innerText)[0] + ")";
-                td.classList.add("verdict-ac");
-            }
-            tr.appendChild(td);
-        }
-        tc.remove();
     }
     if (!showType) return;
     var preCinematicScreen = document.createElement("div");
@@ -453,16 +455,19 @@ function taskSolveCinematic(showType) {
         const cinematics = [() => {
             let img = document.createElement("img");
             img.src = "https://i.ibb.co/b7WW8Q3/mission-passed.png";
-            img.style = "animation: gta-cinematic-image 15s 1 linear; position: fixed; top: 0; left: 0; width: 100vw; background: transparent !important";
+            img.style = "animation: gta-cinematic-image 17s 1 linear; position: fixed; top: 0; left: 0; width: 100vw; background: transparent !important";
             let audio = document.createElement("audio");
-            audio.src = "https://dl.sndup.net/fmjm/mission%20passed%20audio.mp3";
-            audio.play();
+            audio.oncanplay = () => audio.play();
+            audio.crossorigin = "anonymous";
+            audio.src = "https://www.myinstants.com/media/sounds/gta-san-andreas-mission-passed-sound_TpUVE5G.mp3";
+            // audio.src = "https://dl.sndup.net/fmjm/mission%20passed%20audio.mp3";
             document.body.appendChild(img);
             setTimeout(() => img.remove(), 10000);
         }], failCinematics = [() => {
             let audio = document.createElement("audio");
+            audio.oncanplay = () => audio.play();
+            audio.crossorigin = "anonymous";
             audio.src = "https://www.myinstants.com/media/sounds/erro.mp3";
-            audio.play();
             let img = document.createElement("img");
             img.src = "https://i.kym-cdn.com/photos/images/original/000/918/810/a22.jpg";
             img.style = "position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(.5); background: transparent !important; box-shadow: black 10px 10px 5px";

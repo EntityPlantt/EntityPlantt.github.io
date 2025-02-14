@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      40
+// @version      41
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -13,7 +13,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 40, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
+const VERSION = 41, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
 console.log("%cMENDO.MK Enhancement%c loaded", "color:magenta;text-decoration:underline", "");
 var loadingSuccess = 0;
 setTimeout(() => {
@@ -28,14 +28,19 @@ async function MendoMkEnhancement() {
         }
         console.groupCollapsed("Start log");
         var style = document.createElement("style");
+        if (!localStorage.getItem("mendo-mk-enhancement-theme")) {
+            localStorage.setItem("mendo-mk-enhancement-theme", window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+            logFinish("detect color scheme");
+        }
         style.innerHTML = `
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
 ${ // Dark mode
         localStorage.getItem("mendo-mk-enhancement-theme") == "dark" ? `
-html, img, svg, #cboxOverlay, .copy-io-btn span {
+body>div.page-container, img, svg, #cboxWrapper, .copy-io-btn span {
 filter: invert(1) hue-rotate(180deg);
 }
 body, img, svg {
-background: white;
+background: black;
 }
 ::-webkit-scrollbar {
 width: initial;
@@ -369,6 +374,11 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
             localStorage.setItem("mendo-mk-enhancement-theme", localStorage.getItem("mendo-mk-enhancement-theme") == "dark" ? "light" : "dark");
             location.reload();
         };
+        let dmodebtn = document.createElement("div");
+        dmodebtn.className = `bi bi-${localStorage.getItem("mendo-mk-enhancement-theme") == "dark" ? "moon" : "sun"}-fill`;
+        document.body.appendChild(dmodebtn);
+        dmodebtn.style = "width:30px;height:30px;font-size:30px;position:fixed;bottom:0;right:0;margin:10px;cursor:pointer;color:#89AAD6";
+        dmodebtn.setAttribute("onclick", "toggleTheme()");
         logFinish("dark mode button");
         loadingSuccess = 1;
         if (/^https?:\/\/mendo\.mk\/.*?User_Submission.do\?/.test(document.URL)) {

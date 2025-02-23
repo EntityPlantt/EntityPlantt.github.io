@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      41
+// @version      42
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
 // @match        *://mendo.mk/*
+// @require      https://cdn.jsdelivr.net/npm/chart.js
 // @noframes
 // @icon         https://mendo.mk/img/favicon.ico
 // @grant        none
@@ -13,7 +14,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 41, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
+const VERSION = 42, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
 console.log("%cMENDO.MK Enhancement%c loaded", "color:magenta;text-decoration:underline", "");
 var loadingSuccess = 0;
 setTimeout(() => {
@@ -156,9 +157,15 @@ display: inline-block;
 float: right;
 width: 1rem;
 }
+td.wrong.verdict-re {
+background: #fda !important;
+}
+td.wrong.verdict-tle {
+background: #bbf !important;
+}
 /* April Fools! */
 html.mirrored {
-transform: rotateY(1620deg) rotateX(-10deg);z
+transform: rotateY(1620deg) rotateX(-10deg);
 }
 html {
 transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
@@ -171,10 +178,16 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
         }
         logFinish("complete site logo");
         fetch("https://greasyfork.org/scripts/450985-mendo-mk-enhancement/code/MENDOMK%20Enhancement.meta.js").then(x => x.text()).then(cfUpdt => {
-            if (parseInt(/@version *(\d+)/.exec(cfUpdt)[1]) > VERSION) {
+            let offv = parseInt(/@version *(\d+)/.exec(cfUpdt)[1]);
+            if (offv > VERSION) {
                 if (document.getElementById("enhancement-logo")) {
                     document.getElementById("enhancement-logo").classList.add("update-available");
-                    document.querySelector("#enhancement-logo b").innerText = "Update to v" + /@version *?(\d+)/.exec(cfUpdt)[1];
+                    document.querySelector("#enhancement-logo b").innerText = "Update";
+                }
+            }
+            else if (offv < VERSION) {
+                if (document.getElementById("enhancement-logo")) {
+                    document.querySelector("#enhancement-logo b").innerText = "Development";
                 }
             }
             logFinish("check for updates");
@@ -269,8 +282,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
         }
         if (document.querySelector("body > div.page-container > div.header > div.header-bottom > div")) {
             document.querySelector("body > div.page-container > div.header > div.header-bottom > div").innerHTML += `<ul><li><a style="
-			background-image: url(https://evolveyoursuccess.com/wp-content/uploads/2019/12/lightbulb-icon-png-icon-transparent-light-bulb-png.png);
-			background-size: 12.5px;
+			background-image: url(./img/lightbulb.png);
 			" href='/algoritmi'>${document.cookie.includes("mkjudge_language=en") ? "II Algorithms" : "ИИ Алгоритми"}</a></li></ul>`;
             logFinish("add ii algorithms button");
             document.querySelector("body > div.page-container > div.header > div.header-bottom > div > ul:nth-child(1) > li > a").href = "/";
@@ -420,7 +432,7 @@ function taskSolveCinematic(showType, reformatTcs = false) {
     if (reformatTcs) {
         let tcs = document.querySelector("div.main-content > div > div > table:nth-child(6) > tbody");
         let tclist = Array.from(tcs.children);
-        let tr;
+        let tr, nAC = 0, nWA = 0, nTLE = 0, nRE = 0;
         for (let tc of tclist) {
             if (!tr || tr.children.length == 5) {
                 tr = document.createElement("tr");
@@ -431,23 +443,43 @@ function taskSolveCinematic(showType, reformatTcs = false) {
                 if (tc.innerText.includes("Runtime Error")) {
                     td.innerText += " RE";
                     td.classList.add("verdict-re");
+                    nRE++;
                 }
                 if (tc.innerText.includes("Wrong") || tc.innerText.includes("Погрешен")) {
                     td.innerText += " WA";
                     td.classList.add("verdict-wa");
+                    nWA++;
                 }
                 if (tc.innerText.includes("Time") || tc.innerText.includes("време")) {
                     td.innerText += " TLE";
                     td.classList.add("verdict-tle");
+                    nTLE++;
                 }
                 if (tc.innerText.includes("Точен") || tc.innerText.includes("Correct")) {
                     td.innerText += " AC (" + /[\d.]+/.exec(tc.children[1].innerText)[0] + ")";
                     td.classList.add("verdict-ac");
+                    nAC++;
                 }
                 tr.appendChild(td);
             }
             tc.remove();
         }
+        let chartcontainer = document.createElement("div");
+        let chart = document.createElement("canvas");
+        chartcontainer.appendChild(chart);
+        chartcontainer.style = "height:250px;display:flex;justify-content:center;align-items:center;";
+        document.querySelector(".submission-content").insertBefore(chartcontainer, document.querySelectorAll(".submission-content table")[2]);
+        new Chart(chart, {
+            type: "pie",
+            data: {
+            labels: ["AC", "WA", "TLE", "RE"],
+                datasets: [{
+                label: "Results",
+                    data: [nAC, nWA, nTLE, nRE],
+                    backgroundColor: ["#bfb", "#fbb", "#bbf", "#fda"]
+                }]
+            }
+        });
     }
     if (!showType) return;
     var preCinematicScreen = document.createElement("div");

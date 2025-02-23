@@ -5,7 +5,7 @@
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
 // @match        *://mendo.mk/*
-// @require      https://cdn.jsdelivr.net/npm/chart.js
+// @require      https://cdn.jsdelivr.net/npm/chart.js@4.4.8
 // @noframes
 // @icon         https://mendo.mk/img/favicon.ico
 // @grant        none

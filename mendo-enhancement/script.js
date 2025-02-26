@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      43
+// @version      44
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -14,7 +14,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 43, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
+const VERSION = 44, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
 console.log("%cMENDO.MK Enhancement%c loaded", "color:magenta;text-decoration:underline", "");
 var loadingSuccess = 0;
 setTimeout(() => {
@@ -438,7 +438,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
                 }
             }
             const achs = {
-                task: [tasks >= 10, tasks >= 50, tasks >= 100, tasks >= 150, tasks >= 200, tasks >= 250, tasks >= 300, tasks >= 400],
+                task: [tasks >= 10, tasks >= 25, tasks >= 50, tasks >= 100, tasks >= 150, tasks >= 200, tasks >= 250, tasks >= 300, tasks >= 350, tasks >= 400, tasks >= 450, tasks >= 500],
                 readlec: [allread && lecturepage && (document.URL.endsWith("/Training.do") || document.URL.endsWith("/Training.do?cid=0") || document.URL.endsWith("/Training.do?cid=4")),
                          allread && lecturepage && document.URL.endsWith("/Training.do?cid=6") && ach.has("readlec0")]
             };
@@ -447,14 +447,18 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
                 readlec: "/Training.do?cid=6"
             };
             const achname = {
-                task7: localize("God (400 tasks)", "Господ (400 задачи)"),
-                task6: localize("Tzar (300 tasks)", "Цар (300 задачи)"),
-                task5: localize("King (250 tasks)", "Крал (250 задачи)"),
-                task4: localize("Master (200 tasks)", "Мајстор (200 задачи)"),
-                task3: localize("Expert (150 tasks)", "Експерта (150 задачи)"),
-                task2: localize("Specialist (100 tasks)", "Специјалист (100 задачи)"),
-                task1: localize("Determined (50 tasks)", "Детерминиран (50 задачи)"),
                 task0: localize("Apprentice (10 tasks)", "Чирак (10 задачи)"),
+                task1: localize("Guru (25 tasks)", "Гуру (25 задачи)"),
+                task2: localize("Pupil (50 tasks)", "Ученик (50 задачи)"),
+                task3: localize("Specialist (100 tasks)", "Специјалист (100 задачи)"),
+                task4: localize("Sage (150 tasks)", "Мудрец (150 задачи)"),
+                task5: localize("Expert (200 tasks)", "Експерта (200 задачи)"),
+                task6: localize("Master (250 tasks)", "Мајстор (250 задачи)"),
+                task7: localize("Champion (300 tasks)", "Шампион (300 задачи)"),
+                task8: localize("Titan (350 tasks)", "Титан (350 задачи)"),
+                task9: localize("The Architect (400 tasks)", "Архитектот (400 задачи)"),
+                task10: localize("Baba (450 tasks)", "Баба (450 задачи)"),
+                task11: localize("Zenith (500 tasks)", "Зенит (500 задачи)"),
                 readlec0: localize("Student I (all Learn C++ tasks solved)", "Студент I (сите Научи C++ лекции прочитани)"),
                 readlec1: localize("Student II (all Algorithms & Learn C++ tasks solved)", "Студент II (сите Алгоритми и Научи C++ лекции прочитани)")
             };
@@ -556,7 +560,6 @@ function taskSolveCinematic(showType, reformatTcs = false) {
             audio.oncanplay = () => audio.play();
             audio.crossorigin = "anonymous";
             audio.src = "https://www.myinstants.com/media/sounds/gta-san-andreas-mission-passed-sound_TpUVE5G.mp3";
-            // audio.src = "https://dl.sndup.net/fmjm/mission%20passed%20audio.mp3";
             document.body.appendChild(img);
             setTimeout(() => img.remove(), 10000);
         }], failCinematics = [() => {

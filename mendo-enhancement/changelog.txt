@@ -1,0 +1,16 @@
+# VERSION 43
+- Achievements (tasks solved, lectures read)
+- Changelogs w/ changelog button on the bottom
+- Code localization improvements
+
+# VERSION 42
+- Changed colors of TLE and RE verdicts
+- Added pie chart in submission feedback
+
+# VERSION 41
+- Theme button on the bottom-right
+- Automatically detect theme from system preferences
+
+# VERSION 40
+- Fix broken links
+- Slightly change mission complete sound

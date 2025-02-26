@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      42
+// @version      43
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -14,7 +14,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 42, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
+const VERSION = 43, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
 console.log("%cMENDO.MK Enhancement%c loaded", "color:magenta;text-decoration:underline", "");
 var loadingSuccess = 0;
 setTimeout(() => {
@@ -22,13 +22,19 @@ setTimeout(() => {
     else if (loadingSuccess == 2) console.log("Loading %cwith errors", "color:#ff0");
     else console.log("Loading %cunsuccessful", "color:red");
 }, 1000);
+function localize(english, macedonian) {
+    return document.cookie.includes("mkjudge_language=en") ? english : macedonian;
+}
 async function MendoMkEnhancement() {
     try {
         function logFinish(taskName) {
             console.log("%cFinished task:%c " + taskName, "color:#0f0", "");
         }
-        console.groupCollapsed("Start log");
         var style = document.createElement("style");
+        if (!(parseInt(localStorage.getItem("enhancement last version")) >= VERSION)) {
+            Changelog();
+            localStorage.setItem("enhancement last version", VERSION);
+        }
         if (!localStorage.getItem("mendo-mk-enhancement-theme")) {
             localStorage.setItem("mendo-mk-enhancement-theme", window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
             logFinish("detect color scheme");
@@ -253,7 +259,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
             hashChange();
             document.querySelector(".main-content").prepend(search);
             logFinish("add task search bar");
-            document.querySelector("body > div.page-container > div.main > div.main-content > div:nth-child(3)").innerHTML += `<a href="./Training.do?cid=5">[ ${document.cookie.includes("mkjudge_language=en") ? "Other tasks" : "Други задачи"} ]</a>&nbsp;&nbsp;`;
+            document.querySelector("body > div.page-container > div.main > div.main-content > div:nth-child(3)").innerHTML += `<a href="./Training.do?cid=5">[ ${localize("Other tasks", "Други задачи")} ]</a>&nbsp;&nbsp;`;
             document.querySelector("body > div.page-container > div.main > div.main-content > div:last-child").innerHTML =
                 document.querySelector("body > div.page-container > div.main > div.main-content > div:nth-child(3)").innerHTML;
             logFinish("add secret tasks");
@@ -283,7 +289,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
         if (document.querySelector("body > div.page-container > div.header > div.header-bottom > div")) {
             document.querySelector("body > div.page-container > div.header > div.header-bottom > div").innerHTML += `<ul><li><a style="
 			background-image: url(./img/lightbulb.png);
-			" href='/algoritmi'>${document.cookie.includes("mkjudge_language=en") ? "II Algorithms" : "ИИ Алгоритми"}</a></li></ul>`;
+			" href='/algoritmi'>${localize("II Algorithms", "ИИ Алгоритми")}</a></li></ul>`;
             logFinish("add ii algorithms button");
             document.querySelector("body > div.page-container > div.header > div.header-bottom > div > ul:nth-child(1) > li > a").href = "/";
             document.querySelector("body > div.page-container > div.header > div.header-bottom > div > ul:nth-child(2) > li > a").href = "/Training.do";
@@ -304,9 +310,9 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
                 var taskShare = document.createElement("div");
                 taskShare.style.marginBottom = "10px";
                 taskShare.innerHTML = `
-<button id=solved-tasks-save>${document.cookie.includes("mkjudge_language=en") ? "Share solved tasks" : "Сподели решени задачи"}</button>
-<button id=solved-tasks-load>${document.cookie.includes("mkjudge_language=en") ? "Load shared solved tasks" : "Лоадирај споделени решени задачи"}</button>
-<button id=hide-solved-tasks>${document.cookie.includes("mkjudge_language=en") ? "Hide/Show solved tasks" : "Скриј/Откриј решени задачи"}</button>`;
+<button id=solved-tasks-save>${localize("Share solved tasks", "Сподели решени задачи")}</button>
+<button id=solved-tasks-load>${localize("Load shared solved tasks", "Лоадирај споделени решени задачи")}</button>
+<button id=hide-solved-tasks>${localize("Hide/Show solved tasks", "Скриј/Откриј решени задачи")}</button>`;
                 let taskshcode = "mendo-reseni-zadaci" + /^https?(.*)$/.exec(document.URL)[1];
                 if (taskshcode.includes("#")) taskshcode = taskshcode.slice(0, taskshcode.indexOf("#"));
                 taskShare.querySelector("#hide-solved-tasks").onclick = () => {
@@ -323,9 +329,9 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
                     navigator.clipboard.writeText(array.join(","));
                 };
                 taskShare.querySelector("#solved-tasks-load").onclick = async() => {
-                    var array = prompt(document.cookie.includes("mkjudge_language=en") ? "Enter code..." : "Внеси код...").split(",");
+                    var array = prompt(localize("Enter code...", "Внеси код...")).split(",");
                     if (array[0] != taskshcode) {
-                        alert(document.cookie.includes("mkjudge_language=en") ? "Invalid task solve share schema! / Invalid site!" : "Невалидна шема на споделени решени задачи! / Невалидна страна!");
+                        alert(localize("Invalid task solve share schema! / Invalid site!", "Невалидна шема на споделени решени задачи! / Невалидна страна!"));
                         return;
                     }
                     array.shift();
@@ -375,13 +381,13 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
                 var scode = document.getElementById("solutionCode");
                 if (!scode.value.includes("// online judge") && !scode.value.includes("#define ONLINE_JUDGE") && scode.value.length) {
                     scode.value = "#define ONLINE_JUDGE // online judge\n" + scode.value;
-                    document.querySelector("label[for=solutionCode]").innerHTML += `<a href="https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement" class=ojtxt>${document.cookie.includes("mkjudge_language=en") ? "This macro was automatically added" : "Ова макро беше автоматски додадено"}: <code>ONLINE_JUDGE</code></a>`;
+                    document.querySelector("label[for=solutionCode]").innerHTML += `<a href="https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement" class=ojtxt>${localize("This macro was automatically added", "Ова макро беше автоматски додадено")}: <code>ONLINE_JUDGE</code></a>`;
                     setTimeout(() => document.querySelector(".ojtxt:last-child").remove(), 3000);
                 }
             }, 500);
             logFinish("#define ONLINE_JUDGE");
         }
-        (document.querySelector(".footer") ?? {}).innerHTML += `<p class="credits"><a href="https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement">MENDO.MK Enhancement</a> <a href="javascript:toggleTheme()">🎨</a></p>`;
+        (document.querySelector(".footer") ?? {}).innerHTML += `<p class="credits"><a href="https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement">MENDO.MK Enhancement</a> <a href="javascript:toggleTheme()">🎨</a> <a href="javascript:Changelog()">Changelog</a></p>`;
         window.toggleTheme = () => {
             localStorage.setItem("mendo-mk-enhancement-theme", localStorage.getItem("mendo-mk-enhancement-theme") == "dark" ? "light" : "dark");
             location.reload();
@@ -416,12 +422,60 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
             checkForCinematic();
             logFinish("task solve cinematic setup");
         }
+        if (!isNaN(parseInt(document.querySelector("#LoginForm>fieldset>p:last-child>a")?.innerText))) {
+            let elm = document.createElement("p");
+            let tasks = parseInt(document.querySelector("#LoginForm>fieldset>p:last-child>a").innerText);
+            let ach = new Set((localStorage.getItem("achievements " + document.querySelector("#LoginForm>fieldset>p>a").innerText) || "").split("|"));
+            ach.delete("");
+            let allread = true, lecturepage = false;
+            for (let e of document.querySelectorAll(".training-content td:last-child")) {
+                if (e.innerText.includes(localize("lecture", "предавање"))) {
+                    lecturepage = true;
+                    if (!e.classList.contains("solved")) {
+                        allread = false;
+                        break;
+                    }
+                }
+            }
+            const achs = {
+                task: [tasks >= 10, tasks >= 50, tasks >= 100, tasks >= 150, tasks >= 200, tasks >= 250, tasks >= 300, tasks >= 400],
+                readlec: [allread && lecturepage && (document.URL.endsWith("/Training.do") || document.URL.endsWith("/Training.do?cid=0") || document.URL.endsWith("/Training.do?cid=4")),
+                         allread && lecturepage && document.URL.endsWith("/Training.do?cid=6") && ach.has("readlec0")]
+            };
+            const achlink = {
+                task: "/Training.do?cid=1",
+                readlec: "/Training.do?cid=6"
+            };
+            const achname = {
+                task7: localize("God (400 tasks)", "Господ (400 задачи)"),
+                task6: localize("Tzar (300 tasks)", "Цар (300 задачи)"),
+                task5: localize("King (250 tasks)", "Крал (250 задачи)"),
+                task4: localize("Master (200 tasks)", "Мајстор (200 задачи)"),
+                task3: localize("Expert (150 tasks)", "Експерта (150 задачи)"),
+                task2: localize("Specialist (100 tasks)", "Специјалист (100 задачи)"),
+                task1: localize("Determined (50 tasks)", "Детерминиран (50 задачи)"),
+                task0: localize("Apprentice (10 tasks)", "Чирак (10 задачи)"),
+                readlec0: localize("Student I (all Learn C++ tasks solved)", "Студент I (сите Научи C++ лекции прочитани)"),
+                readlec1: localize("Student II (all Algorithms & Learn C++ tasks solved)", "Студент II (сите Алгоритми и Научи C++ лекции прочитани)")
+            };
+            for (let a in achs) {
+                let level = achs[a].lastIndexOf(true);
+                if (level < 0) continue;
+                for (let i = level - 1; i >= 0; i--) ach.delete(a + i);
+                ach.add(a + level);
+            }
+            console.log(ach);
+            elm.innerHTML = `${localize("Achievements", "Постигнувања")}:<br>${[...ach].map(x => `&nbsp; &nbsp; <a title="${achname[x]}" href="${achlink[/[a-z]+/.exec(x)[0]]}">${/(.+) \(/i.exec(achname[x])[1]}</a>`).join("<br>") || localize("None", "Нема")}`;
+            document.querySelector("#LoginForm>fieldset").appendChild(document.createElement("br"));
+            document.querySelector("#LoginForm>fieldset").appendChild(elm);
+            localStorage.setItem("achievements " + document.querySelector("#LoginForm>fieldset>p>a").innerText, [...ach].join("|"));
+            logFinish("achievements");
+        }
     }
     catch (_) {
         console.error(_);
         loadingSuccess = 2;
     }
-    console.groupEnd();
 }
 function taskSolveCinematic(showType, reformatTcs = false) {
     if (AprilFools) {
@@ -488,8 +542,8 @@ function taskSolveCinematic(showType, reformatTcs = false) {
 	background: white; font-size: 20px; cursor: pointer; z-index: 99999;
 	`;
     preCinematicScreen.innerHTML = `
-	<div style="color: black; position: fixed; top: 50vh; left: 50vw; transform: translate(-50%, -50%);">[ ${document.cookie.includes("mkjudge_language=en") ? "Reveal" : "Откриј"} ]</div>
-	<div style="color: black; position: fixed; top: 10px; right: 10px;" id=skip-cinematic>${document.cookie.includes("mkjudge_language=en") ? "Skip" : "Скокни"} &gt;&gt;</div>
+	<div style="color: black; position: fixed; top: 50vh; left: 50vw; transform: translate(-50%, -50%);">[ ${localize("Reveal", "Откриј")} ]</div>
+	<div style="color: black; position: fixed; top: 10px; right: 10px;" id=skip-cinematic>${localize("Skip", "Скокни")} &gt;&gt;</div>
 	`;
     preCinematicScreen.onclick = () => {
         preCinematicScreen.remove();
@@ -521,6 +575,10 @@ function taskSolveCinematic(showType, reformatTcs = false) {
     };
     document.body.appendChild(preCinematicScreen);
 }
+async function Changelog() {
+    alert(await fetch("https://raw.githubusercontent.com/EntityPlantt/EntityPlantt.github.io/refs/heads/main/mendo-enhancement/changelog.txt").then(x => x.text()).catch(x => "Changelog not found"));
+}
 window.MendoMkEnhancement = MendoMkEnhancement;
 window.taskSolveCinematic = taskSolveCinematic;
+window.Changelog = Changelog;
 MendoMkEnhancement();

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      44
+// @version      44.1
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -14,7 +14,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 44, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
+const VERSION = 44.1, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
 console.log("%cMENDO.MK Enhancement%c loaded", "color:magenta;text-decoration:underline", "");
 var loadingSuccess = 0;
 setTimeout(() => {
@@ -184,7 +184,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
         }
         logFinish("complete site logo");
         fetch("https://greasyfork.org/scripts/450985-mendo-mk-enhancement/code/MENDOMK%20Enhancement.meta.js").then(x => x.text()).then(cfUpdt => {
-            let offv = parseInt(/@version *(\d+)/.exec(cfUpdt)[1]);
+            let offv = parseFloat(/@version *(\d+)/.exec(cfUpdt)[1]);
             if (offv > VERSION) {
                 if (document.getElementById("enhancement-logo")) {
                     document.getElementById("enhancement-logo").classList.add("update-available");
@@ -222,7 +222,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
                 // if (document.activeElement == search.querySelector("#search")) {
                 // 	return;
                 // }
-                let kw = unescape(location.hash.substr(1));
+                let kw = unescape(location.hash.substring(1));
                 search.querySelector("#search").value = kw;
                 kw = kw.toLowerCase();
                 if (kw.includes("mirror")) document.body.parentElement.classList.add("mirrored");
@@ -323,7 +323,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
                 taskShare.querySelector("#solved-tasks-save").onclick = () => {
                     var array = [];
                     document.querySelectorAll("body > div.page-container > div.main > div.main-content > div:nth-child(5) > div > table > tbody > tr > td:first-child").forEach(td => {
-                        if (td.classList.contains("solved")) array.push(td.innerText.substr(0, td.innerText.length - 1));
+                        if (td.classList.contains("solved")) array.push(td.innerText.substring(0, td.innerText.length - 1));
                     });
                     array.unshift(taskshcode);
                     navigator.clipboard.writeText(array.join(","));
@@ -336,7 +336,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
                     }
                     array.shift();
                     document.querySelectorAll("body > div.page-container > div.main > div.main-content > div:nth-child(5) > div > table > tbody > tr > td:first-child").forEach(td => {
-                        if (array.includes(td.innerText.substr(0, td.innerText.length - 1))) td.classList.add("share-solved");
+                        if (array.includes(td.innerText.substring(0, td.innerText.length - 1))) td.classList.add("share-solved");
                         else td.classList.remove("share-solved");
                     });
                 };
@@ -353,12 +353,12 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
         document.title = (document.querySelector("body > div.page-container > div.header > div.header-breadcrumbs > ul > li:last-child > a")
                           ?? document.querySelector(".pagetitle")
                           ?? document.querySelector(".pagename")
-                          ?? {innerText: document.URL.substr(document.URL.indexOf("/", 8) + 1)}
+                          ?? {innerText: document.URL.substring(document.URL.indexOf("/", 8) + 1)}
                          ).innerText + " – МЕНДО";
         logFinish("document title set");
         if (document.URL.includes("/Task.do")) {
             document.querySelectorAll("body > div.page-container > div.main > div.main-content > div.column1-unit.taskContentView > table pre").forEach(pre => {
-                var text = pre.innerText.substr(pre.innerText.indexOf("\n") + 1);
+                var text = pre.innerText.substring(pre.innerText.indexOf("\n") + 1);
                 var copyIoBtn = document.createElement("span");
                 copyIoBtn.innerHTML = "<span></span>";
                 copyIoBtn.setAttribute("onclick", `navigator.clipboard.writeText(${JSON.stringify(text)})`);
@@ -368,8 +368,8 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
             logFinish("copy io buttons");
             var navArrows = document.createElement("div");
             navArrows.innerHTML = `
-			<a href="${document.URL.substr(0, document.URL.lastIndexOf("=") + 1) + (parseInt(document.URL.substr(document.URL.lastIndexOf("=") + 1)) - 1)}">&lt;</a>
-			<a href="${document.URL.substr(0, document.URL.lastIndexOf("=") + 1) + (parseInt(document.URL.substr(document.URL.lastIndexOf("=") + 1)) + 1)}" style="float:right">&gt;</a>
+			<a href="${document.URL.substring(0, document.URL.lastIndexOf("=") + 1) + (parseInt(document.URL.substring(document.URL.lastIndexOf("=") + 1)) - 1)}">&lt;</a>
+			<a href="${document.URL.substring(0, document.URL.lastIndexOf("=") + 1) + (parseInt(document.URL.substring(document.URL.lastIndexOf("=") + 1)) + 1)}" style="float:right">&gt;</a>
 			`;
             navArrows.style.fontSize = "40px";
             navArrows.style.marginBottom = "20px";

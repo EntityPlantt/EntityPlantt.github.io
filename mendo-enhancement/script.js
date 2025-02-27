@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      44.1
+// @version      45
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -14,21 +14,15 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 44.1, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
-console.log("%cMENDO.MK Enhancement%c loaded", "color:magenta;text-decoration:underline", "");
-var loadingSuccess = 0;
-setTimeout(() => {
-    if (loadingSuccess == 1) console.log("Loading %csuccessful", "color:#4f4");
-    else if (loadingSuccess == 2) console.log("Loading %cwith errors", "color:#ff0");
-    else console.log("Loading %cunsuccessful", "color:red");
-}, 1000);
+const VERSION = 45, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
+console.log("%cMENDO.MK Enhancement", "color:magenta;text-decoration:underline;font-size:20px");
 function localize(english, macedonian) {
     return document.cookie.includes("mkjudge_language=en") ? english : macedonian;
 }
 async function MendoMkEnhancement() {
     try {
         function logFinish(taskName) {
-            console.log("%cFinished task:%c " + taskName, "color:#0f0", "");
+            (console.debug ?? console.log)("%cFinished setting up:%c " + taskName, "color:#0f0", "");
         }
         var style = document.createElement("style");
         if (!(parseInt(localStorage.getItem("enhancement last version")) >= VERSION)) {
@@ -398,7 +392,6 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
         dmodebtn.style = "width:30px;height:30px;font-size:30px;position:fixed;bottom:0;right:0;margin:10px;cursor:pointer;color:#89AAD6";
         dmodebtn.setAttribute("onclick", "toggleTheme()");
         logFinish("dark mode button");
-        loadingSuccess = 1;
         if (/^https?:\/\/mendo\.mk\/.*?User_Submission.do\?/.test(document.URL)) {
             let ok = false;
             for (let elm of document.querySelectorAll("img")) {
@@ -425,8 +418,12 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
         if (!isNaN(parseInt(document.querySelector("#LoginForm>fieldset>p:last-child>a")?.innerText))) {
             let elm = document.createElement("p");
             let tasks = parseInt(document.querySelector("#LoginForm>fieldset>p:last-child>a").innerText);
-            let ach = new Set((localStorage.getItem("achievements " + document.querySelector("#LoginForm>fieldset>p>a").innerText) || "").split("|"));
-            ach.delete("");
+            let ach = (localStorage.getItem("achievements " + document.querySelector("#LoginForm>fieldset>p>a").innerText) || "{}");
+            if (ach[0] != "{") {
+                alert(localize("As of 44.2, The way achievements are stored was updated, please get them again. Sorry", "Од 44.2, Начинот на зачувување на постигнувањата е сменет, ве молам добиете ги пак. Жал ми е"));
+                ach = {};
+            }
+            else ach = JSON.parse(ach);
             let allread = true, lecturepage = false;
             for (let e of document.querySelectorAll(".training-content td:last-child")) {
                 if (e.innerText.includes(localize("lecture", "предавање"))) {
@@ -440,7 +437,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
             const achs = {
                 task: [tasks >= 10, tasks >= 25, tasks >= 50, tasks >= 100, tasks >= 150, tasks >= 200, tasks >= 250, tasks >= 300, tasks >= 350, tasks >= 400, tasks >= 450, tasks >= 500],
                 readlec: [allread && lecturepage && (document.URL.endsWith("/Training.do") || document.URL.endsWith("/Training.do?cid=0") || document.URL.endsWith("/Training.do?cid=4")),
-                         allread && lecturepage && document.URL.endsWith("/Training.do?cid=6") && ach.has("readlec0")]
+                         allread && lecturepage && document.URL.endsWith("/Training.do?cid=6") && ach.readlec === 0]
             };
             const achlink = {
                 task: "/Training.do?cid=1",
@@ -464,21 +461,18 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
             };
             for (let a in achs) {
                 let level = achs[a].lastIndexOf(true);
-                if (level < 0) continue;
-                for (let i = level - 1; i >= 0; i--) ach.delete(a + i);
-                ach.add(a + level);
+                if (level < 0 || level < ach[a]) continue;
+                ach[a] = level;
             }
-            console.log(ach);
-            elm.innerHTML = `${localize("Achievements", "Постигнувања")}:<br>${[...ach].map(x => `&nbsp; &nbsp; <a title="${achname[x]}" href="${achlink[/[a-z]+/.exec(x)[0]]}">${/(.+) \(/i.exec(achname[x])[1]}</a>`).join("<br>") || localize("None", "Нема")}`;
+            elm.innerHTML = `${localize("Achievements", "Постигнувања")}:<br>${Object.entries(ach).map(x => `&nbsp; &nbsp; <a title="${achname[x[0] + x[1]]}" href="${achlink[x[0]]}">${/(.+) \(/i.exec(achname[x[0] + x[1]])[1]}</a>`).join("<br>") || localize("None", "Нема")}`;
             document.querySelector("#LoginForm>fieldset").appendChild(document.createElement("br"));
             document.querySelector("#LoginForm>fieldset").appendChild(elm);
-            localStorage.setItem("achievements " + document.querySelector("#LoginForm>fieldset>p>a").innerText, [...ach].join("|"));
+            localStorage.setItem("achievements " + document.querySelector("#LoginForm>fieldset>p>a").innerText, JSON.stringify(ach));
             logFinish("achievements");
         }
     }
     catch (_) {
         console.error(_);
-        loadingSuccess = 2;
     }
 }
 function taskSolveCinematic(showType, reformatTcs = false) {
@@ -490,7 +484,7 @@ function taskSolveCinematic(showType, reformatTcs = false) {
     if (reformatTcs) {
         let tcs = document.querySelector("div.main-content > div > div > table:nth-child(6) > tbody");
         let tclist = Array.from(tcs.children);
-        let tr, nAC = 0, nWA = 0, nTLE = 0, nRE = 0;
+        let tr, nAC = 0, nWA = 0, nTLE = 0, nRE = 0, actimes = {};
         for (let tc of tclist) {
             if (!tr || tr.children.length == 5) {
                 tr = document.createElement("tr");
@@ -514,7 +508,10 @@ function taskSolveCinematic(showType, reformatTcs = false) {
                     nTLE++;
                 }
                 if (tc.innerText.includes("Точен") || tc.innerText.includes("Correct")) {
-                    td.innerText += " AC (" + /[\d.]+/.exec(tc.children[1].innerText)[0] + ")";
+                    let time = parseFloat(/[\d.]+/.exec(tc.children[1].innerText)[0]) * 1e3;
+                    td.innerText += `AC (${time})`;
+                    actimes[time] ??= 0;
+                    actimes[time]++;
                     td.classList.add("verdict-ac");
                     nAC++;
                 }
@@ -522,12 +519,13 @@ function taskSolveCinematic(showType, reformatTcs = false) {
             }
             tc.remove();
         }
-        let chartcontainer = document.createElement("div");
-        let chart = document.createElement("canvas");
-        chartcontainer.appendChild(chart);
-        chartcontainer.style = "height:250px;display:flex;justify-content:center;align-items:center;";
-        document.querySelector(".submission-content").insertBefore(chartcontainer, document.querySelectorAll(".submission-content table")[2]);
-        new Chart(chart, {
+        let chartscont = document.createElement("div");
+        let pie = document.createElement("canvas"), bar = document.createElement("canvas");
+        chartscont.appendChild(pie);
+        chartscont.appendChild(bar);
+        chartscont.style = "height:250px;display:flex;justify-content:center;align-items:center;flex-directon:column";
+        document.querySelector(".submission-content").insertBefore(chartscont, document.querySelectorAll(".submission-content table")[2]);
+        new window.Chart(pie, {
             type: "pie",
             data: {
             labels: ["AC", "WA", "TLE", "RE"],
@@ -535,6 +533,18 @@ function taskSolveCinematic(showType, reformatTcs = false) {
                 label: "Results",
                     data: [nAC, nWA, nTLE, nRE],
                     backgroundColor: ["#bfb", "#fbb", "#bbf", "#fda"]
+                }]
+            }
+        });
+        new window.Chart(bar, {
+            type: "bar",
+            data: {
+                labels: Object.keys(actimes).sort((a, b) => parseInt(a) - parseInt(b)).concat("TLE"),
+                datasets: [{
+                    label: "AC times",
+                    data: Object.entries(actimes).sort((a, b) => parseInt(a[0]) - parseInt(b[0])).map(x => x[1]).concat(nTLE),
+                    backgroundColor: "#bbb",
+                    inflateAmount: 0
                 }]
             }
         });

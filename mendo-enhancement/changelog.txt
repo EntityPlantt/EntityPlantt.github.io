@@ -2,8 +2,6 @@
 44.1
 - Changed all substr in code with substring
 - Changed versioning to be with decimal numbers
-- Changed the way achievements are stored, while removing your achievements (just go to Learn C++ and Algorithms in that order and they will be restored)
-- Fixed a bug with the Student achievement
 44
 - Change solved task achievement names
 

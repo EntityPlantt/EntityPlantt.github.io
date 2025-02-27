@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      45
+// @version      45.1
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -14,7 +14,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 45, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
+const VERSION = 45.1, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
 console.log("%cMENDO.MK Enhancement", "color:magenta;text-decoration:underline;font-size:20px");
 function localize(english, macedonian) {
     return document.cookie.includes("mkjudge_language=en") ? english : macedonian;
@@ -25,7 +25,7 @@ async function MendoMkEnhancement() {
             (console.debug ?? console.log)("%cFinished setting up:%c " + taskName, "color:#0f0", "");
         }
         var style = document.createElement("style");
-        if (!(parseInt(localStorage.getItem("enhancement last version")) >= VERSION)) {
+        if (!(parseFloat(localStorage.getItem("enhancement last version")) >= VERSION)) {
             Changelog();
             localStorage.setItem("enhancement last version", VERSION);
         }
@@ -510,8 +510,8 @@ function taskSolveCinematic(showType, reformatTcs = false) {
                 if (tc.innerText.includes("Точен") || tc.innerText.includes("Correct")) {
                     let time = parseFloat(/[\d.]+/.exec(tc.children[1].innerText)[0]) * 1e3;
                     td.innerText += `AC (${time})`;
-                    actimes[time] ??= 0;
-                    actimes[time]++;
+                    actimes[time <= 5 ? -1 : Math.floor(time / 100)] ??= 0;
+                    actimes[time <= 5 ? -1 : Math.floor(time / 100)]++;
                     td.classList.add("verdict-ac");
                     nAC++;
                 }
@@ -530,7 +530,7 @@ function taskSolveCinematic(showType, reformatTcs = false) {
             data: {
             labels: ["AC", "WA", "TLE", "RE"],
                 datasets: [{
-                label: "Results",
+                label: localize("Results", "Резултати"),
                     data: [nAC, nWA, nTLE, nRE],
                     backgroundColor: ["#bfb", "#fbb", "#bbf", "#fda"]
                 }]
@@ -539,10 +539,10 @@ function taskSolveCinematic(showType, reformatTcs = false) {
         new window.Chart(bar, {
             type: "bar",
             data: {
-                labels: Object.keys(actimes).sort((a, b) => parseInt(a) - parseInt(b)).concat("TLE"),
+                labels: (x => nTLE ? x.concat("TLE") : x)(Object.keys(actimes).sort((a, b) => parseInt(a) - parseInt(b)).map(x => parseInt(x)).map(x => x < 0 ? localize("Instant", "Инстантно") : `${x}-${x + 99}`)),
                 datasets: [{
-                    label: "AC times",
-                    data: Object.entries(actimes).sort((a, b) => parseInt(a[0]) - parseInt(b[0])).map(x => x[1]).concat(nTLE),
+                    label: localize("Runtime", "Време на извршување"),
+                    data: (x => nTLE ? x.concat(nTLE) : x)(Object.entries(actimes).sort((a, b) => parseInt(a[0]) - parseInt(b[0])).map(x => x[1])),
                     backgroundColor: "#bbb",
                     inflateAmount: 0
                 }]

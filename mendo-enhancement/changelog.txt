@@ -1,4 +1,9 @@
 # VERSION 45
+45.1
+- Group bar chart times by 100ms (+ separate Instant & separate TLE group)
+- Fixed changelog always appearing when version is decimal
+- Localize submission charts
+45
 - Added bar graph for submission running time for AC tests
 - Reworked console logging (now uses console.debug)
 - Changed the way achievements are stored, thus removing achievements got before version 45 (go to Learn C++ and Algorithms next to get them again)

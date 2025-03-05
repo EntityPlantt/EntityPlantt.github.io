@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      46
+// @version      46.1
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -14,7 +14,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 46, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
+const VERSION = 46.1, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
 console.log("%cMENDO.MK Enhancement", "color:magenta;text-decoration:underline;font-size:20px");
 function localize(english, macedonian) {
     return document.cookie.includes("mkjudge_language=en") ? english : macedonian;
@@ -37,7 +37,7 @@ async function MendoMkEnhancement() {
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
 ${ // Dark mode
         localStorage.getItem("mendo-mk-enhancement-theme") == "dark" ? `
-div.page-container, div.page-container>img, div.page-container>svg, #cboxWrapper, .copy-io-btn span, .precinematicscreen {
+div.page-container, div.page-container img, div.page-container svg, #cboxWrapper, .copy-io-btn span, .precinematicscreen, .sitelogo {
 filter: invert(1) hue-rotate(180deg);
 }
 body, img, svg {

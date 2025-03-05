@@ -1,4 +1,8 @@
 # VERSION 46
+46.1
+- Site logo now appears normal
+- Fixed a bug with images appearing inverted
+46
 - Added new success and fail screen on task submission based on Minecraft
 - Added navigation buttons for tasks
 - Changed version fetching to be done from the EntityPlantt.github.io repository instead of GreasyFork

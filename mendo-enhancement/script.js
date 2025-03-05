@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      45.1
+// @version      46
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -14,7 +14,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 45.1, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
+const VERSION = 46, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
 console.log("%cMENDO.MK Enhancement", "color:magenta;text-decoration:underline;font-size:20px");
 function localize(english, macedonian) {
     return document.cookie.includes("mkjudge_language=en") ? english : macedonian;
@@ -37,7 +37,7 @@ async function MendoMkEnhancement() {
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
 ${ // Dark mode
         localStorage.getItem("mendo-mk-enhancement-theme") == "dark" ? `
-body>div.page-container, img, svg, #cboxWrapper, .copy-io-btn span {
+div.page-container, div.page-container>img, div.page-container>svg, #cboxWrapper, .copy-io-btn span, .precinematicscreen {
 filter: invert(1) hue-rotate(180deg);
 }
 body, img, svg {
@@ -147,7 +147,7 @@ padding: 5px;
 box-sizing: border-box;
 }
 .hidden {
-display: none;
+display: none !important;
 }
 .sorttask {
 font: inherit;
@@ -163,6 +163,26 @@ background: #fda !important;
 td.wrong.verdict-tle {
 background: #bbf !important;
 }
+.precinematicscreen {
+top: 0px;
+left: 0px;
+position: fixed;
+width: 100vw;
+height: 100vh;
+background: white;
+font-size: 20px;
+cursor: pointer;
+z-index: 99999;
+}
+.page-container.deathscreen {
+rotate: 4deg;
+scale: .95;
+animation: deathscreen 10s linear 1;
+}
+@keyframes deathscreen {
+0% { rotate: 0deg; scale: 1 }
+to { rotate: 4deg; scale: .95 }
+}
 /* April Fools! */
 html.mirrored {
 transform: rotateY(1620deg) rotateX(-10deg);
@@ -177,8 +197,9 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
             document.querySelector(".sitename h1").innerHTML += " <a href='https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement' id=enhancement-logo><em><b>Enhanced</b></em></a>";
         }
         logFinish("complete site logo");
-        fetch("https://greasyfork.org/scripts/450985-mendo-mk-enhancement/code/MENDOMK%20Enhancement.meta.js").then(x => x.text()).then(cfUpdt => {
-            let offv = parseFloat(/@version *(\d+)/.exec(cfUpdt)[1]);
+        fetch("https://raw.githubusercontent.com/EntityPlantt/EntityPlantt.github.io/refs/heads/main/mendo-enhancement/version.txt").then(async x => {
+            x = await x.text();
+            let offv = parseFloat(x);
             if (offv > VERSION) {
                 if (document.getElementById("enhancement-logo")) {
                     document.getElementById("enhancement-logo").classList.add("update-available");
@@ -191,7 +212,11 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
                 }
             }
             logFinish("check for updates");
-        });
+        });/*.catch(() => {
+            fetch("https://greasyfork.org/scripts/450985-mendo-mk-enhancement/code/MENDOMK%20Enhancement.meta.js").then(x => x.text()).then(cfUpdt => {
+                let offv = parseFloat(/@version *(\d+)/.exec(cfUpdt)[1]);
+                // ...
+            })});*/
         /* if (document.querySelector(".main-navigation > ul") && !document.URL.includes("Help.do")) {
 			let elm = document.createElement("li");
 			elm.innerHTML = `<a href="/simple_jsp/report_bug.jsp" class="cbrbm cboxElement">${true ? "Пријави Грешка" : "Report Bug"}</a>`;
@@ -350,7 +375,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
                           ?? {innerText: document.URL.substring(document.URL.indexOf("/", 8) + 1)}
                          ).innerText + " – МЕНДО";
         logFinish("document title set");
-        if (document.URL.includes("/Task.do")) {
+        if (document.URL.includes("/Task.do") || document.URL.includes("User_ListSubmissions.do")) {
             document.querySelectorAll("body > div.page-container > div.main > div.main-content > div.column1-unit.taskContentView > table pre").forEach(pre => {
                 var text = pre.innerText.substring(pre.innerText.indexOf("\n") + 1);
                 var copyIoBtn = document.createElement("span");
@@ -360,18 +385,39 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
                 pre.parentElement.appendChild(copyIoBtn);
             });
             logFinish("copy io buttons");
-            var navArrows = document.createElement("div");
-            navArrows.innerHTML = `
-			<a href="${document.URL.substring(0, document.URL.lastIndexOf("=") + 1) + (parseInt(document.URL.substring(document.URL.lastIndexOf("=") + 1)) - 1)}">&lt;</a>
-			<a href="${document.URL.substring(0, document.URL.lastIndexOf("=") + 1) + (parseInt(document.URL.substring(document.URL.lastIndexOf("=") + 1)) + 1)}" style="float:right">&gt;</a>
-			`;
-            navArrows.style.fontSize = "40px";
-            navArrows.style.marginBottom = "20px";
-            document.querySelector(".main-content").prepend(navArrows);
+            let nav = document.createElement("div");
+            if (document.URL.includes("/Task.do")) {
+                nav.innerHTML = `<a href="#">${localize("Task", "Задача")}</a> |
+<a href="#submit">${localize("Submit", "Поднеси")}</a> |
+<a href="${document.URL.replace("Task.do?id", "User_ListSubmissions.do?task").replace(/#.*$/, "")}">${localize("Previous submissions", "Претходни субмисии")}</a>`;
+            }
+            else {
+            nav.innerHTML = `<a href="${document.URL.replace("User_ListSubmissions.do?task", "Task.do?id")}">${localize("Task", "Задача")}</a> |
+<a href="${document.URL.replace("User_ListSubmissions.do?task", "Task.do?id")}#submit">${localize("Submit", "Поднеси")}</a> | <b style=color:black>${localize("Previous submissions", "Претходни субмисии")}</b>`;
+            }
+            nav.style = `font-size:15px;margin-bottom:20px;color:gray`;
+            document.querySelector(".main-content").prepend(nav);
             logFinish("add nav buttons");
+            if (document.URL.includes("/Task.do")) {
+                function hchange() {
+                    let Vtask = document.querySelector(".taskContentView"), Vsubmit = document.querySelector("#submitinfocontainer");
+                    if (location.hash.length < 2) {
+                        Vtask.classList.remove("hidden");
+                        Vsubmit.classList.add("hidden");
+                    }
+                    else if (location.hash == "#submit") {
+                        Vtask.classList.add("hidden");
+                        Vsubmit.classList.remove("hidden");
+                    }
+                    document.body.scrollTo(0, 0);
+                }
+                hchange();
+                addEventListener("hashchange", hchange);
+                logFinish("listen to hash change");
+            }
             document.querySelector(".pagetitle").style.textAlign = "center";
             logFinish("center title text");
-            setInterval(() => {
+            if (document.URL.includes("/Task.do")) setInterval(() => {
                 var scode = document.getElementById("solutionCode");
                 if (!scode.value.includes("// online judge") && !scode.value.includes("#define ONLINE_JUDGE") && scode.value.length) {
                     scode.value = "#define ONLINE_JUDGE // online judge\n" + scode.value;
@@ -539,7 +585,7 @@ function taskSolveCinematic(showType, reformatTcs = false) {
         new window.Chart(bar, {
             type: "bar",
             data: {
-                labels: (x => nTLE ? x.concat("TLE") : x)(Object.keys(actimes).sort((a, b) => parseInt(a) - parseInt(b)).map(x => parseInt(x)).map(x => x < 0 ? localize("Instant", "Инстантно") : `${x}-${x + 99}`)),
+                labels: (x => nTLE ? x.concat("TLE") : x)(Object.keys(actimes).sort((a, b) => parseInt(a) - parseInt(b)).map(x => parseInt(x)).map(x => x < 0 ? localize("Instant", "Инстантно") : `${x * 100}-${x * 100 + 99}`)),
                 datasets: [{
                     label: localize("Runtime", "Време на извршување"),
                     data: (x => nTLE ? x.concat(nTLE) : x)(Object.entries(actimes).sort((a, b) => parseInt(a[0]) - parseInt(b[0])).map(x => x[1])),
@@ -551,15 +597,12 @@ function taskSolveCinematic(showType, reformatTcs = false) {
     }
     if (!showType) return;
     var preCinematicScreen = document.createElement("div");
-    preCinematicScreen.style = `
-	top: 0px; left: 0px; position: fixed; width: 100vw; height: 100vh;
-	background: white; font-size: 20px; cursor: pointer; z-index: 99999;
-	`;
+    preCinematicScreen.className = "precinematicscreen";
     preCinematicScreen.innerHTML = `
 	<div style="color: black; position: fixed; top: 50vh; left: 50vw; transform: translate(-50%, -50%);">[ ${localize("Reveal", "Откриј")} ]</div>
 	<div style="color: black; position: fixed; top: 10px; right: 10px;" id=skip-cinematic>${localize("Skip", "Скокни")} &gt;&gt;</div>
 	`;
-    preCinematicScreen.onclick = () => {
+    preCinematicScreen.onclick = ev => {
         preCinematicScreen.remove();
         if (window.event.target.id == "skip-cinematic") return;
         const cinematics = [() => {
@@ -572,6 +615,46 @@ function taskSolveCinematic(showType, reformatTcs = false) {
             audio.src = "https://www.myinstants.com/media/sounds/gta-san-andreas-mission-passed-sound_TpUVE5G.mp3";
             document.body.appendChild(img);
             setTimeout(() => img.remove(), 10000);
+        }, () => {
+            let xporb = new Image;
+            xporb.src = "https://minecraft.wiki/images/Experience_Orb_Value_3-6.png?6de8c&format=original";
+            xporb.style = `position:fixed;translate:-50% -50%;width:25px;background:transparent`;
+            let orbsfx = new Audio("https://minecraft.wiki/images/Successful_hit.ogg?b99e0");
+            let orbs = Array(document.querySelectorAll(".verdict-ac").length * 2).fill(0).map(() => {
+                let orb = xporb.cloneNode();
+                orb.style.top = Math.random() * innerHeight + "px";
+                orb.style.left = Math.random() * innerWidth + "px";
+                document.body.appendChild(orb);
+                return orb;
+            });
+            let mousex = ev.clientX, mousey = ev.clientY;
+            addEventListener("mousemove", e => {
+                mousex = e.clientX;
+                mousey = e.clientY;
+            });
+            function fr() {
+                orbs = orbs.map(o => {
+                    if (!o) return;
+                    let x = parseFloat(o.style.left), y = parseFloat(o.style.top);
+                    let dist = ((mousex - x) ** 2 + (mousey - y) ** 2) ** .5, speed = 150 * dist ** -.7;
+                    let vx = speed / dist * (mousex - x), vy = speed / dist * (mousey - y);
+                    if (Math.abs(x - mousex) < o.offsetWidth / 2 && Math.abs(y - mousey) < o.offsetHeight / 2) {
+                        o.remove();
+                        let sfx = orbsfx.cloneNode();
+                        sfx.playbackRate = Math.random() * .7 + .55;
+                        sfx.mozPreservesPitch = false;
+                        sfx.webkitPreservesPitch = false;
+                        sfx.preservesPitch = false;
+                        sfx.play();
+                        return null;
+                    }
+                    o.style.left = x + vx + "px";
+                    o.style.top = y + vy + "px";
+                    return o;
+                });
+                if (orbs.some(x => x)) requestAnimationFrame(fr);
+            }
+            fr();
         }], failCinematics = [() => {
             let audio = document.createElement("audio");
             audio.oncanplay = () => audio.play();
@@ -582,6 +665,22 @@ function taskSolveCinematic(showType, reformatTcs = false) {
             img.style = "position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(.5); background: transparent !important; box-shadow: black 10px 10px 5px";
             document.body.appendChild(img);
             img.onclick = () => img.remove();
+        }, () => {
+            let audio = new Audio("https://minecraft.wiki/images/Player_hurt3.ogg");
+            audio.play();
+            audio.oncanplay = () => audio.play();
+            let dm = document.createElement("map");
+            dm.name = "deathmap";
+            dm.innerHTML = `<area shape=rect coords="322,371,977,436" href="javascript:document.getElementById('deathmap').remove();document.querySelector('.page-container').classList.remove('deathscreen')">
+            <area shape=rect coords="322,450,977,509" href="/">
+            <img src="https://i.ibb.co/DHYzFtyL/deathscreen.png" height=720 style="background:transparent" usemap="#deathmap">`;
+            dm.style = "position:fixed;top:50%;left:50%;translate:-50% -50%";
+            let bg = document.createElement("div");
+            bg.style = "top:0;left:0;width:100vw;height:100vh;position:fixed;background:#ff000540";
+            bg.id = "deathmap";
+            bg.appendChild(dm);
+            document.body.appendChild(bg);
+            document.querySelector(".page-container").classList.add("deathscreen");
         }];
         if (showType == 1) cinematics[Math.floor(Math.random() * cinematics.length)]();
         else failCinematics[Math.floor(Math.random() * failCinematics.length)]();

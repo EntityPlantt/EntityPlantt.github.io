@@ -1,3 +1,8 @@
+# VERSION 46
+- Added new success and fail screen on task submission based on Minecraft
+- Added navigation buttons for tasks
+- Changed version fetching to be done from the EntityPlantt.github.io repository instead of GreasyFork
+
 # VERSION 45
 45.1
 - Group bar chart times by 100ms (+ separate Instant & separate TLE group)

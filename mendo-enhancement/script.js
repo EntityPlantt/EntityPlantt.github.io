@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      46.2
+// @version      47
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -14,11 +14,32 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 46.2, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
+const VERSION = 47, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
 console.log("%cMENDO.MK Enhancement", "color:magenta;text-decoration:underline;font-size:20px");
 function localize(english, macedonian) {
     return document.cookie.includes("mkjudge_language=en") ? english : macedonian;
 }
+const achlink = {
+    task: "/Training.do?cid=1",
+    readlec: "/Training.do?cid=6"
+};
+const achname = {
+    task0: localize("Apprentice (10 tasks)", "Чирак (10 задачи)"),
+    task1: localize("Guru (25 tasks)", "Гуру (25 задачи)"),
+    task2: localize("Pupil (50 tasks)", "Ученик (50 задачи)"),
+    task3: localize("Specialist (100 tasks)", "Специјалист (100 задачи)"),
+    task4: localize("Sage (150 tasks)", "Мудрец (150 задачи)"),
+    task5: localize("Expert (200 tasks)", "Експерта (200 задачи)"),
+    task6: localize("Master (250 tasks)", "Мајстор (250 задачи)"),
+    task7: localize("Champion (300 tasks)", "Шампион (300 задачи)"),
+    task8: localize("Titan (350 tasks)", "Титан (350 задачи)"),
+    task9: localize("The Architect (400 tasks)", "Архитектот (400 задачи)"),
+    task10: localize("Baba (450 tasks)", "Баба (450 задачи)"),
+    task11: localize("Zenith (500 tasks)", "Зенит (500 задачи)"),
+    readlec0: localize("Student I (all Learn C++ tasks solved)", "Студент I (сите Научи C++ лекции прочитани)"),
+    readlec1: localize("Student II (all Algorithms & Learn C++ tasks solved)", "Студент II (сите Алгоритми и Научи C++ лекции прочитани)"),
+    colorful0: localize("Colorful! (Get 1 testcase with every verdict on a single submission)", "Шарено! (Добиј барем 1 тест случај од секој verdict на едно исто решение)")
+};
 async function MendoMkEnhancement() {
     try {
         function logFinish(taskName) {
@@ -178,6 +199,36 @@ z-index: 99999;
 rotate: 4deg;
 scale: .95;
 animation: deathscreen 10s linear 1;
+}
+#achievement-toast {
+position: fixed;
+bottom: 0;
+right: 0;
+font-family: Times New Roman, serif;
+text-align: right;
+color: black;
+}
+#achievement-toast > div {
+background: gold;
+border-top-left-radius: 20px;
+border-bottom-left-radius: 20px;
+padding: 10px 20px;
+flex-direction: column;
+margin-bottom: 10px;
+animation: achievement-toast 6s ease-in 1;
+opacity: 0;
+translate: 100%;
+scale: 0;
+}
+#achievement-toast > div > :first-child {
+font-size: 20px;
+}
+#achievement-toast > div > :last-child {
+font-size: 30px;
+}
+@keyframes achievement-toast {
+0%, 100% { opacity: 0; translate: 100%; scale: 0; }
+20%, 80% { opacity: 1; translate: 0%; scale: 1; }
 }
 @keyframes deathscreen {
 0% { rotate: 0deg; scale: 1 }
@@ -464,12 +515,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
         if (!isNaN(parseInt(document.querySelector("#LoginForm>fieldset>p:last-child>a")?.innerText))) {
             let elm = document.createElement("p");
             let tasks = parseInt(document.querySelector("#LoginForm>fieldset>p:last-child>a").innerText);
-            let ach = (localStorage.getItem("achievements " + document.querySelector("#LoginForm>fieldset>p>a").innerText) || "{}");
-            if (ach[0] != "{") {
-                alert(localize("As of 44.2, The way achievements are stored was updated, please get them again. Sorry", "Од 44.2, Начинот на зачувување на постигнувањата е сменет, ве молам добиете ги пак. Жал ми е"));
-                ach = {};
-            }
-            else ach = JSON.parse(ach);
+            let ach = getAchievements();
             let allread = true, lecturepage = false;
             for (let e of document.querySelectorAll(".training-content td:last-child")) {
                 if (e.innerText.includes(localize("lecture", "предавање"))) {
@@ -480,40 +526,24 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
                     }
                 }
             }
-            const achs = {
-                task: [tasks >= 10, tasks >= 25, tasks >= 50, tasks >= 100, tasks >= 150, tasks >= 200, tasks >= 250, tasks >= 300, tasks >= 350, tasks >= 400, tasks >= 450, tasks >= 500],
-                readlec: [allread && lecturepage && (document.URL.endsWith("/Training.do") || document.URL.endsWith("/Training.do?cid=0") || document.URL.endsWith("/Training.do?cid=4")),
-                         allread && lecturepage && document.URL.endsWith("/Training.do?cid=6") && ach.readlec === 0]
-            };
-            const achlink = {
-                task: "/Training.do?cid=1",
-                readlec: "/Training.do?cid=6"
-            };
-            const achname = {
-                task0: localize("Apprentice (10 tasks)", "Чирак (10 задачи)"),
-                task1: localize("Guru (25 tasks)", "Гуру (25 задачи)"),
-                task2: localize("Pupil (50 tasks)", "Ученик (50 задачи)"),
-                task3: localize("Specialist (100 tasks)", "Специјалист (100 задачи)"),
-                task4: localize("Sage (150 tasks)", "Мудрец (150 задачи)"),
-                task5: localize("Expert (200 tasks)", "Експерта (200 задачи)"),
-                task6: localize("Master (250 tasks)", "Мајстор (250 задачи)"),
-                task7: localize("Champion (300 tasks)", "Шампион (300 задачи)"),
-                task8: localize("Titan (350 tasks)", "Титан (350 задачи)"),
-                task9: localize("The Architect (400 tasks)", "Архитектот (400 задачи)"),
-                task10: localize("Baba (450 tasks)", "Баба (450 задачи)"),
-                task11: localize("Zenith (500 tasks)", "Зенит (500 задачи)"),
-                readlec0: localize("Student I (all Learn C++ tasks solved)", "Студент I (сите Научи C++ лекции прочитани)"),
-                readlec1: localize("Student II (all Algorithms & Learn C++ tasks solved)", "Студент II (сите Алгоритми и Научи C++ лекции прочитани)")
-            };
-            for (let a in achs) {
-                let level = achs[a].lastIndexOf(true);
-                if (level < 0 || level < ach[a]) continue;
-                ach[a] = level;
-            }
+            if (tasks >= 10) addAchievement("task", 0);
+            if (tasks >= 25) addAchievement("task", 1);
+            if (tasks >= 50) addAchievement("task", 2);
+            if (tasks >= 100) addAchievement("task", 3);
+            if (tasks >= 150) addAchievement("task", 4);
+            if (tasks >= 200) addAchievement("task", 5);
+            if (tasks >= 250) addAchievement("task", 6);
+            if (tasks >= 300) addAchievement("task", 7);
+            if (tasks >= 350) addAchievement("task", 8);
+            if (tasks >= 400) addAchievement("task", 9);
+            if (tasks >= 450) addAchievement("task", 10);
+            if (tasks >= 500) addAchievement("task", 11);
+            if (allread && lecturepage && (document.URL.endsWith("/Training.do") || document.URL.endsWith("/Training.do?cid=0") || document.URL.endsWith("/Training.do?cid=4"))) addAchievement("readlec", 0);
+            if (allread && lecturepage && document.URL.endsWith("/Training.do?cid=6") && ach.readlec === 0) addAchievement("readlec", 1);
+            ach = getAchievements();
             elm.innerHTML = `${localize("Achievements", "Постигнувања")}:<br>${Object.entries(ach).map(x => `&nbsp; &nbsp; <a title="${achname[x[0] + x[1]]}" href="${achlink[x[0]]}">${/(.+) \(/i.exec(achname[x[0] + x[1]])[1]}</a>`).join("<br>") || localize("None", "Нема")}`;
             document.querySelector("#LoginForm>fieldset").appendChild(document.createElement("br"));
             document.querySelector("#LoginForm>fieldset").appendChild(elm);
-            localStorage.setItem("achievements " + document.querySelector("#LoginForm>fieldset>p>a").innerText, JSON.stringify(ach));
             logFinish("achievements");
         }
     }
@@ -529,9 +559,8 @@ function taskSolveCinematic(showType, reformatTcs = false) {
     }
     if (reformatTcs) {
         let tcs = document.querySelector("div.main-content > div > div > table:nth-child(6) > tbody");
-        let tclist = Array.from(tcs.children);
         let tr, nAC = 0, nWA = 0, nTLE = 0, nRE = 0, actimes = {};
-        for (let tc of tclist) {
+        for (let tc of Array.from(tcs.children)) {
             if (!tr || tr.children.length == 5) {
                 tr = document.createElement("tr");
                 tcs.appendChild(tr);
@@ -567,6 +596,11 @@ function taskSolveCinematic(showType, reformatTcs = false) {
                 tr.appendChild(td);
             }
             tc.remove();
+        }
+        // Colorful achievement
+        if (nAC > 0 && nTLE > 0 && nWA > 0 && nRE > 0) {
+            tcs.previousElementSibling.innerHTML = localize("Colorful!!!", "Шарено!!!").split("").map((x, i) => `<span style="color:${["#fda", "#bbf", "#fbb", "#bfb"][i % 4]}">${x}</span>`).join("");
+            addAchievement("colorful", 0);
         }
         let chartscont = document.createElement("div");
         let pie = document.createElement("canvas"), bar = document.createElement("canvas");
@@ -693,7 +727,32 @@ function taskSolveCinematic(showType, reformatTcs = false) {
 async function Changelog() {
     alert(await fetch("https://raw.githubusercontent.com/EntityPlantt/EntityPlantt.github.io/refs/heads/main/mendo-enhancement/changelog.txt").then(x => x.text()).catch(x => "Changelog not found"));
 }
-window.MendoMkEnhancement = MendoMkEnhancement;
-window.taskSolveCinematic = taskSolveCinematic;
-window.Changelog = Changelog;
+function getAchievements() {
+    let ach = (localStorage.getItem("achievements " + document.querySelector("#LoginForm>fieldset>p>a").innerText) || "{}");
+    if (ach[0] != "{") {
+        alert(localize("As of 44.2, The way achievements are stored was updated, please get them again. Sorry", "Од 44.2, Начинот на зачувување на постигнувањата е сменет, ве молам добиете ги пак. Жал ми е"));
+        ach = {};
+    }
+    else ach = JSON.parse(ach);
+    return ach;
+}
+function addAchievement(name, lvl) {
+    let ach = getAchievements();
+    if (ach[name] >= lvl) return false;
+    ach[name] = lvl;
+    localStorage.setItem("achievements " + document.querySelector("#LoginForm>fieldset>p>a").innerText, JSON.stringify(ach));
+    achievementToast(achname[name + lvl]);
+    return true;
+}
+function achievementToast(text) {
+    if (!document.getElementById("achievement-toast")) {
+        let d = document.createElement("div");
+        d.id = "achievement-toast";
+        document.body.appendChild(d);
+    }
+    let div = document.createElement("div");
+    div.innerHTML = `<div>${localize("Achievement got!", "Постигнување добиено!")}</div><div>${text}</div>`;
+    document.getElementById("achievement-toast").appendChild(div);
+}
+Object.assign(window, { MendoMkEnhancement, taskSolveCinematic, Changelog, addAchievement, getAchievements, achievementToast });
 MendoMkEnhancement();

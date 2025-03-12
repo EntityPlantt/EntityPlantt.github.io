@@ -1,3 +1,8 @@
+# VERSION 47
+- NEW ACHIEVEMENT: Colorful (get every verdict possible on a single submission)
+- Achievement toasts on the bottom-right
+- Changed achievement adding & refactored more code
+
 # VERSION 46
 46.2
 - Testcases after competitions now have clickable links to see them

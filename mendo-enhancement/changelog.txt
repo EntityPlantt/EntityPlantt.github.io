@@ -1,4 +1,7 @@
 # VERSION 47
+47.1
+- Added clarity to sharing solved tasks
+47
 - NEW ACHIEVEMENT: Colorful (get every verdict possible on a single submission)
 - Achievement toasts on the bottom-right
 - Changed achievement adding & refactored more code

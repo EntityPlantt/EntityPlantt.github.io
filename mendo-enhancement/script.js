@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      47
+// @version      47.1
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -14,7 +14,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 47, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
+const VERSION = 47.1, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
 console.log("%cMENDO.MK Enhancement", "color:magenta;text-decoration:underline;font-size:20px");
 function localize(english, macedonian) {
     return document.cookie.includes("mkjudge_language=en") ? english : macedonian;
@@ -397,11 +397,12 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
                     });
                     array.unshift(taskshcode);
                     navigator.clipboard.writeText(array.join(","));
+                    alert(localize("Solved tasks copied, share them by pasting", "Решените задачи се копирани, сподели ги со пејстање"));
                 };
                 taskShare.querySelector("#solved-tasks-load").onclick = async() => {
                     var array = prompt(localize("Enter code...", "Внеси код...")).split(",");
                     if (array[0] != taskshcode) {
-                        alert(localize("Invalid task solve share schema! / Invalid site!", "Невалидна шема на споделени решени задачи! / Невалидна страна!"));
+                        alert(localize("Invalid task solve share schema! / Invalid page!", "Невалидна шема на споделени решени задачи! / Невалидна страна!"));
                         return;
                     }
                     array.shift();

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      47.1
+// @version      48
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -14,7 +14,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 47.1, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
+const VERSION = 48, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
 console.log("%cMENDO.MK Enhancement", "color:magenta;text-decoration:underline;font-size:20px");
 function localize(english, macedonian) {
     return document.cookie.includes("mkjudge_language=en") ? english : macedonian;
@@ -45,6 +45,12 @@ async function MendoMkEnhancement() {
         function logFinish(taskName) {
             (console.debug ?? console.log)("%cFinished setting up:%c " + taskName, "color:#0f0", "");
         }
+        function collapseNavigation() {
+            if (!document.querySelector(".main-navigation")) return;
+            localStorage.setItem("nav collapsed", document.querySelector(".main-navigation").classList.toggle("collapsed"));
+        }
+        if (localStorage.getItem("nav collapsed") == "true") collapseNavigation();
+        logFinish("collapse navigation if collapsed");
         var style = document.createElement("style");
         if (!(parseFloat(localStorage.getItem("enhancement last version")) >= VERSION)) {
             Changelog();
@@ -234,6 +240,50 @@ font-size: 30px;
 0% { rotate: 0deg; scale: 1 }
 to { rotate: 4deg; scale: .95 }
 }
+.main {
+display: flex;
+flex-direction: row;
+justify-content: center;
+}
+.main-navigation {
+transition: width .5s;
+overflow: hidden !important;
+}
+.main-navigation.collapsed {
+width: 35px;
+}
+.main-navigation>* {
+transition: opacity .5s;
+opacity: 1;
+}
+.main-navigation.collapsed>* {
+opacity: 0;
+}
+.collapse-navigation-container {
+opacity: 1 !important;
+float: right;
+}
+.collapse-navigation {
+cursor: pointer;
+border: none;
+padding: 0;
+font-size: 25px;
+overflow: visible;
+height: 0;
+margin-right: 10px;
+color: white;
+transition: color .5s;
+z-index: 99;
+position: relative;
+top: -5px;
+}
+.main-navigation.collapsed .collapse-navigation {
+color: black;
+}
+.main-content {
+padding-left: 30px;
+margin: 0;
+}
 /* April Fools! */
 html.mirrored {
 transform: rotateY(1620deg) rotateX(-10deg);
@@ -333,7 +383,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
             document.querySelector("body > div.page-container > div.main > div.main-content > div:last-child").innerHTML =
                 document.querySelector("body > div.page-container > div.main > div.main-content > div:nth-child(3)").innerHTML;
             logFinish("add secret tasks");
-            if (/(Статистика|Success rate)/.test(document.querySelector(".main-content > .column1-unit > .training-content table tr th:last-child").textContent)) {
+            if (/(Статистика|Success rate)/.test(document.querySelector(".main-content > .column1-unit > .training-content table tr th:last-child")?.textContent)) {
                 let elm = document.querySelector(".main-content > .column1-unit > .training-content table tr th:last-child");
                 let select = document.createElement("select");
                 select.innerHTML = [["normal", "indexmin"], ["latest", "indexmax"], ["min %", "percmin"], ["max %", "percmax"], ["least tried", "submin"],
@@ -441,7 +491,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
             if (document.URL.includes("/Task.do")) {
                 nav.innerHTML = `<a href="#">${localize("Task", "Задача")}</a> |
 <a href="#submit">${localize("Submit", "Поднеси")}</a> |
-<a href="${document.URL.replace("Task.do?id", "User_ListSubmissions.do?task").replace(/#.*$/, "")}">${localize("Previous submissions", "Претходни субмисии")}</a>`;
+<a href="${document.URL.replace(/Task\.do\?(?:competition=\d+&)?id/, "User_ListSubmissions.do?task").replace(/#.*$/, "")}">${localize("Previous submissions", "Претходни субмисии")}</a>`;
             }
             else {
             nav.innerHTML = `<a href="${document.URL.replace("User_ListSubmissions.do?task", "Task.do?id")}">${localize("Task", "Задача")}</a> |
@@ -453,6 +503,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
             if (document.URL.includes("/Task.do")) {
                 function hchange() {
                     let Vtask = document.querySelector(".taskContentView"), Vsubmit = document.querySelector("#submitinfocontainer");
+                    if (!Vsubmit) return;
                     if (location.hash.length < 2) {
                         Vtask.classList.remove("hidden");
                         Vsubmit.classList.add("hidden");
@@ -467,17 +518,17 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
                 addEventListener("hashchange", hchange);
                 logFinish("listen to hash change");
             }
-            document.querySelector(".pagetitle").style.textAlign = "center";
-            logFinish("center title text");
-            if (document.URL.includes("/Task.do")) setInterval(() => {
-                var scode = document.getElementById("solutionCode");
-                if (!scode.value.includes("// online judge") && !scode.value.includes("#define ONLINE_JUDGE") && scode.value.length) {
-                    scode.value = "#define ONLINE_JUDGE // online judge\n" + scode.value;
-                    document.querySelector("label[for=solutionCode]").innerHTML += `<a href="https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement" class=ojtxt>${localize("This macro was automatically added", "Ова макро беше автоматски додадено")}: <code>ONLINE_JUDGE</code></a>`;
-                    setTimeout(() => document.querySelector(".ojtxt:last-child").remove(), 3000);
-                }
-            }, 500);
-            logFinish("#define ONLINE_JUDGE");
+            if (document.URL.includes("/Task.do") && document.querySelector("#solutionCode")) {
+                setInterval(() => {
+                    let scode = document.getElementById("solutionCode");
+                    if (!scode.value.includes("// online judge") && !scode.value.includes("#define ONLINE_JUDGE") && scode.value.length) {
+                        scode.value = "#define ONLINE_JUDGE // online judge\n" + scode.value;
+                        document.querySelector("label[for=solutionCode]").innerHTML += `<a href="https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement" class=ojtxt>${localize("This macro was automatically added", "Ова макро беше автоматски додадено")}: <code>ONLINE_JUDGE</code></a>`;
+                        setTimeout(() => document.querySelector(".ojtxt:last-child").remove(), 3000);
+                    }
+                }, 500);
+                logFinish("#define ONLINE_JUDGE");
+            }
         }
         (document.querySelector(".footer") ?? {}).innerHTML += `<p class="credits"><a href="https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement">MENDO.MK Enhancement</a> <a href="javascript:toggleTheme()">🎨</a> <a href="javascript:Changelog()">Changelog</a></p>`;
         window.toggleTheme = () => {
@@ -546,6 +597,29 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
             document.querySelector("#LoginForm>fieldset").appendChild(document.createElement("br"));
             document.querySelector("#LoginForm>fieldset").appendChild(elm);
             logFinish("achievements");
+        }
+        if (document.querySelector(".main-navigation>ul")) {
+            let nav = document.querySelector(".main-navigation>ul");
+            let collapseparent = document.querySelector(".main-navigation>.round-border-topright");
+            collapseparent.className = "collapse-navigation-container";
+            let collapse = document.createElement("button");
+            collapseparent.appendChild(collapse);
+            collapse.innerText = "≡";
+            collapse.className = "collapse-navigation";
+            collapse.onclick = collapseNavigation;
+            let links = [
+                ["National", "Национални", "/Training.do?cid=1"],
+                ["International", "Интернационални", "/Training.do?cid=2"]
+            ];
+            window.logoffButton = () => {
+                if (confirm(localize("You are about to log out.\nProceed?", "Наскоро ќе се одјавите.\nПродолжете?"))) {
+                    let a = document.createElement("a");
+                    a.href = "/User_Logoff.do";
+                    a.click();
+                }
+            };
+            nav.innerHTML = links.map(l => `<li><a href="${l[2]}">${localize(l[0], l[1])}</a></li>`).join("") + nav.innerHTML;
+            logFinish("navigation bar");
         }
     }
     catch (_) {

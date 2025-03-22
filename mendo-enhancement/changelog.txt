@@ -1,3 +1,10 @@
+# VERSION 48
+- Added sidebar collapsing & CSS styling around that feature
+- Made the competition task "See submissions" button show the upsolve submissions of that task instead of erroring
+- Fixed a bug on the competition page (competition pages don't have statistics)
+- Fixed a bug on the competition task page (after the competition the submission modal doesn't exist)
+- Refactored #define ONLINE_JUDGE code
+
 # VERSION 47
 47.1
 - Added clarity to sharing solved tasks

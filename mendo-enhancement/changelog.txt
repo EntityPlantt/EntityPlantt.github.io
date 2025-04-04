@@ -1,4 +1,8 @@
 # VERSION 49
+49.1
+- Changed event deadline to 14th of April
+- Removed cinematic on test submissions (ctest=true)
+49
 - [NEW] ✨⏳️ PROGRESS BAR for competitors that need to solve a certain number of tasks for the upcoming olympiad TSTs
 - Filter by valid tasks for 2025 olympiad TST
 - Fixed a bug with collapsible navigation

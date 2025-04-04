@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      49
+// @version      49.1
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -14,7 +14,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 49, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 18 25").getTime();
+const VERSION = 49.1, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 15 25").getTime();
 console.log("%cMENDO.MK Enhancement", "color:magenta;text-decoration:underline;font-size:20px");
 function localize(english, macedonian) {
     return document.cookie.includes("mkjudge_language=en") ? english : macedonian;
@@ -591,7 +591,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
         dmodebtn.style = "width:30px;height:30px;font-size:30px;position:fixed;bottom:0;right:0;margin:10px;cursor:pointer;color:#89AAD6";
         dmodebtn.setAttribute("onclick", "toggleTheme()");
         logFinish("dark mode button");
-        if (/^https?:\/\/mendo\.mk\/.*?User_Submission.do\?/.test(document.URL)) {
+        if (/^https?:\/\/mendo\.mk\/.*?User_Submission.do\?/.test(document.URL) && !document.URL.includes("ctest=true")) {
             let ok = false;
             for (let elm of document.querySelectorAll("img")) {
                 if (elm.src.includes("loadingAnimation")) {

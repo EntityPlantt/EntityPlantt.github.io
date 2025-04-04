@@ -1,3 +1,8 @@
+# VERSION 49
+- [NEW] ✨⏳️ PROGRESS BAR for competitors that need to solve a certain number of tasks for the upcoming olympiad TSTs
+- Filter by valid tasks for 2025 olympiad TST
+- Fixed a bug with collapsible navigation
+
 # VERSION 48
 - Added sidebar collapsing & CSS styling around that feature
 - Made the competition task "See submissions" button show the upsolve submissions of that task instead of erroring

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      48
+// @version      49
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -14,7 +14,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 48, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3;
+const VERSION = 49, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 18 25").getTime();
 console.log("%cMENDO.MK Enhancement", "color:magenta;text-decoration:underline;font-size:20px");
 function localize(english, macedonian) {
     return document.cookie.includes("mkjudge_language=en") ? english : macedonian;
@@ -284,7 +284,57 @@ color: black;
 padding-left: 30px;
 margin: 0;
 }
-/* April Fools! */
+.event {
+position: fixed;
+left: 0;
+bottom: 0;
+display: flex;
+flex-direction: column;
+width: 200px;
+height: 100vh;
+background: #606;
+font-family: system-ui, Verdana, sans-serif;
+font-size: 20px;
+font-weight: bold;
+text-align: center;
+color: white;
+opacity: .75;
+}
+.event-text {
+flex-shrink: 0;
+padding: 10px 0;
+}
+.event-pbar {
+height: 100%;
+width: 100%;
+display: flex;
+flex-direction: column-reverse;
+overflow: hidden;
+}
+.event-prog {
+background: #808;
+width: 100%;
+padding-top: 10px;
+overflow: hidden;
+}
+.event select {
+color: inherit;
+font: inherit;
+background: transparent;
+border: none;
+border-top: solid 3px #808;
+}
+.event-hot, td.event-hot {
+background: #fbf !important;
+}
+.event-hot a:hover {
+background: #fdf !important;
+}
+#olympsearch {
+color: #808;
+text-decoration: underline;
+}
+/* April Fools'! */
 html.mirrored {
 transform: rotateY(1620deg) rotateX(-10deg);
 }
@@ -351,7 +401,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
                     if (!elm.querySelector("td:nth-child(2) > a")) {
                         return;
                     }
-                    if (elm.innerText.toLowerCase().includes(kw) || elm.querySelector("td:nth-child(2) > a").href.toLowerCase().includes(kw)) {
+                    if ((kw == "event.olymp2025" && /(олимпијада|мои|ibuoi)/i.test(elm.querySelector("td:nth-child(3)").innerText)) || elm.innerText.toLowerCase().includes(kw) || elm.querySelector("td:nth-child(2) > a").href.toLowerCase().includes(kw)) {
                         elm.style.display = "";
                     }
                     else {
@@ -601,6 +651,10 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
         if (document.querySelector(".main-navigation>ul")) {
             let nav = document.querySelector(".main-navigation>ul");
             let collapseparent = document.querySelector(".main-navigation>.round-border-topright");
+            if (!collapseparent) {
+                collapseparent = document.createElement("div");
+                document.querySelector(".main-navigation").prepend(collapseparent);
+            }
             collapseparent.className = "collapse-navigation-container";
             let collapse = document.createElement("button");
             collapseparent.appendChild(collapse);
@@ -611,15 +665,43 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
                 ["National", "Национални", "/Training.do?cid=1"],
                 ["International", "Интернационални", "/Training.do?cid=2"]
             ];
-            window.logoffButton = () => {
-                if (confirm(localize("You are about to log out.\nProceed?", "Наскоро ќе се одјавите.\nПродолжете?"))) {
-                    let a = document.createElement("a");
-                    a.href = "/User_Logoff.do";
-                    a.click();
-                }
-            };
             nav.innerHTML = links.map(l => `<li><a href="${l[2]}">${localize(l[0], l[1])}</a></li>`).join("") + nav.innerHTML;
+            if (Date.now() < EventDeadline) {
+                nav.childNodes[0].classList.add("event-hot");
+                nav.querySelector("a").innerHTML += " <i class='bi bi-hourglass-split'></i>";
+            }
             logFinish("navigation bar");
+        }
+        if (document.URL.includes("/Training.do?cid=1") && Date.now() < EventDeadline && localStorage.getItem("event.total") !== "0") {
+            let evbar = document.createElement("div");
+            let totalTasks = parseInt(localStorage.getItem("event.total") || "45"), solvedTasks = Array.from(document.querySelectorAll(".training-content td:nth-child(3)")).filter(x => /(Олимпијада|ibuoi|мои)/i.test(x.innerText)), untilend = EventDeadline - Date.now();
+            evbar.className = "event";
+            solvedTasks.forEach(x => {
+                x.classList.add("event-hot");
+                x.innerHTML = `<a href="#event.olymp2025">${x.innerHTML}</a>`;
+            });
+            solvedTasks = solvedTasks.filter(x => x.classList.contains("solved"));
+            evbar.innerHTML = `
+            <div class=event-pbar>
+                <div class=event-prog style="height:${solvedTasks.length / totalTasks * 100}%">[${(Math.min(solvedTasks.length / totalTasks, 1) * 100).toFixed(0)}%] ${solvedTasks.length} / ${totalTasks}<br>${localize("TASKS SOLVED", "ЗАДАЧИ РЕШЕНИ")}</div>
+            </div>
+            <div class=event-text>${Math.floor(untilend / 864e5)} ${localize("DAYS LEFT", "ДЕНОВИ ОСТАНАТИ")}<br>
+            <a href="https://cs.org.mk/konechna-lista-na-uchesnici-pokaneti-na-moi-2024-copy/" style="color:white" target=_blank>${localize("Announcement", "Соопштение")}</a></div>
+            <select autocomplete=off onchange="localStorage.setItem('event.total', this.value);if(this.value=='0')alert(localize('Turn it on again with:', 'Упали го пак со:')+'\\ndelete localStorage[\\'event.total\\']');location.reload()">
+                <option value=45>${localize("MOI", "МОИ")}</option>
+                <option value=20>${localize("MJOI", "МЈОИ")}</option>
+                <option value=25>${localize("EGOI", "ЕГОИ")}</option>
+                <option value=0>${localize("Turn off", "Исклучи")}</option>
+            </select>
+            `;
+            evbar.querySelector("select").value = totalTasks + "";
+            document.body.appendChild(evbar);
+            let olympsearch = document.createElement("a");
+            olympsearch.id = "olympsearch";
+            olympsearch.innerText = localize("Olympiad valid tasks", "Задачи валидни за олимпијада");
+            olympsearch.href = "#event.olymp2025";
+            document.querySelector(".content-search").appendChild(olympsearch);
+            logFinish("event bar");
         }
     }
     catch (_) {
@@ -829,5 +911,5 @@ function achievementToast(text) {
     div.innerHTML = `<div>${localize("Achievement got!", "Постигнување добиено!")}</div><div>${text}</div>`;
     document.getElementById("achievement-toast").appendChild(div);
 }
-Object.assign(window, { MendoMkEnhancement, taskSolveCinematic, Changelog, addAchievement, getAchievements, achievementToast });
+Object.assign(window, { MendoMkEnhancement, taskSolveCinematic, Changelog, addAchievement, getAchievements, achievementToast, localize });
 MendoMkEnhancement();

@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      49.1
+// @version      49.2
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
 // @match        *://mendo.mk/*
+// @exclude      *://mendo.mk/jforum/*
 // @require      https://cdn.jsdelivr.net/npm/chart.js@4.4.8
 // @noframes
 // @icon         https://mendo.mk/img/favicon.ico
@@ -14,7 +15,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 49.1, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 15 25").getTime();
+const VERSION = 49.2, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 15 25").getTime();
 console.log("%cMENDO.MK Enhancement", "color:magenta;text-decoration:underline;font-size:20px");
 function localize(english, macedonian) {
     return document.cookie.includes("mkjudge_language=en") ? english : macedonian;
@@ -478,6 +479,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
                 document.querySelector("body > div.page-container > div.main > div.main-content > div > div > table > caption").appendChild(progbar);
                 logFinish("task solved percentage");
                 var taskShare = document.createElement("div");
+                taskShare.id = "task-list-buttons";
                 taskShare.style.marginBottom = "10px";
                 taskShare.innerHTML = `
 <button id=solved-tasks-save>${localize("Share solved tasks", "Сподели решени задачи")}</button>
@@ -700,7 +702,16 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
             olympsearch.id = "olympsearch";
             olympsearch.innerText = localize("Olympiad valid tasks", "Задачи валидни за олимпијада");
             olympsearch.href = "#event.olymp2025";
+            let olympsend = document.createElement("button");
+            olympsend.innerText = "Направи листа од решени валидни задачи";
+            olympsend.style = "color:#f0f;background:#eae;border-radius:5px";
+            olympsend.onclick = () => {
+                let list = solvedTasks.map(x => x.previousElementSibling).map(x => `${x.previousElementSibling.innerText} ${x.innerText} (${x.nextElementSibling.innerText}) - ${x.querySelector("a").href}`).join("\n");
+                navigator.clipboard.writeText(list);
+                alert(list);
+            };
             document.querySelector(".content-search").appendChild(olympsearch);
+            document.getElementById("task-list-buttons").appendChild(olympsend);
             logFinish("event bar");
         }
     }

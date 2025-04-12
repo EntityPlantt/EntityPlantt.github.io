@@ -1,4 +1,8 @@
 # VERSION 49
+49.2
+- Add button to generate plain text for valid solved tasks (recommended for sending in e-mail to natprevari at cs.org.mk)
+- Exclude JForum from Mendo Enhancement
+- [Technical] add task-list-buttons ID to the task buttons div
 49.1
 - Changed event deadline to 14th of April
 - Removed cinematic on test submissions (ctest=true)

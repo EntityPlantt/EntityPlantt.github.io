@@ -1,3 +1,7 @@
+# VERSION 50
+- Added coloring of competition results
+- Refactor: changed script code indentation from spaces to tabs
+
 # VERSION 49
 49.2
 - Add button to generate plain text for valid solved tasks (recommended for sending in e-mail to natprevari at cs.org.mk)

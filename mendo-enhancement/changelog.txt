@@ -1,4 +1,11 @@
 # VERSION 50
+50.1
+- Dark mode support for competition results up to republic
+- Improve document title setting
+- Fix lecture/task icons not appearing
+- technical: Remove unnessecary console logging for competition results and commented code on two places
+- technical: Use (encode/decode)URIComponent instead of (un)escape
+50
 - Added coloring of competition results
 - Refactor: changed script code indentation from spaces to tabs
 

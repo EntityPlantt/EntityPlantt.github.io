@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      50
+// @version      50.1
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -15,7 +15,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 50, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 15 25").getTime();
+const VERSION = 50.1, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 15 25").getTime();
 console.log("%cMENDO.MK Enhancement", "color:magenta;text-decoration:underline;font-size:20px");
 function localize(english, macedonian) {
 	return document.cookie.includes("mkjudge_language=en") ? english : macedonian;
@@ -65,40 +65,43 @@ async function MendoMkEnhancement() {
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
 ${ // Dark mode
 			localStorage.getItem("mendo-mk-enhancement-theme") == "dark" ? `
-div.page-container, div.page-container img, div.page-container svg, #cboxWrapper, .copy-io-btn span, .precinematicscreen, .sitelogo {
+.page-container, .page-container img, .page-container svg, #cboxWrapper, .copy-io-btn span, .precinematicscreen, .sitelogo, #container, #container img {
 filter: invert(1) hue-rotate(180deg);
 }
 body, img, svg {
-background: black;
+background-color: black;
 }
 ::-webkit-scrollbar {
 width: initial;
 }
 ::-webkit-scrollbar-track {
-background: #eee;
+background-color: #eee;
 }
 body::-webkit-scrollbar-track {
-background: #111;
+background-color: #111;
 }
 ::-webkit-scrollbar-thumb {
-background: #ddd;
+background-color: #ddd;
+}
+#infoinfo {
+color: white;
 }
 ` : ""}
 body::-webkit-scrollbar-thumb {
-background: #222;
+background-color: #222;
 }
 ${AprilFools ? `
 td.solved, td.wrong {
-background: #bfb !important;
+background-color: #bfb !important;
 }
 td.correct {
-background: #fbb !important;
+background-color: #fbb !important;
 }` : `
 td.solved, td.correct {
-background: #bfb !important;
+background-color: #bfb !important;
 }
 td.wrong {
-background: #fbb !important;
+background-color: #fbb !important;
 }
 `}
 .copy-io-btn span:before {
@@ -116,21 +119,21 @@ margin-bottom: 20px;
 cursor: pointer;
 }
 #search:focus {
-background: #eee;
+background-color: #eee;
 }
 #search-submit:hover, #search:hover {
-background: #ddd;
+background-color: #ddd;
 }
 .copy-io-btn {
 float: right;
-background: #ddd;
+background-color: #ddd;
 padding: 5px;
 cursor: pointer;
 border-radius: 5px;
 user-select: none;
 }
 .copy-io-btn:hover {
-background: #e8e8e8;
+background-color: #e8e8e8;
 }
 #search:active, #search:focus, #search-submit:active, #search-submit:focus {
 box-shadow: 0 0 2.5px 2.5px black;
@@ -140,7 +143,7 @@ box-shadow: 0 0 2.5px 2.5px black;
 10%, 40% {filter: blur(0px); opacity: 1;}
 }
 td.share-solved {
-background: #ac0 !important;
+background-color: #ac0 !important;
 }
 .update-available {
 animation: update-available .5s infinite linear;
@@ -159,14 +162,14 @@ from {color: #4f4}
 to {color: white}
 }
 .progbar {
-background: #0004;
+background-color: #0004;
 margin-top: .5em;
 border-radius: 5px;
 padding: 2.5px;
 width: 100%;
 }
 .progbar > div {
-background: #bfb;
+background-color: #bfb;
 border: solid 1px gray;
 border-radius: 2.5px;
 height: 100%;
@@ -179,17 +182,17 @@ display: none !important;
 }
 .sorttask {
 font: inherit;
-background: transparent;
+background-color: transparent;
 border: none;
 display: inline-block;
 float: right;
 width: 1rem;
 }
 td.wrong.verdict-re {
-background: #fda !important;
+background-color: #fda !important;
 }
 td.wrong.verdict-tle {
-background: #bbf !important;
+background-color: #bbf !important;
 }
 .precinematicscreen {
 top: 0px;
@@ -197,7 +200,7 @@ left: 0px;
 position: fixed;
 width: 100vw;
 height: 100vh;
-background: white;
+background-color: white;
 font-size: 20px;
 cursor: pointer;
 z-index: 99999;
@@ -216,7 +219,7 @@ text-align: right;
 color: black;
 }
 #achievement-toast > div {
-background: gold;
+background-color: gold;
 border-top-left-radius: 20px;
 border-bottom-left-radius: 20px;
 padding: 10px 20px;
@@ -293,7 +296,7 @@ display: flex;
 flex-direction: column;
 width: 200px;
 height: 100vh;
-background: #606;
+background-color: #606;
 font-family: system-ui, Verdana, sans-serif;
 font-size: 20px;
 font-weight: bold;
@@ -313,7 +316,7 @@ flex-direction: column-reverse;
 overflow: hidden;
 }
 .event-prog {
-background: #808;
+background-color: #808;
 width: 100%;
 padding-top: 10px;
 overflow: hidden;
@@ -321,15 +324,15 @@ overflow: hidden;
 .event select {
 color: inherit;
 font: inherit;
-background: transparent;
+background-color: transparent;
 border: none;
 border-top: solid 3px #808;
 }
 .event-hot, td.event-hot {
-background: #fbf !important;
+background-color: #fbf !important;
 }
 .event-hot a:hover {
-background: #fdf !important;
+background-color: #fdf !important;
 }
 #olympsearch {
 color: #808;
@@ -364,11 +367,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 				}
 			}
 			logFinish("check for updates");
-		});/*.catch(() => {
-			fetch("https://greasyfork.org/scripts/450985-mendo-mk-enhancement/code/MENDOMK%20Enhancement.meta.js").then(x => x.text()).then(cfUpdt => {
-				let offv = parseFloat(/@version *(\d+)/.exec(cfUpdt)[1]);
-				// ...
-			})});*/
+		});
 		/* if (document.querySelector(".main-navigation > ul") && !document.URL.includes("Help.do")) {
 			let elm = document.createElement("li");
 			elm.innerHTML = `<a href="/simple_jsp/report_bug.jsp" class="cbrbm cboxElement">${true ? "Пријави Грешка" : "Report Bug"}</a>`;
@@ -385,15 +384,12 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 		`;
 			search.onsubmit = e => {
 				e.preventDefault();
-				location.hash = "#" + escape(search.querySelector("#search").value);
+				location.hash = "#" + encodeURIComponent(search.querySelector("#search").value);
 				search.querySelector("#search").blur();
 				hashChange();
 			}
 			function hashChange() {
-				// if (document.activeElement == search.querySelector("#search")) {
-				// 	return;
-				// }
-				let kw = unescape(location.hash.substring(1));
+				let kw = decodeURIComponent(location.hash.substring(1));
 				search.querySelector("#search").value = kw;
 				kw = kw.toLowerCase();
 				if (kw.includes("mirror")) document.body.parentElement.classList.add("mirrored");
@@ -523,9 +519,10 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 		else if (document.querySelector(".pagetitle")) {
 			window.name = document.querySelector(".pagetitle").innerText;
 		}
-		document.title = (document.querySelector("body > div.page-container > div.header > div.header-breadcrumbs > ul > li:last-child > a")
-			?? document.querySelector(".pagetitle")
+		document.title = (document.querySelector(".pagetitle")
+			?? document.querySelector("body > div.page-container > div.header > div.header-breadcrumbs > ul > li:last-child > a")
 			?? document.querySelector(".pagename")
+			?? document.getElementById("infoinfo")
 			?? { innerText: document.URL.substring(document.URL.indexOf("/", 8) + 1) }
 		).innerText + " – МЕНДО";
 		logFinish("document title set");
@@ -704,7 +701,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 			olympsearch.href = "#event.olymp2025";
 			let olympsend = document.createElement("button");
 			olympsend.innerText = "Направи листа од решени валидни задачи";
-			olympsend.style = "color:#f0f;background:#eae;border-radius:5px";
+			olympsend.style = "color:#f0f;background-color:#eae;border-radius:5px";
 			olympsend.onclick = () => {
 				let list = solvedTasks.map(x => x.previousElementSibling).map(x => `${x.previousElementSibling.innerText} ${x.innerText} (${x.nextElementSibling.innerText}) - ${x.querySelector("a").href}`).join("\n");
 				navigator.clipboard.writeText(list);
@@ -734,8 +731,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 						j.style.fontWeight = "bold";
 						j.style.border = "solid 2px #0008";
 					}
-					console.log(j.style.backgroundColor = `hsl(${perc * 120}, 100%, 70%)`);
-					console.log(j);
+					j.style.backgroundColor = `hsl(${perc * 120}, 100%, 70%)`;
 				});
 			}
 			logFinish("olympiad results coloring");
@@ -839,7 +835,7 @@ function taskSolveCinematic(showType, reformatTcs = false) {
 		const cinematics = [() => {
 			let img = document.createElement("img");
 			img.src = "https://i.ibb.co/b7WW8Q3/mission-passed.png";
-			img.style = "animation: gta-cinematic-image 17s 1 linear; position: fixed; top: 0; left: 0; width: 100vw; background: transparent !important";
+			img.style = "animation: gta-cinematic-image 17s 1 linear; position: fixed; top: 0; left: 0; width: 100vw; background-color: transparent !important";
 			let audio = document.createElement("audio");
 			audio.oncanplay = () => audio.play();
 			audio.crossorigin = "anonymous";
@@ -849,7 +845,7 @@ function taskSolveCinematic(showType, reformatTcs = false) {
 		}, () => {
 			let xporb = new Image;
 			xporb.src = "https://minecraft.wiki/images/Experience_Orb_Value_3-6.png?6de8c&format=original";
-			xporb.style = `position:fixed;translate:-50% -50%;width:25px;background:transparent`;
+			xporb.style = `position:fixed;translate:-50% -50%;width:25px;background-color:transparent`;
 			let orbsfx = new Audio("https://minecraft.wiki/images/Successful_hit.ogg?b99e0");
 			let orbs = Array(document.querySelectorAll(".verdict-ac").length * 2).fill(0).map(() => {
 				let orb = xporb.cloneNode();
@@ -893,7 +889,7 @@ function taskSolveCinematic(showType, reformatTcs = false) {
 			audio.src = "https://www.myinstants.com/media/sounds/erro.mp3";
 			let img = document.createElement("img");
 			img.src = "https://i.kym-cdn.com/photos/images/original/000/918/810/a22.jpg";
-			img.style = "position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(.5); background: transparent !important; box-shadow: black 10px 10px 5px";
+			img.style = "position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(.5); background-color: transparent !important; box-shadow: black 10px 10px 5px";
 			document.body.appendChild(img);
 			img.onclick = () => img.remove();
 		}, () => {
@@ -904,10 +900,10 @@ function taskSolveCinematic(showType, reformatTcs = false) {
 			dm.name = "deathmap";
 			dm.innerHTML = `<area shape=rect coords="322,371,977,436" href="javascript:document.getElementById('deathmap').remove();document.querySelector('.page-container').classList.remove('deathscreen')">
 			<area shape=rect coords="322,450,977,509" href="/">
-			<img src="https://i.ibb.co/DHYzFtyL/deathscreen.png" height=720 style="background:transparent" usemap="#deathmap">`;
+			<img src="https://i.ibb.co/DHYzFtyL/deathscreen.png" height=720 style="background-color:transparent" usemap="#deathmap">`;
 			dm.style = "position:fixed;top:50%;left:50%;translate:-50% -50%";
 			let bg = document.createElement("div");
-			bg.style = "top:0;left:0;width:100vw;height:100vh;position:fixed;background:#ff000540";
+			bg.style = "top:0;left:0;width:100vw;height:100vh;position:fixed;background-color:#ff000540";
 			bg.id = "deathmap";
 			bg.appendChild(dm);
 			document.body.appendChild(bg);

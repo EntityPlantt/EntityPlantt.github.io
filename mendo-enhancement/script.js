@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      50.1
+// @version      50.2
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -15,7 +15,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 50.1, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 15 25").getTime();
+const VERSION = 50.2, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 15 25").getTime();
 console.log("%cMENDO.MK Enhancement", "color:magenta;text-decoration:underline;font-size:20px");
 function localize(english, macedonian) {
 	return document.cookie.includes("mkjudge_language=en") ? english : macedonian;
@@ -337,6 +337,12 @@ background-color: #fdf !important;
 #olympsearch {
 color: #808;
 text-decoration: underline;
+}
+.nameplate {
+display: flex;
+align-items: center;
+flex-direction: row;
+gap: .5em;
 }
 /* April Fools'! */
 html.mirrored {
@@ -713,6 +719,13 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 		}
 		if (document.URL.includes("/User_CompetitionResults.do?id=")) {
 			let res = document.getElementById("resultstable");
+			res.querySelectorAll("td[data-user-id] table").forEach(tb => {
+				let wrapper = document.createElement("div");
+				tb.querySelectorAll("td").forEach(x => Array.from(x.childNodes).forEach(y => wrapper.appendChild(y)));
+				wrapper.className = "nameplate";
+				tb.parentElement.appendChild(wrapper);
+				tb.remove();
+			});
 			let table = Array(res.querySelector("tr").childNodes.length);
 			for (let tr of res.querySelectorAll("tr")) {
 				for (let i = 0; i < tr.childNodes.length; i++) {

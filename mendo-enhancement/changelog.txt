@@ -1,4 +1,6 @@
 # VERSION 50
+50.2
+- You are now able to copy the competition results into Excel/Calc without destroying the layout
 50.1
 - Dark mode support for competition results up to republic
 - Improve document title setting

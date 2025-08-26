@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         OJ.UZ enhancement
 // @namespace    ojuzenhancement
-// @version      v5
+// @version      v6
 // @description  Enhances OJ.UZ
 // @author       EntityPlantt
 // @match        https://oj.uz/*
@@ -28,12 +28,20 @@ addEventListener("DOMContentLoaded", () => {
 	background: #eee;
 	box-shadow: none;
 	height: 30px !important;
+    display: grid;
 	}
+    .progressbar > * {
+    grid-row: 1;
+    grid-column: 1;
+    }
 	.progressbar .text {
 	color: #333;
-	top: -20px !important;
+    top: 0 !important;
+    display: grid-item;
 	}
-	.progressbar > .bar { animation: progressbargradient 2s linear infinite; }
+	.progressbar > .bar {
+    animation: progressbargradient 2s linear infinite;
+    }
 	#my-score canvas { animation: myscore_s 10s linear infinite, myscore_r 10s ease infinite; }
 	.label {
 	text-transform: uppercase;
@@ -58,6 +66,7 @@ addEventListener("DOMContentLoaded", () => {
 	body::-webkit-scrollbar { width: 15px; height: 15px }
 	body::-webkit-scrollbar-track { background: #222 }
 	body::-webkit-scrollbar-thumb { background: #444; border-radius: 7.5px }
+    td { align-items: center; justify-content: space-between; }
 	`;
 	document.querySelector("head").appendChild(style);
 	function setProgressBars() {

@@ -1,3 +1,10 @@
+# VERSION 51
+51
+- Added a checkmark/X in the title of every task depending on the last submission
+- Removed description from achievement toasts
+- Removed redundant elements from all pages
+- [Technical] Removed unused commented code
+
 # VERSION 50
 50.2
 - You are now able to copy the competition results into Excel/Calc without destroying the layout

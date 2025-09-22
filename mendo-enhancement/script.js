@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      50.2
+// @version      51
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -15,7 +15,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 50.2, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 15 25").getTime();
+const VERSION = 51, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 15 25").getTime();
 console.log("%cMENDO.MK Enhancement", "color:magenta;text-decoration:underline;font-size:20px");
 function localize(english, macedonian) {
 	return document.cookie.includes("mkjudge_language=en") ? english : macedonian;
@@ -374,12 +374,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 			}
 			logFinish("check for updates");
 		});
-		/* if (document.querySelector(".main-navigation > ul") && !document.URL.includes("Help.do")) {
-			let elm = document.createElement("li");
-			elm.innerHTML = `<a href="/simple_jsp/report_bug.jsp" class="cbrbm cboxElement">${true ? "Пријави Грешка" : "Report Bug"}</a>`;
-			document.querySelector(".main-navigation > ul").appendChild(elm);
-			logFinish("add report bug form");
-		} */
+        document.querySelector(".searchform")?.remove();
 		if (document.URL.includes("/Training.do") || document.URL.includes("/User_Competition.do")) {
 			var search = document.createElement("form");
 			search.className = "content-search";
@@ -460,10 +455,6 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 			}
 		}
 		if (document.querySelector("body > div.page-container > div.header > div.header-bottom > div")) {
-			document.querySelector("body > div.page-container > div.header > div.header-bottom > div").innerHTML += `<ul><li><a style="
-			background-image: url(./img/lightbulb.png);
-			" href='/algoritmi'>${localize("II Algorithms", "ИИ Алгоритми")}</a></li></ul>`;
-			logFinish("add ii algorithms button");
 			document.querySelector("body > div.page-container > div.header > div.header-bottom > div > ul:nth-child(1) > li > a").href = "/";
 			document.querySelector("body > div.page-container > div.header > div.header-bottom > div > ul:nth-child(2) > li > a").href = "/Training.do";
 			document.querySelector("body > div.page-container > div.header > div.header-bottom > div > ul:nth-child(2) > li > a").className = "";
@@ -572,6 +563,19 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 				hchange();
 				addEventListener("hashchange", hchange);
 				logFinish("listen to hash change");
+                let tsContainer = document.querySelector("hr.clear-contentunit").previousElementSibling, pttl = document.querySelector(".pagetitle");
+                pttl.style = "display:flex;padding:.25em";
+                if (tsContainer.textContent.includes(localize("Last submission sent on ", "Последниот код е испратен на "))) {
+                    let ts = tsContainer.children[0];
+                    let iurl = /^url\("(.+)"\)$/.exec(ts.style.backgroundImage)[1];
+                    let img = new Image;
+                    img.src = iurl;
+                    img.style = "border:none;margin:0;padding:0;width:1em;height:1em;margin-left:.5em;";
+                    pttl.appendChild(img);
+                    tsContainer.remove();
+                    logFinish("remove last submit");
+                }
+                document.querySelector("hr.clear-contentunit").remove();
 			}
 			if (document.URL.includes("/Task.do") && document.querySelector("#solutionCode")) {
 				setInterval(() => {
@@ -653,6 +657,13 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 			document.querySelector("#LoginForm>fieldset").appendChild(elm);
 			logFinish("achievements");
 		}
+        if (document.querySelector(".nav2>p>a")) {
+            let x = document.querySelector(".nav2>p>a");
+            document.querySelector(".header-breadcrumbs").appendChild(x);
+            document.querySelector(".header-bottom").remove();
+            x.style = "float:right;margin-right:1em;";
+            document.querySelector(".header-breadcrumbs").style.paddingTop = 0;
+        }
 		if (document.querySelector(".main-navigation>ul")) {
 			let nav = document.querySelector(".main-navigation>ul");
 			let collapseparent = document.querySelector(".main-navigation>.round-border-topright");
@@ -668,7 +679,9 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 			collapse.onclick = collapseNavigation;
 			let links = [
 				["National", "Национални", "/Training.do?cid=1"],
-				["International", "Интернационални", "/Training.do?cid=2"]
+				["International", "Интернационални", "/Training.do?cid=2"],
+                ["II Algorithms", "ИИ Алгоритми", "/algoritmi/Welcome.do"],
+                ["Tasks for practice", "Задачи за вежбање", "/algoritmi/User_Competition.do?id=150"]
 			];
 			nav.innerHTML = links.map(l => `<li><a href="${l[2]}">${localize(l[0], l[1])}</a></li>`).join("") + nav.innerHTML;
 			if (Date.now() < EventDeadline) {
@@ -931,12 +944,8 @@ async function Changelog() {
 	alert(await fetch("https://raw.githubusercontent.com/EntityPlantt/EntityPlantt.github.io/refs/heads/main/mendo-enhancement/changelog.txt").then(x => x.text()).catch(x => "Changelog not found"));
 }
 function getAchievements() {
-	let ach = (localStorage.getItem("achievements " + document.querySelector("#LoginForm>fieldset>p>a").innerText) || "{}");
-	if (ach[0] != "{") {
-		alert(localize("As of 44.2, The way achievements are stored was updated, please get them again. Sorry", "Од 44.2, Начинот на зачувување на постигнувањата е сменет, ве молам добиете ги пак. Жал ми е"));
-		ach = {};
-	}
-	else ach = JSON.parse(ach);
+	let ach = JSON.parse(localStorage.getItem("achievements " + document.querySelector("#LoginForm>fieldset>p>a").innerText) || "{}");
+    // 44.2 achievement migration existed here
 	return ach;
 }
 function addAchievement(name, lvl) {
@@ -944,7 +953,7 @@ function addAchievement(name, lvl) {
 	if (ach[name] >= lvl) return false;
 	ach[name] = lvl;
 	localStorage.setItem("achievements " + document.querySelector("#LoginForm>fieldset>p>a").innerText, JSON.stringify(ach));
-	achievementToast(achname[name + lvl]);
+	achievementToast(/^(.+) \(.+?\)$/.exec(achname[name + lvl])[1]);
 	return true;
 }
 function achievementToast(text) {

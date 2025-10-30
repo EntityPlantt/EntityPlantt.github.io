@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      51
+// @version      52
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -15,7 +15,7 @@
 // @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 51, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 15 25").getTime();
+const VERSION = 52, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 15 25").getTime();
 console.log("%cMENDO.MK Enhancement", "color:magenta;text-decoration:underline;font-size:20px");
 function localize(english, macedonian) {
 	return document.cookie.includes("mkjudge_language=en") ? english : macedonian;
@@ -65,7 +65,7 @@ async function MendoMkEnhancement() {
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
 ${ // Dark mode
 			localStorage.getItem("mendo-mk-enhancement-theme") == "dark" ? `
-.page-container, .page-container img, .page-container svg, #cboxWrapper, .copy-io-btn span, .precinematicscreen, .sitelogo, #container, #container img {
+.page-container, .page-container img, .page-container svg, #cboxWrapper, .precinematicscreen, .sitelogo, #container, #container img {
 filter: invert(1) hue-rotate(180deg);
 }
 body, img, svg {
@@ -104,9 +104,6 @@ td.wrong {
 background-color: #fbb !important;
 }
 `}
-.copy-io-btn span:before {
-content: "📃";
-}
 #search {
 font-family: consolas;
 }
@@ -126,14 +123,12 @@ background-color: #ddd;
 }
 .copy-io-btn {
 float: right;
-background-color: #ddd;
-padding: 5px;
 cursor: pointer;
 border-radius: 5px;
 user-select: none;
 }
 .copy-io-btn:hover {
-background-color: #e8e8e8;
+opacity: .7;
 }
 #search:active, #search:focus, #search-submit:active, #search-submit:focus {
 box-shadow: 0 0 2.5px 2.5px black;
@@ -344,6 +339,51 @@ align-items: center;
 flex-direction: row;
 gap: .5em;
 }
+#changelog {
+position: fixed;
+right: 0;
+height: calc(100vh - 6em);
+width: 30vw;
+top: 0;
+box-shadow: solid black 1px;
+overflow-y: auto;
+background: #ddd;
+padding: 2em;
+font-size: 25px;
+margin: 1em;
+}
+#changelog-cont {
+position: fixed;
+top: 0;
+left: 0;
+height: 100vh;
+width: 100vw;
+background: #0004;
+}
+.task-tab {
+padding: 5px 20px !important;
+background: #ddd;
+border-top-left-radius: 5px;
+border-top-right-radius: 5px;
+transition: translate .3s, background-color .3s;
+translate: 0 2px;
+text-decoration: none !important;
+color: #222 !important;
+}
+.task-tab::before {
+padding-right: .35em;
+}
+.task-tab:hover, .task-tab.active {
+translate: 0;
+background-color: #eee;
+}
+.task-tab-group {
+gap: 2px;
+display: flex;
+border-bottom: solid 5px #ddd;
+border-bottom-left-radius: 5px;
+border-bottom-right-radius: 5px;
+}
 /* April Fools'! */
 html.mirrored {
 transform: rotateY(1620deg) rotateX(-10deg);
@@ -374,7 +414,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 			}
 			logFinish("check for updates");
 		});
-        document.querySelector(".searchform")?.remove();
+		document.querySelector(".searchform")?.remove();
 		if (document.URL.includes("/Training.do") || document.URL.includes("/User_Competition.do")) {
 			var search = document.createElement("form");
 			search.className = "content-search";
@@ -525,23 +565,24 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 		logFinish("document title set");
 		if (document.URL.includes("/Task.do") || document.URL.includes("User_ListSubmissions.do")) {
 			document.querySelectorAll("body > div.page-container > div.main > div.main-content > div.column1-unit.taskContentView > table pre").forEach(pre => {
-				var text = pre.innerText.substring(pre.innerText.indexOf("\n") + 1);
-				var copyIoBtn = document.createElement("span");
-				copyIoBtn.innerHTML = "<span></span>";
-				copyIoBtn.setAttribute("onclick", `navigator.clipboard.writeText(${JSON.stringify(text)})`);
-				copyIoBtn.className = "copy-io-btn";
-				pre.parentElement.appendChild(copyIoBtn);
+				let text = pre.innerText.substring(pre.innerText.indexOf("\n") + 1);
+				let btn = document.createElement("span");
+				btn.onclick = () => {
+					navigator.clipboard.writeText(text);
+					btn.className += "-check-fill";
+				}
+				btn.onmouseleave = () => setTimeout(() => void (btn.className = btn.className.replace("-check-fill", "")), 500);
+				btn.className = "copy-io-btn bi bi-clipboard";
+				pre.parentElement.prepend(btn);
 			});
 			logFinish("copy io buttons");
 			let nav = document.createElement("div");
+			nav.className = "task-tab-group";
 			if (document.URL.includes("/Task.do")) {
-				nav.innerHTML = `<a href="#">${localize("Task", "Задача")}</a> |
-<a href="#submit">${localize("Submit", "Поднеси")}</a> |
-<a href="${document.URL.replace(/Task\.do\?(?:competition=\d+&)?id/, "User_ListSubmissions.do?task").replace(/#.*$/, "")}">${localize("Previous submissions", "Претходни субмисии")}</a>`;
+				nav.innerHTML = `<a href="#" class="task-tab bi bi-mortarboard" id=task-tab-task>${localize("Task", "Задача")}</a><a href="#submit" class="task-tab bi bi-send" id=task-tab-submit>${localize("Submit", "Поднеси")}</a><a href="${document.URL.replace(/Task\.do\?(?:competition=\d+&)?id/, "User_ListSubmissions.do?task").replace(/#.*$/, "")}" class="task-tab bi bi-list-task">${localize("Previous submissions", "Претходни субмисии")}</a>`;
 			}
 			else {
-				nav.innerHTML = `<a href="${document.URL.replace("User_ListSubmissions.do?task", "Task.do?id")}">${localize("Task", "Задача")}</a> |
-<a href="${document.URL.replace("User_ListSubmissions.do?task", "Task.do?id")}#submit">${localize("Submit", "Поднеси")}</a> | <b style=color:black>${localize("Previous submissions", "Претходни субмисии")}</b>`;
+				nav.innerHTML = `<a href="${document.URL.replace("User_ListSubmissions.do?task", "Task.do?id")}" class="task-tab bi bi-mortarboard">${localize("Task", "Задача")}</a><a href="${document.URL.replace("User_ListSubmissions.do?task", "Task.do?id")}#submit" class="task-tab bi bi-send">${localize("Submit", "Поднеси")}</a><b style=color:black class="task-tab bi bi-list-task active">${localize("Previous submissions", "Претходни субмисии")}</b>`;
 			}
 			nav.style = `font-size:15px;margin-bottom:20px;color:gray`;
 			document.querySelector(".main-content").prepend(nav);
@@ -549,33 +590,38 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 			if (document.URL.includes("/Task.do")) {
 				function hchange() {
 					let Vtask = document.querySelector(".taskContentView"), Vsubmit = document.querySelector("#submitinfocontainer");
+					let Ttask = document.getElementById("task-tab-task"), Tsubmit = document.getElementById("task-tab-submit");
 					if (!Vsubmit) return;
 					if (location.hash.length < 2) {
 						Vtask.classList.remove("hidden");
 						Vsubmit.classList.add("hidden");
+						Ttask.classList.add("active");
+						Tsubmit.classList.remove("active");
 					}
 					else if (location.hash == "#submit") {
 						Vtask.classList.add("hidden");
 						Vsubmit.classList.remove("hidden");
+						Ttask.classList.remove("active");
+						Tsubmit.classList.add("active");
 					}
 					document.body.scrollTo(0, 0);
 				}
 				hchange();
 				addEventListener("hashchange", hchange);
 				logFinish("listen to hash change");
-                let tsContainer = document.querySelector("hr.clear-contentunit").previousElementSibling, pttl = document.querySelector(".pagetitle");
-                pttl.style = "display:flex;padding:.25em";
-                if (tsContainer.textContent.includes(localize("Last submission sent on ", "Последниот код е испратен на "))) {
-                    let ts = tsContainer.children[0];
-                    let iurl = /^url\("(.+)"\)$/.exec(ts.style.backgroundImage)[1];
-                    let img = new Image;
-                    img.src = iurl;
-                    img.style = "border:none;margin:0;padding:0;width:1em;height:1em;margin-left:.5em;";
-                    pttl.appendChild(img);
-                    tsContainer.remove();
-                    logFinish("remove last submit");
-                }
-                document.querySelector("hr.clear-contentunit").remove();
+				let tsContainer = document.querySelector("hr.clear-contentunit").previousElementSibling, pttl = document.querySelector(".pagetitle");
+				pttl.style = "display:flex;padding:.25em";
+				if (tsContainer.textContent.includes(localize("Last submission sent on ", "Последниот код е испратен на "))) {
+					let ts = tsContainer.children[0];
+					let iurl = /^url\("(.+)"\)$/.exec(ts.style.backgroundImage)[1];
+					let img = new Image;
+					img.src = iurl;
+					img.style = "border:none;margin:0;padding:0;width:1em;height:1em;margin-left:.5em;";
+					pttl.appendChild(img);
+					tsContainer.remove();
+					logFinish("remove last submit");
+				}
+				document.querySelector("hr.clear-contentunit").remove();
 			}
 			if (document.URL.includes("/Task.do") && document.querySelector("#solutionCode")) {
 				setInterval(() => {
@@ -657,13 +703,13 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 			document.querySelector("#LoginForm>fieldset").appendChild(elm);
 			logFinish("achievements");
 		}
-        if (document.querySelector(".nav2>p>a")) {
-            let x = document.querySelector(".nav2>p>a");
-            document.querySelector(".header-breadcrumbs").appendChild(x);
-            document.querySelector(".header-bottom").remove();
-            x.style = "float:right;margin-right:1em;";
-            document.querySelector(".header-breadcrumbs").style.paddingTop = 0;
-        }
+		if (document.querySelector(".nav2>p>a")) {
+			let x = document.querySelector(".nav2>p>a");
+			document.querySelector(".header-breadcrumbs").appendChild(x);
+			document.querySelector(".header-bottom").remove();
+			x.style = "float:right;margin-right:1em;";
+			document.querySelector(".header-breadcrumbs").style.paddingTop = 0;
+		}
 		if (document.querySelector(".main-navigation>ul")) {
 			let nav = document.querySelector(".main-navigation>ul");
 			let collapseparent = document.querySelector(".main-navigation>.round-border-topright");
@@ -680,8 +726,8 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 			let links = [
 				["National", "Национални", "/Training.do?cid=1"],
 				["International", "Интернационални", "/Training.do?cid=2"],
-                ["II Algorithms", "ИИ Алгоритми", "/algoritmi/Welcome.do"],
-                ["Tasks for practice", "Задачи за вежбање", "/algoritmi/User_Competition.do?id=150"]
+				["II Algorithms", "ИИ Алгоритми", "/algoritmi/Welcome.do"],
+				["Tasks for practice", "Задачи за вежбање", "/algoritmi/User_Competition.do?id=150"]
 			];
 			nav.innerHTML = links.map(l => `<li><a href="${l[2]}">${localize(l[0], l[1])}</a></li>`).join("") + nav.innerHTML;
 			if (Date.now() < EventDeadline) {
@@ -941,11 +987,18 @@ function taskSolveCinematic(showType, reformatTcs = false) {
 	document.body.appendChild(preCinematicScreen);
 }
 async function Changelog() {
-	alert(await fetch("https://raw.githubusercontent.com/EntityPlantt/EntityPlantt.github.io/refs/heads/main/mendo-enhancement/changelog.txt").then(x => x.text()).catch(x => "Changelog not found"));
+	let div = document.createElement("div"), cont = document.createElement("div");
+	div.id = "changelog";
+	cont.id = "changelog-cont";
+	cont.appendChild(div);
+	document.body.appendChild(cont);
+	cont.onclick = () => cont.remove();
+	div.innerText = "Fetching changelog...";
+	div.innerText = await fetch("https://raw.githubusercontent.com/EntityPlantt/EntityPlantt.github.io/refs/heads/main/mendo-enhancement/changelog.txt").then(x => x.text()).catch(x => "Changelog not found");
 }
 function getAchievements() {
 	let ach = JSON.parse(localStorage.getItem("achievements " + document.querySelector("#LoginForm>fieldset>p>a").innerText) || "{}");
-    // 44.2 achievement migration existed here
+	// 44.2 achievement migration existed here
 	return ach;
 }
 function addAchievement(name, lvl) {

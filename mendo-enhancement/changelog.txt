@@ -4,6 +4,7 @@
 - Switch task tab colors (active & non-active)
 - [Technical] Made USERSCRIPT_LINK variable that points to the GreasyFork link
 - [Technical] Added FOUC prevention (flash of unstyled content), but that still doesn't fix the issue
+- Added support button that tells you to leave a positive comment on the GreasyFork page (please support this project by sharing it!)
 
 # VERSION 52
 - Added changelog sidebar

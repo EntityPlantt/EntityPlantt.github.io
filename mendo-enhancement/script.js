@@ -1,24 +1,30 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      52
+// @version      53
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
 // @match        *://mendo.mk/*
 // @exclude      *://mendo.mk/jforum/*
 // @require      https://cdn.jsdelivr.net/npm/chart.js@4.4.8
+// @require      https://cdn.jsdelivr.net/npm/js-base64@2.5.2/base64.min.js
 // @noframes
 // @icon         https://mendo.mk/img/favicon.ico
 // @grant        none
 // @license      CC-BY-ND
-// @downloadURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.user.js
-// @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
+// @downloadURL  https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.user.js
+// @updateURL    https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
-const VERSION = 52, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 15 25").getTime();
+// FOUC prevention
+const fouc = document.createElement("style");
+fouc.innerHTML = "html,*{opacity:0 !important;}";
+document.head.prepend(fouc);
+
+const VERSION = 53, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 15 25").getTime(), USERSCRIPT_LINK = "https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement";
 console.log("%cMENDO.MK Enhancement", "color:magenta;text-decoration:underline;font-size:20px");
-function localize(english, macedonian) {
-	return document.cookie.includes("mkjudge_language=en") ? english : macedonian;
+function localize(en, mk) {
+	return document.cookie.includes("mkjudge_language=en") ? en : mk;
 }
 const achlink = {
 	task: "/Training.do?cid=1",
@@ -50,6 +56,7 @@ async function MendoMkEnhancement() {
 			if (!document.querySelector(".main-navigation")) return;
 			localStorage.setItem("nav collapsed", document.querySelector(".main-navigation").classList.toggle("collapsed"));
 		}
+        fouc.remove();
 		if (localStorage.getItem("nav collapsed") == "true") collapseNavigation();
 		logFinish("collapse navigation if collapsed");
 		var style = document.createElement("style");
@@ -62,10 +69,10 @@ async function MendoMkEnhancement() {
 			logFinish("detect color scheme");
 		}
 		style.innerHTML = `
-@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css");
 ${ // Dark mode
 			localStorage.getItem("mendo-mk-enhancement-theme") == "dark" ? `
-.page-container, .page-container img, .page-container svg, #cboxWrapper, .precinematicscreen, .sitelogo, #container, #container img {
+.page-container, .page-container img, .page-container svg, #cboxWrapper, .precinematicscreen, .sitelogo, #container, #container img, .nav-emoji {
 filter: invert(1) hue-rotate(180deg);
 }
 body, img, svg {
@@ -361,8 +368,8 @@ width: 100vw;
 background: #0004;
 }
 .task-tab {
-padding: 5px 20px !important;
-background: #ddd;
+padding: 5px 20px;
+background: #eee;
 border-top-left-radius: 5px;
 border-top-right-radius: 5px;
 transition: translate .3s, background-color .3s;
@@ -375,14 +382,30 @@ padding-right: .35em;
 }
 .task-tab:hover, .task-tab.active {
 translate: 0;
-background-color: #eee;
+background-color: #e6e6e6;
+}
+.task-tab.active {
+background-color: #ddd;
+z-index: 9;
 }
 .task-tab-group {
 gap: 2px;
 display: flex;
-border-bottom: solid 5px #ddd;
+font-size: 15px;
+}
+.task-tab-group-after {
+padding: 2.5px;
+display: block;
+background-color: #ddd;
 border-bottom-left-radius: 5px;
 border-bottom-right-radius: 5px;
+margin-bottom: 15px;
+position: relative;
+z-index: 9;
+}
+.nav-emoji {
+float: right;
+margin-right: 10px;
 }
 /* April Fools'! */
 html.mirrored {
@@ -395,7 +418,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 		document.head.appendChild(style);
 		logFinish("inject style sheet");
 		if (document.querySelector(".sitename h1 a")) {
-			document.querySelector(".sitename h1").innerHTML += " <a href='https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement' id=enhancement-logo><em><b>Enhanced</b></em></a>";
+			document.querySelector(".sitename h1").innerHTML += ` <a href='${USERSCRIPT_LINK}' id=enhancement-logo><em><b>Enhanced</b></em></a>`;
 		}
 		logFinish("complete site logo");
 		fetch("https://raw.githubusercontent.com/EntityPlantt/EntityPlantt.github.io/refs/heads/main/mendo-enhancement/version.txt").then(async x => {
@@ -414,7 +437,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 			}
 			logFinish("check for updates");
 		});
-		document.querySelector(".searchform")?.remove();
+        document.querySelector(".searchform")?.remove();
 		if (document.URL.includes("/Training.do") || document.URL.includes("/User_Competition.do")) {
 			var search = document.createElement("form");
 			search.className = "content-search";
@@ -568,74 +591,76 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 				let text = pre.innerText.substring(pre.innerText.indexOf("\n") + 1);
 				let btn = document.createElement("span");
 				btn.onclick = () => {
-					navigator.clipboard.writeText(text);
-					btn.className += "-check-fill";
-				}
-				btn.onmouseleave = () => setTimeout(() => void (btn.className = btn.className.replace("-check-fill", "")), 500);
+                    navigator.clipboard.writeText(text);
+                    btn.className += "-check-fill";
+                }
+                btn.onmouseleave = () => setTimeout(() => void(btn.className = btn.className.replace("-check-fill", "")), 500);
 				btn.className = "copy-io-btn bi bi-clipboard";
 				pre.parentElement.prepend(btn);
 			});
 			logFinish("copy io buttons");
 			let nav = document.createElement("div");
-			nav.className = "task-tab-group";
+            nav.className = "task-tab-group";
 			if (document.URL.includes("/Task.do")) {
 				nav.innerHTML = `<a href="#" class="task-tab bi bi-mortarboard" id=task-tab-task>${localize("Task", "Задача")}</a><a href="#submit" class="task-tab bi bi-send" id=task-tab-submit>${localize("Submit", "Поднеси")}</a><a href="${document.URL.replace(/Task\.do\?(?:competition=\d+&)?id/, "User_ListSubmissions.do?task").replace(/#.*$/, "")}" class="task-tab bi bi-list-task">${localize("Previous submissions", "Претходни субмисии")}</a>`;
 			}
 			else {
 				nav.innerHTML = `<a href="${document.URL.replace("User_ListSubmissions.do?task", "Task.do?id")}" class="task-tab bi bi-mortarboard">${localize("Task", "Задача")}</a><a href="${document.URL.replace("User_ListSubmissions.do?task", "Task.do?id")}#submit" class="task-tab bi bi-send">${localize("Submit", "Поднеси")}</a><b style=color:black class="task-tab bi bi-list-task active">${localize("Previous submissions", "Претходни субмисии")}</b>`;
 			}
-			nav.style = `font-size:15px;margin-bottom:20px;color:gray`;
+            let afternav = document.createElement("div");
+            afternav.className = "task-tab-group-after";
+			document.querySelector(".main-content").prepend(afternav);
 			document.querySelector(".main-content").prepend(nav);
 			logFinish("add nav buttons");
 			if (document.URL.includes("/Task.do")) {
 				function hchange() {
 					let Vtask = document.querySelector(".taskContentView"), Vsubmit = document.querySelector("#submitinfocontainer");
-					let Ttask = document.getElementById("task-tab-task"), Tsubmit = document.getElementById("task-tab-submit");
+                    let Ttask = document.getElementById("task-tab-task"), Tsubmit = document.getElementById("task-tab-submit");
 					if (!Vsubmit) return;
 					if (location.hash.length < 2) {
 						Vtask.classList.remove("hidden");
 						Vsubmit.classList.add("hidden");
-						Ttask.classList.add("active");
-						Tsubmit.classList.remove("active");
+                        Ttask.classList.add("active");
+                        Tsubmit.classList.remove("active");
 					}
 					else if (location.hash == "#submit") {
 						Vtask.classList.add("hidden");
 						Vsubmit.classList.remove("hidden");
-						Ttask.classList.remove("active");
-						Tsubmit.classList.add("active");
+                        Ttask.classList.remove("active");
+                        Tsubmit.classList.add("active");
 					}
 					document.body.scrollTo(0, 0);
 				}
 				hchange();
 				addEventListener("hashchange", hchange);
 				logFinish("listen to hash change");
-				let tsContainer = document.querySelector("hr.clear-contentunit").previousElementSibling, pttl = document.querySelector(".pagetitle");
-				pttl.style = "display:flex;padding:.25em";
-				if (tsContainer.textContent.includes(localize("Last submission sent on ", "Последниот код е испратен на "))) {
-					let ts = tsContainer.children[0];
-					let iurl = /^url\("(.+)"\)$/.exec(ts.style.backgroundImage)[1];
-					let img = new Image;
-					img.src = iurl;
-					img.style = "border:none;margin:0;padding:0;width:1em;height:1em;margin-left:.5em;";
-					pttl.appendChild(img);
-					tsContainer.remove();
-					logFinish("remove last submit");
-				}
-				document.querySelector("hr.clear-contentunit").remove();
+                let tsContainer = document.querySelector("hr.clear-contentunit").previousElementSibling, pttl = document.querySelector(".pagetitle");
+                pttl.style = "display:flex;padding:.25em";
+                if (tsContainer.textContent.includes(localize("Last submission sent on ", "Последниот код е испратен на "))) {
+                    let ts = tsContainer.children[0];
+                    let iurl = /^url\("(.+)"\)$/.exec(ts.style.backgroundImage)[1];
+                    let img = new Image;
+                    img.src = iurl;
+                    img.style = "border:none;margin:0;padding:0;width:1em;height:1em;margin-left:.5em;";
+                    pttl.appendChild(img);
+                    tsContainer.remove();
+                    logFinish("remove last submit");
+                }
+                document.querySelector("hr.clear-contentunit").remove();
 			}
 			if (document.URL.includes("/Task.do") && document.querySelector("#solutionCode")) {
 				setInterval(() => {
 					let scode = document.getElementById("solutionCode");
 					if (!scode.value.includes("// online judge") && !scode.value.includes("#define ONLINE_JUDGE") && scode.value.length) {
 						scode.value = "#define ONLINE_JUDGE // online judge\n" + scode.value;
-						document.querySelector("label[for=solutionCode]").innerHTML += `<a href="https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement" class=ojtxt>${localize("This macro was automatically added", "Ова макро беше автоматски додадено")}: <code>ONLINE_JUDGE</code></a>`;
+						document.querySelector("label[for=solutionCode]").innerHTML += `<a href="${USERSCRIPT_LINK}" class=ojtxt>${localize("This macro was automatically added", "Ова макро беше автоматски додадено")}: <code>ONLINE_JUDGE</code></a>`;
 						setTimeout(() => document.querySelector(".ojtxt:last-child").remove(), 3000);
 					}
 				}, 500);
 				logFinish("#define ONLINE_JUDGE");
 			}
 		}
-		(document.querySelector(".footer") ?? {}).innerHTML += `<p class="credits"><a href="https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement">MENDO.MK Enhancement</a> <a href="javascript:toggleTheme()">🎨</a> <a href="javascript:Changelog()">Changelog</a></p>`;
+		(document.querySelector(".footer") ?? {}).innerHTML += `<p class="credits"><a href="${USERSCRIPT_LINK}">MENDO.MK Enhancement</a> <a href="javascript:toggleTheme()">🎨</a> <a href="javascript:Changelog()">Changelog</a></p>`;
 		window.toggleTheme = () => {
 			localStorage.setItem("mendo-mk-enhancement-theme", localStorage.getItem("mendo-mk-enhancement-theme") == "dark" ? "light" : "dark");
 			location.reload();
@@ -703,13 +728,13 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 			document.querySelector("#LoginForm>fieldset").appendChild(elm);
 			logFinish("achievements");
 		}
-		if (document.querySelector(".nav2>p>a")) {
-			let x = document.querySelector(".nav2>p>a");
-			document.querySelector(".header-breadcrumbs").appendChild(x);
-			document.querySelector(".header-bottom").remove();
-			x.style = "float:right;margin-right:1em;";
-			document.querySelector(".header-breadcrumbs").style.paddingTop = 0;
-		}
+        if (document.querySelector(".nav2>p>a")) {
+            let x = document.querySelector(".nav2>p>a");
+            document.querySelector(".header-breadcrumbs").appendChild(x);
+            document.querySelector(".header-bottom").remove();
+            x.style = "float:right;margin-right:1em;";
+            document.querySelector(".header-breadcrumbs").style.paddingTop = 0;
+        }
 		if (document.querySelector(".main-navigation>ul")) {
 			let nav = document.querySelector(".main-navigation>ul");
 			let collapseparent = document.querySelector(".main-navigation>.round-border-topright");
@@ -723,13 +748,25 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 			collapse.innerText = "≡";
 			collapse.className = "collapse-navigation";
 			collapse.onclick = collapseNavigation;
+            const registered = !document.getElementById("LoginForm").textContent.includes(localize("Password", "Лозинка"));
 			let links = [
-				["National", "Национални", "/Training.do?cid=1"],
-				["International", "Интернационални", "/Training.do?cid=2"],
-				["II Algorithms", "ИИ Алгоритми", "/algoritmi/Welcome.do"],
-				["Tasks for practice", "Задачи за вежбање", "/algoritmi/User_Competition.do?id=150"]
+				["National", "Национални", "/Training.do?cid=1", "🇲🇰"],
+				["International", "Интернационални", "/Training.do?cid=2", "🇬🇧"],
+                ["II Algorithms", "ИИ Алгоритми", "/algoritmi/Welcome.do", "💡"],
+                ["Tasks for practice", "Задачи за вежбање", "/algoritmi/User_Competition.do?id=150", "☑️"],
+                ["Learn C++", "Научи C++", "/Training.do", "🎓️"],
+                ["Algorithms", "Алгоритми", "/Training.do?cid=6", "📊"],
+                ["Introductory tasks", "Воведни задачи", "/Training.do?cid=3", "🔰"],
+                ["Competitions", "Натпревари", "/Competitions.do", "⚽️"],
+                registered ? ["Profile", "Профил", "/User_EditProfile.do", "📝"] : ["Registration", "Регистрација", "/Register.do", "📝"],
+                ["Submissions", "Решенија", "/User_ListSubmissions.do", "✅️"],
+                ["Help", "Помош", "/Help.do", "❓️"],
+                ["Report a bug on MENDO", "Пријави грешка на МЕНДО", "javascript:$.colorbox({open:true,href:'/simple_jsp/report_bug.jsp'})", "🪲"],
+                ["MENDO Enhancement", "MENDO Enhancement", USERSCRIPT_LINK, "✨️"],
+                ["Support MENDO Enhancement", "Поддржи го MENDO Enhancement", "javascript:$.colorbox({open:true,href:'data:text/html;base64,"
+                 + window.Base64.encode(`<p style=font-size:15px;padding:10px;text-align:center;width:200px>${localize("Support MENDO Enhancement by leaving a positive comment", "Поддржи го MENDO Enhancement со оставање на позитивен коментар")} <a href=${USERSCRIPT_LINK}/feedback>${localize("here", "тука")}</a>! 💖</p>`) + "'})", "💖"],
 			];
-			nav.innerHTML = links.map(l => `<li><a href="${l[2]}">${localize(l[0], l[1])}</a></li>`).join("") + nav.innerHTML;
+			nav.innerHTML = links.map(l => `<li><a href="${l[2]}">${localize(l[0], l[1])}<span class=nav-emoji>${l[3] ?? ""}</span></a></li>`).join("");
 			if (Date.now() < EventDeadline) {
 				nav.childNodes[0].classList.add("event-hot");
 				nav.querySelector("a").innerHTML += " <i class='bi bi-hourglass-split'></i>";
@@ -808,6 +845,9 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 			}
 			logFinish("olympiad results coloring");
 		}
+        if (document.getElementById("LoginForm").textContent.includes(localize("Username:", "Корисник:"))) {
+            document.querySelector("#LoginForm p").innerHTML += ` (<a href=/User_Logoff.do>${localize("Log out", "Одјави се")}</a>)`;
+        }
 	}
 	catch (_) {
 		console.error(_);
@@ -987,18 +1027,18 @@ function taskSolveCinematic(showType, reformatTcs = false) {
 	document.body.appendChild(preCinematicScreen);
 }
 async function Changelog() {
-	let div = document.createElement("div"), cont = document.createElement("div");
-	div.id = "changelog";
-	cont.id = "changelog-cont";
-	cont.appendChild(div);
-	document.body.appendChild(cont);
-	cont.onclick = () => cont.remove();
-	div.innerText = "Fetching changelog...";
-	div.innerText = await fetch("https://raw.githubusercontent.com/EntityPlantt/EntityPlantt.github.io/refs/heads/main/mendo-enhancement/changelog.txt").then(x => x.text()).catch(x => "Changelog not found");
+    let div = document.createElement("div"), cont = document.createElement("div");
+    div.id = "changelog";
+    cont.id = "changelog-cont";
+    cont.appendChild(div);
+    document.body.appendChild(cont);
+    cont.onclick = () => cont.remove();
+    div.innerText = "Fetching changelog...";
+    div.innerText = await fetch("https://raw.githubusercontent.com/EntityPlantt/EntityPlantt.github.io/refs/heads/main/mendo-enhancement/changelog.txt").then(x => x.text()).catch(x => "Changelog not found");
 }
 function getAchievements() {
 	let ach = JSON.parse(localStorage.getItem("achievements " + document.querySelector("#LoginForm>fieldset>p>a").innerText) || "{}");
-	// 44.2 achievement migration existed here
+    // 44.2 achievement migration existed here
 	return ach;
 }
 function addAchievement(name, lvl) {

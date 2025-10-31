@@ -1,3 +1,10 @@
+# VERSION 53
+- NEW Improved Sidebar
+- Placed Log out option right after the username
+- Switch task tab colors (active & non-active)
+- [Technical] Made USERSCRIPT_LINK variable that points to the GreasyFork link
+- [Technical] Added FOUC prevention (flash of unstyled content), but that still doesn't fix the issue
+
 # VERSION 52
 - Added changelog sidebar
 - Styled the tabs above the task

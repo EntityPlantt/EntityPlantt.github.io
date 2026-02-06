@@ -1,111 +1,156 @@
-<h3>Version 54</h3>
-- Changed changelog to use Mendo native colorbox (and HTML too!)
-- Unsolved tasks now appear red in task list (stored in per-account localStorage)
-- Separated MENDO Enhancement stuff from the sidebar
-- [Technical] Removed some unnessecary code
-
-<h3>Version 53</h3>
-- NEW Improved Sidebar
-- Placed Log out option right after the username
-- Switch task tab colors (active & non-active)
-- [Technical] Made USERSCRIPT_LINK variable that points to the GreasyFork link
-- [Technical] Added FOUC prevention (flash of unstyled content), but that still doesn't fix the issue
-- Added support button that tells you to leave a positive comment on the GreasyFork page (please support this project by sharing it!)
-
-<h3>Version 52</h3>
-- Added changelog sidebar
-- Styled the tabs above the task
-- Changed the look of copy I/O buttons
-- [Technical] Some code refactoring
-
-<h3>Version 51</h3>
-- Added a checkmark/X in the title of every task depending on the last submission
-- Removed description from achievement toasts
-- Removed redundant elements from all pages
-- [Technical] Removed unused commented code
-
-<h3>Version 50</h3>
-50.2
-- You are now able to copy the competition results into Excel/Calc without destroying the layout
-50.1
-- Dark mode support for competition results up to republic
-- Improve document title setting
-- Fix lecture/task icons not appearing
-- technical: Remove unnessecary console logging for competition results and commented code on two places
-- technical: Use (encode/decode)URIComponent instead of (un)escape
-50
-- Added coloring of competition results
-- Refactor: changed script code indentation from spaces to tabs
-
-<h3>Version 49</h3>
-49.2
-- Add button to generate plain text for valid solved tasks (recommended for sending in e-mail to natprevari at cs.org.mk)
-- Exclude JForum from Mendo Enhancement
-- [Technical] add task-list-buttons ID to the task buttons div
-49.1
-- Changed event deadline to 14th of April
-- Removed cinematic on test submissions (ctest=true)
-49
-- [NEW] ✨⏳️ PROGRESS BAR for competitors that need to solve a certain number of tasks for the upcoming olympiad TSTs
-- Filter by valid tasks for 2025 olympiad TST
-- Fixed a bug with collapsible navigation
-
-<h3>Version 48</h3>
-- Added sidebar collapsing & CSS styling around that feature
-- Made the competition task "See submissions" button show the upsolve submissions of that task instead of erroring
-- Fixed a bug on the competition page (competition pages don't have statistics)
-- Fixed a bug on the competition task page (after the competition the submission modal doesn't exist)
-- Refactored #define ONLINE_JUDGE code
-
-<h3>Version 47</h3>
-47.1
-- Added clarity to sharing solved tasks
-47
-- NEW ACHIEVEMENT: Colorful (get every verdict possible on a single submission)
-- Achievement toasts on the bottom-right
-- Changed achievement adding & refactored more code
-
-<h3>Version 46</h3>
-46.2
-- Testcases after competitions now have clickable links to see them
-46.1
-- Site logo now appears normal
-- Fixed a bug with images appearing inverted
-46
-- Added new success and fail screen on task submission based on Minecraft
-- Added navigation buttons for tasks
-- Changed version fetching to be done from the EntityPlantt.github.io repository instead of GreasyFork
-
-<h3>Version 45</h3>
-45.1
-- Group bar chart times by 100ms (+ separate Instant & separate TLE group)
-- Fixed changelog always appearing when version is decimal
-- Localize submission charts
-45
-- Added bar graph for submission running time for AC tests
-- Reworked console logging (now uses console.debug)
-- Changed the way achievements are stored, thus removing achievements got before version 45 (go to Learn C++ and Algorithms next to get them again)
-
-<h3>Version 44</h3>
-44.1
-- Changed all substr in code with substring
-- Changed versioning to be with decimal numbers
-44
-- Change solved task achievement names
-
-<h3>Version 43</h3>
-- Achievements (tasks solved, lectures read)
-- Changelogs w/ changelog button on the bottom
-- Code localization improvements
-
-<h3>Version 42</h3>
-- Changed colors of TLE and RE verdicts
-- Added pie chart in submission feedback
-
-<h3>Version 41</h3>
-- Theme button on the bottom-right
-- Automatically detect theme from system preferences
-
-<h3>Version 40</h3>
-- Fix broken links
-- Slightly change mission complete sound
+<div style="font-size:20px">
+	<h3>Version 54</h3>
+	<ul>
+		<li>Changed changelog to use Mendo native colorbox (and HTML too!)</li>
+		<li>Unsolved tasks now appear red in task list (stored in per-account localStorage)</li>
+		<li>Separated MENDO Enhancement stuff from the sidebar</li>
+		<li>[Technical] Removed some unnessecary code</li>
+	</ul>
+	<h3>Version 53</h3>
+	<ul>
+		<li>NEW Improved Sidebar</li>
+		<li>Placed Log out option right after the username</li>
+		<li>Switch task tab colors (active &amp; non-active)</li>
+		<li>[Technical] Made USERSCRIPT_LINK variable that points to the GreasyFork link</li>
+		<li>[Technical] Added FOUC prevention (flash of unstyled content), but that still doesn't fix the issue</li>
+		<li>Added support button that tells you to leave a positive comment on the GreasyFork page (please support this
+			project by sharing it!)</li>
+	</ul>
+	<h3>Version 52</h3>
+	<ul>
+		<li>Added changelog sidebar</li>
+		<li>Styled the tabs above the task</li>
+		<li>Changed the look of copy I/O buttons</li>
+		<li>[Technical] Some code refactoring</li>
+	</ul>
+	<h3>Version 51</h3>
+	<ul>
+		<li>Added a checkmark/X in the title of every task depending on the last submission</li>
+		<li>Removed description from achievement toasts</li>
+		<li>Removed redundant elements from all pages</li>
+		<li>[Technical] Removed unused commented code</li>
+	</ul>
+	<h3>Version 50</h3>
+	<h4>50.2</h4>
+	<ul>
+		<li>You are now able to copy the competition results into Excel/Calc without destroying the layout</li>
+	</ul>
+	<h4>50.1</h4>
+	<ul>
+		<li>Dark mode support for competition results up to republic</li>
+		<li>Improve document title setting</li>
+		<li>Fix lecture/task icons not appearing</li>
+		<li>technical: Remove unnessecary console logging for competition results and commented code on two places</li>
+		<li>technical: Use (encode/decode)URIComponent instead of (un)escape</li>
+	</ul>
+	<h4>50</h4>
+	<ul>
+		<li>Added coloring of competition results</li>
+		<li>Refactor: changed script code indentation from spaces to tabs</li>
+	</ul>
+	<h3>Version 49</h3>
+	<h4>49.2</h4>
+	<ul>
+		<li>Add button to generate plain text for valid solved tasks (recommended for sending in e-mail to natprevari at
+			cs.org.mk)</li>
+		<li>Exclude JForum from Mendo Enhancement</li>
+		<li>[Technical] add task-list-buttons ID to the task buttons div</li>
+	</ul>
+	<h4>49.1</h4>
+	<ul>
+		<li>Changed event deadline to 14th of April</li>
+		<li>Removed cinematic on test submissions (ctest=true)</li>
+	</ul>
+	<h4>49</h4>
+	<ul>
+		<li>[NEW] ✨⏳️ PROGRESS BAR for competitors that need to solve a certain number of tasks for the upcoming
+			olympiad
+			TSTs
+		</li>
+		<li>Filter by valid tasks for 2025 olympiad TST</li>
+		<li>Fixed a bug with collapsible navigation</li>
+	</ul>
+	<h3>Version 48</h3>
+	<ul>
+		<li>Added sidebar collapsing & CSS styling around that feature</li>
+		<li>Made the competition task "See submissions" button show the upsolve submissions of that task instead of
+			erroring
+		</li>
+		<li>Fixed a bug on the competition page (competition pages don't have statistics)</li>
+		<li>Fixed a bug on the competition task page (after the competition the submission modal doesn't exist)</li>
+		<li>Refactored #define ONLINE_JUDGE code</li>
+	</ul>
+	<h3>Version 47</h3>
+	<h4>47.1</h4>
+	<ul>
+		<li>Added clarity to sharing solved tasks</li>
+	</ul>
+	<h4>47</h4>
+	<ul>
+		<li>NEW ACHIEVEMENT: Colorful (get every verdict possible on a single submission)</li>
+		<li>Achievement toasts on the bottom-right</li>
+		<li>Changed achievement adding & refactored more code</li>
+	</ul>
+	<h3>Version 46</h3>
+	<h4>46.2</h4>
+	<ul>
+		<li>Testcases after competitions now have clickable links to see them</li>
+	</ul>
+	<h4>46.1</h4>
+	<ul>
+		<li>Site logo now appears normal</li>
+		<li>Fixed a bug with images appearing inverted</li>
+	</ul>
+	<h4>46</h4>
+	<ul>
+		<li>Added new success and fail screen on task submission based on Minecraft</li>
+		<li>Added navigation buttons for tasks</li>
+		<li>Changed version fetching to be done from the EntityPlantt.github.io repository instead of GreasyFork</li>
+	</ul>
+	<h3>Version 45</h3>
+	<h4>45.1</h4>
+	<ul>
+		<li>Group bar chart times by 100ms (+ separate Instant & separate TLE group)</li>
+		<li>Fixed changelog always appearing when version is decimal</li>
+		<li>Localize submission charts</li>
+	</ul>
+	<h4>45</h4>
+	<ul>
+		<li>Added bar graph for submission running time for AC tests</li>
+		<li>Reworked console logging (now uses console.debug)</li>
+		<li>Changed the way achievements are stored, thus removing achievements got before version 45 (go to Learn C++
+			and
+			Algorithms next to get them again)</li>
+	</ul>
+	<h3>Version 44</h3>
+	<h4>44.1</h4>
+	<ul>
+		<li>Changed all substr in code with substring</li>
+		<li>Changed versioning to be with decimal numbers</li>
+	</ul>
+	<h4>44</h4>
+	<ul>
+		<li>Change solved task achievement names</li>
+	</ul>
+	<h3>Version 43</h3>
+	<ul>
+		<li>Achievements (tasks solved, lectures read)</li>
+		<li>Changelogs w/ changelog button on the bottom</li>
+		<li>Code localization improvements</li>
+	</ul>
+	<h3>Version 42</h3>
+	<ul>
+		<li>Changed colors of TLE and RE verdicts</li>
+		<li>Added pie chart in submission feedback</li>
+	</ul>
+	<h3>Version 41</h3>
+	<ul>
+		<li>Theme button on the bottom-right</li>
+		<li>Automatically detect theme from system preferences</li>
+	</ul>
+	<h3>Version 40</h3>
+	<ul>
+		<li>Fix broken links</li>
+		<li>Slightly change mission complete sound</li>
+	</ul>
+</div>

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      53
+// @version      54
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -21,7 +21,7 @@ const fouc = document.createElement("style");
 fouc.innerHTML = "html,*{opacity:0 !important;}";
 document.head.prepend(fouc);
 
-const VERSION = 53, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 15 25").getTime(), USERSCRIPT_LINK = "https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement";
+const VERSION = 54, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 15 25").getTime(), USERSCRIPT_LINK = "https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement";
 console.log("%cMENDO.MK Enhancement", "color:magenta;text-decoration:underline;font-size:20px");
 function localize(en, mk) {
 	return document.cookie.includes("mkjudge_language=en") ? en : mk;
@@ -56,7 +56,7 @@ async function MendoMkEnhancement() {
 			if (!document.querySelector(".main-navigation")) return;
 			localStorage.setItem("nav collapsed", document.querySelector(".main-navigation").classList.toggle("collapsed"));
 		}
-        fouc.remove();
+		fouc.remove();
 		if (localStorage.getItem("nav collapsed") == "true") collapseNavigation();
 		logFinish("collapse navigation if collapsed");
 		var style = document.createElement("style");
@@ -347,7 +347,6 @@ flex-direction: row;
 gap: .5em;
 }
 #changelog {
-position: fixed;
 right: 0;
 height: calc(100vh - 6em);
 width: 30vw;
@@ -366,6 +365,16 @@ left: 0;
 height: 100vh;
 width: 100vw;
 background: #0004;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+}
+#changelog::before {
+color: gray;
+content: "Click outside to close";
+display: block;
+margin-bottom: 1em;
 }
 .task-tab {
 padding: 5px 20px;
@@ -437,7 +446,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 			}
 			logFinish("check for updates");
 		});
-        document.querySelector(".searchform")?.remove();
+		document.querySelector(".searchform")?.remove();
 		if (document.URL.includes("/Training.do") || document.URL.includes("/User_Competition.do")) {
 			var search = document.createElement("form");
 			search.className = "content-search";
@@ -452,6 +461,13 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 				search.querySelector("#search").blur();
 				hashChange();
 			}
+			let taskWAlist = gettaskWAlist();
+			document.querySelectorAll(".training-content tr").forEach(tr => {
+				if (tr.querySelector("a") && taskWAlist.includes(parseInt(/\d+$/.exec(tr.querySelector("a").href)[0])) && !tr.querySelector(".solved")) {
+					for (let td of tr.children) td.className = "wrong";
+				}
+			});
+			logFinish("add WA tasks as wrong in list");
 			function hashChange() {
 				let kw = decodeURIComponent(location.hash.substring(1));
 				search.querySelector("#search").value = kw;
@@ -591,62 +607,64 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 				let text = pre.innerText.substring(pre.innerText.indexOf("\n") + 1);
 				let btn = document.createElement("span");
 				btn.onclick = () => {
-                    navigator.clipboard.writeText(text);
-                    btn.className += "-check-fill";
-                }
-                btn.onmouseleave = () => setTimeout(() => void(btn.className = btn.className.replace("-check-fill", "")), 500);
+					navigator.clipboard.writeText(text);
+					btn.className += "-check-fill";
+				}
+				btn.onmouseleave = () => setTimeout(() => void (btn.className = btn.className.replace("-check-fill", "")), 500);
 				btn.className = "copy-io-btn bi bi-clipboard";
 				pre.parentElement.prepend(btn);
 			});
 			logFinish("copy io buttons");
 			let nav = document.createElement("div");
-            nav.className = "task-tab-group";
+			nav.className = "task-tab-group";
 			if (document.URL.includes("/Task.do")) {
 				nav.innerHTML = `<a href="#" class="task-tab bi bi-mortarboard" id=task-tab-task>${localize("Task", "Задача")}</a><a href="#submit" class="task-tab bi bi-send" id=task-tab-submit>${localize("Submit", "Поднеси")}</a><a href="${document.URL.replace(/Task\.do\?(?:competition=\d+&)?id/, "User_ListSubmissions.do?task").replace(/#.*$/, "")}" class="task-tab bi bi-list-task">${localize("Previous submissions", "Претходни субмисии")}</a>`;
 			}
 			else {
 				nav.innerHTML = `<a href="${document.URL.replace("User_ListSubmissions.do?task", "Task.do?id")}" class="task-tab bi bi-mortarboard">${localize("Task", "Задача")}</a><a href="${document.URL.replace("User_ListSubmissions.do?task", "Task.do?id")}#submit" class="task-tab bi bi-send">${localize("Submit", "Поднеси")}</a><b style=color:black class="task-tab bi bi-list-task active">${localize("Previous submissions", "Претходни субмисии")}</b>`;
 			}
-            let afternav = document.createElement("div");
-            afternav.className = "task-tab-group-after";
+			let afternav = document.createElement("div");
+			afternav.className = "task-tab-group-after";
 			document.querySelector(".main-content").prepend(afternav);
 			document.querySelector(".main-content").prepend(nav);
 			logFinish("add nav buttons");
 			if (document.URL.includes("/Task.do")) {
 				function hchange() {
 					let Vtask = document.querySelector(".taskContentView"), Vsubmit = document.querySelector("#submitinfocontainer");
-                    let Ttask = document.getElementById("task-tab-task"), Tsubmit = document.getElementById("task-tab-submit");
+					let Ttask = document.getElementById("task-tab-task"), Tsubmit = document.getElementById("task-tab-submit");
 					if (!Vsubmit) return;
 					if (location.hash.length < 2) {
 						Vtask.classList.remove("hidden");
 						Vsubmit.classList.add("hidden");
-                        Ttask.classList.add("active");
-                        Tsubmit.classList.remove("active");
+						Ttask.classList.add("active");
+						Tsubmit.classList.remove("active");
 					}
 					else if (location.hash == "#submit") {
 						Vtask.classList.add("hidden");
 						Vsubmit.classList.remove("hidden");
-                        Ttask.classList.remove("active");
-                        Tsubmit.classList.add("active");
+						Ttask.classList.remove("active");
+						Tsubmit.classList.add("active");
 					}
 					document.body.scrollTo(0, 0);
 				}
 				hchange();
 				addEventListener("hashchange", hchange);
 				logFinish("listen to hash change");
-                let tsContainer = document.querySelector("hr.clear-contentunit").previousElementSibling, pttl = document.querySelector(".pagetitle");
-                pttl.style = "display:flex;padding:.25em";
-                if (tsContainer.textContent.includes(localize("Last submission sent on ", "Последниот код е испратен на "))) {
-                    let ts = tsContainer.children[0];
-                    let iurl = /^url\("(.+)"\)$/.exec(ts.style.backgroundImage)[1];
-                    let img = new Image;
-                    img.src = iurl;
-                    img.style = "border:none;margin:0;padding:0;width:1em;height:1em;margin-left:.5em;";
-                    pttl.appendChild(img);
-                    tsContainer.remove();
-                    logFinish("remove last submit");
-                }
-                document.querySelector("hr.clear-contentunit").remove();
+				let tsContainer = document.querySelector("hr.clear-contentunit").previousElementSibling, pttl = document.querySelector(".pagetitle");
+				pttl.style = "display:flex;padding:.25em";
+				if (tsContainer.textContent.includes(localize("Last submission sent on ", "Последниот код е испратен на "))) {
+					let ts = tsContainer.children[0];
+					let iurl = /^url\("(.+)"\)$/.exec(ts.style.backgroundImage)[1];
+					let img = new Image;
+					img.src = iurl;
+					img.style = "border:none;margin:0;padding:0;width:1em;height:1em;margin-left:.5em;";
+					pttl.appendChild(img);
+					tsContainer.remove();
+					logFinish("remove last submit");
+					taskWA(parseInt(/[&?]id=(\d+)/.exec(document.URL)[1]), img.src.includes("cross"));
+					logFinish("write solve status to localStorage");
+				}
+				document.querySelector("hr.clear-contentunit").remove();
 			}
 			if (document.URL.includes("/Task.do") && document.querySelector("#solutionCode")) {
 				setInterval(() => {
@@ -728,13 +746,13 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 			document.querySelector("#LoginForm>fieldset").appendChild(elm);
 			logFinish("achievements");
 		}
-        if (document.querySelector(".nav2>p>a")) {
-            let x = document.querySelector(".nav2>p>a");
-            document.querySelector(".header-breadcrumbs").appendChild(x);
-            document.querySelector(".header-bottom").remove();
-            x.style = "float:right;margin-right:1em;";
-            document.querySelector(".header-breadcrumbs").style.paddingTop = 0;
-        }
+		if (document.querySelector(".nav2>p>a")) {
+			let x = document.querySelector(".nav2>p>a");
+			document.querySelector(".header-breadcrumbs").appendChild(x);
+			document.querySelector(".header-bottom").remove();
+			x.style = "float:right;margin-right:1em;";
+			document.querySelector(".header-breadcrumbs").style.paddingTop = 0;
+		}
 		if (document.querySelector(".main-navigation>ul")) {
 			let nav = document.querySelector(".main-navigation>ul");
 			let collapseparent = document.querySelector(".main-navigation>.round-border-topright");
@@ -748,25 +766,27 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 			collapse.innerText = "≡";
 			collapse.className = "collapse-navigation";
 			collapse.onclick = collapseNavigation;
-            const registered = !document.getElementById("LoginForm").textContent.includes(localize("Password", "Лозинка"));
+			const registered = !document.getElementById("LoginForm").textContent.includes(localize("Password", "Лозинка"));
 			let links = [
 				["National", "Национални", "/Training.do?cid=1", "🇲🇰"],
 				["International", "Интернационални", "/Training.do?cid=2", "🇬🇧"],
-                ["II Algorithms", "ИИ Алгоритми", "/algoritmi/Welcome.do", "💡"],
-                ["Tasks for practice", "Задачи за вежбање", "/algoritmi/User_Competition.do?id=150", "☑️"],
-                ["Learn C++", "Научи C++", "/Training.do", "🎓️"],
-                ["Algorithms", "Алгоритми", "/Training.do?cid=6", "📊"],
-                ["Introductory tasks", "Воведни задачи", "/Training.do?cid=3", "🔰"],
-                ["Competitions", "Натпревари", "/Competitions.do", "⚽️"],
-                registered ? ["Profile", "Профил", "/User_EditProfile.do", "📝"] : ["Registration", "Регистрација", "/Register.do", "📝"],
-                ["Submissions", "Решенија", "/User_ListSubmissions.do", "✅️"],
-                ["Help", "Помош", "/Help.do", "❓️"],
-                ["Report a bug on MENDO", "Пријави грешка на МЕНДО", "javascript:$.colorbox({open:true,href:'/simple_jsp/report_bug.jsp'})", "🪲"],
-                ["MENDO Enhancement", "MENDO Enhancement", USERSCRIPT_LINK, "✨️"],
-                ["Support MENDO Enhancement", "Поддржи го MENDO Enhancement", "javascript:$.colorbox({open:true,href:'data:text/html;base64,"
-                 + window.Base64.encode(`<p style=font-size:15px;padding:10px;text-align:center;width:200px>${localize("Support MENDO Enhancement by leaving a positive comment", "Поддржи го MENDO Enhancement со оставање на позитивен коментар")} <a href=${USERSCRIPT_LINK}/feedback>${localize("here", "тука")}</a>! 💖</p>`) + "'})", "💖"],
+				["II Algorithms", "ИИ Алгоритми", "/algoritmi/Welcome.do", "💡"],
+				["Tasks for practice", "Задачи за вежбање", "/algoritmi/User_Competition.do?id=150", "☑️"],
+				["Learn C++", "Научи C++", "/Training.do", "🎓️"],
+				["Algorithms", "Алгоритми", "/Training.do?cid=6", "📊"],
+				["Introductory tasks", "Воведни задачи", "/Training.do?cid=3", "🔰"],
+				["Competitions", "Натпревари", "/Competitions.do", "⚽️"],
+				registered ? ["Profile", "Профил", "/User_EditProfile.do", "📝"] : ["Registration", "Регистрација", "/Register.do", "📝"],
+				["Submissions", "Решенија", "/User_ListSubmissions.do", "✅️"],
+				["Help", "Помош", "/Help.do", "❓️"],
+				["Report a bug on MENDO", "Пријави грешка на МЕНДО", "javascript:$.colorbox({open:true,href:'/simple_jsp/report_bug.jsp'})", "🪲"],
+				["MENDO Enhancement", "MENDO Enhancement", null],
+				["Website", "Веб-страна", USERSCRIPT_LINK, "🌐"],
+				["Support", "Поддршка", "javascript:$.colorbox({open:true,href:'data:text/html;base64,"
+					+ window.Base64.encode(`<p style=font-size:15px;padding:10px;text-align:center;width:200px>${localize("Support MENDO Enhancement by leaving a positive comment", "Поддржи го MENDO Enhancement со оставање на позитивен коментар")} <a href=${USERSCRIPT_LINK}/feedback>${localize("here", "тука")}</a>! 💖</p>`) + "'})", "💖"],
+				["Changelog", "Историја на промени", "javascript:Changelog()", "📜"],
 			];
-			nav.innerHTML = links.map(l => `<li><a href="${l[2]}">${localize(l[0], l[1])}<span class=nav-emoji>${l[3] ?? ""}</span></a></li>`).join("");
+			nav.innerHTML = links.map(l => l[2] === null ? `<h3 class=headerbar style="margin-top: 1em">${localize(l[0], l[1])}</h3>` : `<li><a href="${l[2]}">${localize(l[0], l[1])}<span class=nav-emoji>${l[3] ?? ""}</span></a></li>`).join("");
 			if (Date.now() < EventDeadline) {
 				nav.childNodes[0].classList.add("event-hot");
 				nav.querySelector("a").innerHTML += " <i class='bi bi-hourglass-split'></i>";
@@ -845,9 +865,9 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 			}
 			logFinish("olympiad results coloring");
 		}
-        if (document.getElementById("LoginForm").textContent.includes(localize("Username:", "Корисник:"))) {
-            document.querySelector("#LoginForm p").innerHTML += ` (<a href=/User_Logoff.do>${localize("Log out", "Одјави се")}</a>)`;
-        }
+		if (document.getElementById("LoginForm").textContent.includes(localize("Username:", "Корисник:"))) {
+			document.querySelector("#LoginForm p").innerHTML += ` (<a href=/User_Logoff.do>${localize("Log out", "Одјави се")}</a>)`;
+		}
 	}
 	catch (_) {
 		console.error(_);
@@ -933,6 +953,9 @@ function taskSolveCinematic(showType, reformatTcs = false) {
 				}]
 			}
 		});
+		if (document.querySelector(".cbtcdownload").innerText.includes("[ ")) {
+			taskWA(parseInt(/(\d+)$/.exec(document.querySelector(".cbtcdownload").href)[1]), true);
+		}
 	}
 	if (!showType) return;
 	var preCinematicScreen = document.createElement("div");
@@ -1027,19 +1050,10 @@ function taskSolveCinematic(showType, reformatTcs = false) {
 	document.body.appendChild(preCinematicScreen);
 }
 async function Changelog() {
-    let div = document.createElement("div"), cont = document.createElement("div");
-    div.id = "changelog";
-    cont.id = "changelog-cont";
-    cont.appendChild(div);
-    document.body.appendChild(cont);
-    cont.onclick = () => cont.remove();
-    div.innerText = "Fetching changelog...";
-    div.innerText = await fetch("https://raw.githubusercontent.com/EntityPlantt/EntityPlantt.github.io/refs/heads/main/mendo-enhancement/changelog.txt").then(x => x.text()).catch(x => "Changelog not found");
+	window.$.colorbox({ open: true, href: "https://raw.githubusercontent.com/EntityPlantt/EntityPlantt.github.io/refs/heads/main/mendo-enhancement/changelog.html" });
 }
 function getAchievements() {
-	let ach = JSON.parse(localStorage.getItem("achievements " + document.querySelector("#LoginForm>fieldset>p>a").innerText) || "{}");
-    // 44.2 achievement migration existed here
-	return ach;
+	return JSON.parse(localStorage.getItem("achievements " + document.querySelector("#LoginForm>fieldset>p>a").innerText) || "{}");
 }
 function addAchievement(name, lvl) {
 	let ach = getAchievements();
@@ -1059,5 +1073,16 @@ function achievementToast(text) {
 	div.innerHTML = `<div>${localize("Achievement got!", "Постигнување добиено!")}</div><div>${text}</div>`;
 	document.getElementById("achievement-toast").appendChild(div);
 }
-Object.assign(window, { MendoMkEnhancement, taskSolveCinematic, Changelog, addAchievement, getAchievements, achievementToast, localize });
+function taskWA(task, wa) {
+	let x = gettaskWAlist();
+	if (wa) {
+		if (!x.includes(task)) x.push(task);
+	}
+	else if (x.includes(task)) x.splice(x.indexOf(task), 1);
+	localStorage.setItem("mendo unsolved " + document.querySelector("#LoginForm>fieldset>p>a").innerText, JSON.stringify(x));
+}
+function gettaskWAlist() {
+	return JSON.parse(localStorage.getItem("mendo unsolved " + document.querySelector("#LoginForm>fieldset>p>a").innerText) || "[]");
+}
+Object.assign(window, { MendoMkEnhancement, taskSolveCinematic, Changelog, addAchievement, getAchievements, achievementToast, localize, taskWA, gettaskWAlist });
 MendoMkEnhancement();

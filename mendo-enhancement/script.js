@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      54
+// @version      54.1
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -12,8 +12,8 @@
 // @icon         https://mendo.mk/img/favicon.ico
 // @grant        none
 // @license      CC-BY-ND
-// @downloadURL  https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.user.js
-// @updateURL    https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
+// @downloadURL	 https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.user.js
+// @updateURL	 https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
 // FOUC prevention
@@ -21,7 +21,7 @@ const fouc = document.createElement("style");
 fouc.innerHTML = "html,*{opacity:0 !important;}";
 document.head.prepend(fouc);
 
-const VERSION = 54, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 15 25").getTime(), USERSCRIPT_LINK = "https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement";
+const VERSION = 54.1, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 15 25").getTime(), USERSCRIPT_LINK = "https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement";
 console.log("%cMENDO.MK Enhancement", "color:magenta;text-decoration:underline;font-size:20px");
 function localize(en, mk) {
 	return document.cookie.includes("mkjudge_language=en") ? en : mk;
@@ -114,18 +114,18 @@ background-color: #fbb !important;
 #search {
 font-family: consolas;
 }
-#search, #search-submit {
+#search, .searchbtn {
 border: solid 2px black;
 transition: box-shadow .5s;
 margin-bottom: 20px;
 }
-#search-submit:hover {
+.searchbtn {
 cursor: pointer;
 }
 #search:focus {
 background-color: #eee;
 }
-#search-submit:hover, #search:hover {
+#search-submit:hover, .searchbtn:hover {
 background-color: #ddd;
 }
 .copy-io-btn {
@@ -346,36 +346,6 @@ align-items: center;
 flex-direction: row;
 gap: .5em;
 }
-#changelog {
-right: 0;
-height: calc(100vh - 6em);
-width: 30vw;
-top: 0;
-box-shadow: solid black 1px;
-overflow-y: auto;
-background: #ddd;
-padding: 2em;
-font-size: 25px;
-margin: 1em;
-}
-#changelog-cont {
-position: fixed;
-top: 0;
-left: 0;
-height: 100vh;
-width: 100vw;
-background: #0004;
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-}
-#changelog::before {
-color: gray;
-content: "Click outside to close";
-display: block;
-margin-bottom: 1em;
-}
 .task-tab {
 padding: 5px 20px;
 background: #eee;
@@ -453,7 +423,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 			search.action = "#";
 			search.innerHTML = `
 		<input type=text id=search autocomplete=off>
-		<input type=submit id=search-submit value=Search>
+		<input type=submit id=search-submit class=searchbtn value="${localize("Search", "Пребарај")}">
 		`;
 			search.onsubmit = e => {
 				e.preventDefault();
@@ -522,7 +492,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 					sub: tr => parseInt(/\/(\d+)\b/.exec(tr.querySelector("td:last-child").textContent)[1]),
 					solv: tr => parseInt(/^(\d+)\//.exec(tr.querySelector("td:last-child").textContent)[1])
 				};
-				select.oninput = event => {
+				select.oninput = () => {
 					let [, criteria, rev] = /^([a-z]+)(min|max)$/.exec(select.value);
 					rev = rev == "max" ? -1 : 1;
 					let f = sortcriteria[criteria];
@@ -552,11 +522,10 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 				logFinish("task solved percentage");
 				var taskShare = document.createElement("div");
 				taskShare.id = "task-list-buttons";
-				taskShare.style.marginBottom = "10px";
 				taskShare.innerHTML = `
-<button id=solved-tasks-save>${localize("Share solved tasks", "Сподели решени задачи")}</button>
-<button id=solved-tasks-load>${localize("Load shared solved tasks", "Лоадирај споделени решени задачи")}</button>
-<button id=hide-solved-tasks>${localize("Hide/Show solved tasks", "Скриј/Откриј решени задачи")}</button>`;
+<button id=solved-tasks-save class=searchbtn>${localize("Share solved tasks", "Сподели решени задачи")}</button>
+<button id=solved-tasks-load class=searchbtn>${localize("Load shared solved tasks", "Лоадирај споделени решени задачи")}</button>
+<button id=hide-solved-tasks class=searchbtn>${localize("Hide/Show solved tasks", "Скриј/Откриј решени задачи")}</button>`;
 				let taskshcode = "mendo-reseni-zadaci" + /^https?(.*)$/.exec(document.URL)[1];
 				if (taskshcode.includes("#")) taskshcode = taskshcode.slice(0, taskshcode.indexOf("#"));
 				taskShare.querySelector("#hide-solved-tasks").onclick = () => {
@@ -953,7 +922,7 @@ function taskSolveCinematic(showType, reformatTcs = false) {
 				}]
 			}
 		});
-		if (document.querySelector(".cbtcdownload").innerText.includes("[ ")) {
+		if (document.querySelector(".cbtcdownload") && document.querySelector(".cbtcdownload").innerText.includes("[ ")) {
 			taskWA(parseInt(/(\d+)$/.exec(document.querySelector(".cbtcdownload").href)[1]), true);
 		}
 	}
@@ -966,7 +935,7 @@ function taskSolveCinematic(showType, reformatTcs = false) {
 	`;
 	preCinematicScreen.onclick = ev => {
 		preCinematicScreen.remove();
-		if (window.event.target.id == "skip-cinematic") return;
+		if (ev.target.id == "skip-cinematic") return;
 		const cinematics = [() => {
 			let img = document.createElement("img");
 			img.src = "https://i.ibb.co/b7WW8Q3/mission-passed.png";

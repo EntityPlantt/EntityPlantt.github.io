@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      54.1
+// @version      55
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -21,7 +21,7 @@ const fouc = document.createElement("style");
 fouc.innerHTML = "html,*{opacity:0 !important;}";
 document.head.prepend(fouc);
 
-const VERSION = 54.1, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 15 25").getTime(), USERSCRIPT_LINK = "https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement";
+const VERSION = 55, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 15 25").getTime(), USERSCRIPT_LINK = "https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement";
 console.log("%cMENDO.MK Enhancement", "color:magenta;text-decoration:underline;font-size:20px");
 function localize(en, mk) {
 	return document.cookie.includes("mkjudge_language=en") ? en : mk;
@@ -346,6 +346,36 @@ align-items: center;
 flex-direction: row;
 gap: .5em;
 }
+#changelog {
+right: 0;
+height: calc(100vh - 6em);
+width: 30vw;
+top: 0;
+box-shadow: solid black 1px;
+overflow-y: auto;
+background: #ddd;
+padding: 2em;
+font-size: 25px;
+margin: 1em;
+}
+#changelog-cont {
+position: fixed;
+top: 0;
+left: 0;
+height: 100vh;
+width: 100vw;
+background: #0004;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+}
+#changelog::before {
+color: gray;
+content: "Click outside to close";
+display: block;
+margin-bottom: 1em;
+}
 .task-tab {
 padding: 5px 20px;
 background: #eee;
@@ -432,12 +462,29 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 				hashChange();
 			}
 			let taskWAlist = gettaskWAlist();
-			document.querySelectorAll(".training-content tr").forEach(tr => {
-				if (tr.querySelector("a") && taskWAlist.includes(parseInt(/\d+$/.exec(tr.querySelector("a").href)[0])) && !tr.querySelector(".solved")) {
-					for (let td of tr.children) td.className = "wrong";
-				}
-			});
-			logFinish("add WA tasks as wrong in list");
+			if (document.querySelector(".training-content")) {
+				document.querySelectorAll(".training-content tr").forEach(tr => {
+					if (tr.querySelector("a") && taskWAlist.includes(parseInt(/\d+$/.exec(tr.querySelector("a").href)[0])) && !tr.querySelector(".solved")) {
+						for (let td of tr.children) td.className = "wrong";
+					}
+				});
+				logFinish("add WA tasks as wrong in list");
+			}
+			if (document.querySelector(".competition-content")) {
+				let totalPts = 0, totalMax = 0;
+				document.querySelectorAll(".competition-content tr").forEach(tr => {
+					const alast = tr.querySelector("td:last-child a");
+					totalMax += parseInt(tr.querySelector("td:nth-child(3)")?.textContent) || 0;
+					if (alast && alast.textContent.includes(localize(" points", " поени"))) {
+						totalPts += parseInt(/\d+/.exec(alast.textContent)[0]);
+						alast.textContent = `${/\d+/.exec(alast.textContent)[0]}/${tr.querySelector("td:nth-child(3)").textContent} ${localize("points", "поени")}`;
+					}
+				});
+				let d = document.createElement("div");
+				d.style = "color:green;padding:10px 20px;font-size:20px;";
+				d.innerText = `${localize("Total", "Вкупно")}: ${totalPts}/${totalMax}`;
+				document.querySelector(".competition-content>table").after(d);
+			}
 			function hashChange() {
 				let kw = decodeURIComponent(location.hash.substring(1));
 				search.querySelector("#search").value = kw;
@@ -935,7 +982,7 @@ function taskSolveCinematic(showType, reformatTcs = false) {
 	`;
 	preCinematicScreen.onclick = ev => {
 		preCinematicScreen.remove();
-		if (ev.target.id == "skip-cinematic") return;
+		if (window.event.target.id == "skip-cinematic") return;
 		const cinematics = [() => {
 			let img = document.createElement("img");
 			img.src = "https://i.ibb.co/b7WW8Q3/mission-passed.png";

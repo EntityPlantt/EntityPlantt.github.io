@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      55
+// @version      55.1
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -12,8 +12,8 @@
 // @icon         https://mendo.mk/img/favicon.ico
 // @grant        none
 // @license      CC-BY-ND
-// @downloadURL	 https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.user.js
-// @updateURL	 https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
+// @downloadURL  https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.user.js
+// @updateURL    https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
 // FOUC prevention
@@ -21,7 +21,7 @@ const fouc = document.createElement("style");
 fouc.innerHTML = "html,*{opacity:0 !important;}";
 document.head.prepend(fouc);
 
-const VERSION = 55, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 15 25").getTime(), USERSCRIPT_LINK = "https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement";
+const VERSION = 55.1, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 13 26").getTime(), USERSCRIPT_LINK = "https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement";
 console.log("%cMENDO.MK Enhancement", "color:magenta;text-decoration:underline;font-size:20px");
 function localize(en, mk) {
 	return document.cookie.includes("mkjudge_language=en") ? en : mk;
@@ -823,7 +823,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 				<div class=event-prog style="height:${solvedTasks.length / totalTasks * 100}%">[${(Math.min(solvedTasks.length / totalTasks, 1) * 100).toFixed(0)}%] ${solvedTasks.length} / ${totalTasks}<br>${localize("TASKS SOLVED", "ЗАДАЧИ РЕШЕНИ")}</div>
 			</div>
 			<div class=event-text>${Math.floor(untilend / 864e5)} ${localize("DAYS LEFT", "ДЕНОВИ ОСТАНАТИ")}<br>
-			<a href="https://cs.org.mk/konechna-lista-na-uchesnici-pokaneti-na-moi-2024-copy/" style="color:white" target=_blank>${localize("Announcement", "Соопштение")}</a></div>
+			<a href="https://cs.org.mk/konechna-lista-na-uchesnici-pokaneti-na-moi-2026/" style="color:white" target=_blank>${localize("Announcement", "Соопштение")}</a></div>
 			<select autocomplete=off onchange="localStorage.setItem('event.total', this.value);if(this.value=='0')alert(localize('Turn it on again with:', 'Упали го пак со:')+'\\ndelete localStorage[\\'event.total\\']');location.reload()">
 				<option value=45>${localize("MOI", "МОИ")}</option>
 				<option value=20>${localize("MJOI", "МЈОИ")}</option>

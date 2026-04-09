@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      55.1
+// @version      55.2
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -21,7 +21,7 @@ const fouc = document.createElement("style");
 fouc.innerHTML = "html,*{opacity:0 !important;}";
 document.head.prepend(fouc);
 
-const VERSION = 55.1, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 13 26").getTime(), USERSCRIPT_LINK = "https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement";
+const VERSION = 55.2, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 13 26").getTime(), USERSCRIPT_LINK = "https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement";
 console.log("%cMENDO.MK Enhancement", "color:magenta;text-decoration:underline;font-size:20px");
 function localize(en, mk) {
 	return document.cookie.includes("mkjudge_language=en") ? en : mk;
@@ -45,7 +45,8 @@ const achname = {
 	task11: localize("Zenith (500 tasks)", "Зенит (500 задачи)"),
 	readlec0: localize("Student I (all Learn C++ tasks solved)", "Студент I (сите Научи C++ лекции прочитани)"),
 	readlec1: localize("Student II (all Algorithms & Learn C++ tasks solved)", "Студент II (сите Алгоритми и Научи C++ лекции прочитани)"),
-	colorful0: localize("Colorful! (Get 1 testcase with every verdict on a single submission)", "Шарено! (Добиј барем 1 тест случај од секој verdict на едно исто решение)")
+	colorful0: localize("Colorful! (Get 1 testcase with every verdict on a single submission)", "Шарено! (Добиј барем 1 тест случај од секој verdict на едно исто решение)"),
+	olympdone0: localize("MOI-ready (Solve 45 Olympic tasks)", "МОИ-спремен (Реши 45 олимписки задачи)"),
 };
 async function MendoMkEnhancement() {
 	try {
@@ -495,7 +496,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 					if (!elm.querySelector("td:nth-child(2) > a")) {
 						return;
 					}
-					if ((kw == "event.olymp2025" && /(олимпијада|мои|ibuoi)/i.test(elm.querySelector("td:nth-child(3)").innerText)) || elm.innerText.toLowerCase().includes(kw) || elm.querySelector("td:nth-child(2) > a").href.toLowerCase().includes(kw)) {
+					if ((kw == "event.olymp2026" && /(олимпијада|мои|ibuoi)/i.test(elm.querySelector("td:nth-child(3)").innerText)) || elm.innerText.toLowerCase().includes(kw) || elm.querySelector("td:nth-child(2) > a").href.toLowerCase().includes(kw)) {
 						elm.style.display = "";
 					}
 					else {
@@ -682,6 +683,18 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 				}
 				document.querySelector("hr.clear-contentunit").remove();
 			}
+			else if (document.querySelector(".training-content tbody")) {
+				document.querySelectorAll(".training-content tr").forEach(tr => {
+					if (!tr.querySelector("a")) return;
+					const id = parseInt(/\d+/.exec(tr.querySelector(":last-child>a").href)[0]);
+					tr.querySelector(":last-child>a").href = "./User_SubmissionSourceCode.do?id=" + id;
+					tr.querySelector(":last-child>a").textContent = localize("source code", "изворен код");
+					const [pts, total] = tr.querySelector(":nth-child(4)").textContent.split("/");
+					if (pts === total && total !== "CE") for (const x of tr.children) x.classList.add("solved");
+					tr.querySelector(":nth-child(4)").innerHTML = `<a href="./User_Submission.do?id=${id}">${pts} / ${total}</a>`;
+				});
+				logFinish("change up links on user submission list");
+			}
 			if (document.URL.includes("/Task.do") && document.querySelector("#solutionCode")) {
 				setInterval(() => {
 					let scode = document.getElementById("solutionCode");
@@ -815,9 +828,10 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 			evbar.className = "event";
 			solvedTasks.forEach(x => {
 				x.classList.add("event-hot");
-				x.innerHTML = `<a href="#event.olymp2025">${x.innerHTML}</a>`;
+				x.innerHTML = `<a href="#event.olymp2026">${x.innerHTML}</a>`;
 			});
 			solvedTasks = solvedTasks.filter(x => x.classList.contains("solved"));
+			if (solvedTasks.length >= 45) addAchievement("olympdone", 0);
 			evbar.innerHTML = `
 			<div class=event-pbar>
 				<div class=event-prog style="height:${solvedTasks.length / totalTasks * 100}%">[${(Math.min(solvedTasks.length / totalTasks, 1) * 100).toFixed(0)}%] ${solvedTasks.length} / ${totalTasks}<br>${localize("TASKS SOLVED", "ЗАДАЧИ РЕШЕНИ")}</div>
@@ -836,7 +850,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 			let olympsearch = document.createElement("a");
 			olympsearch.id = "olympsearch";
 			olympsearch.innerText = localize("Olympiad valid tasks", "Задачи валидни за олимпијада");
-			olympsearch.href = "#event.olymp2025";
+			olympsearch.href = "#event.olymp2026";
 			let olympsend = document.createElement("button");
 			olympsend.innerText = "Направи листа од решени валидни задачи";
 			olympsend.style = "color:#f0f;background-color:#eae;border-radius:5px";

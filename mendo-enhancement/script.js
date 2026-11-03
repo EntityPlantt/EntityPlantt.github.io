@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         MENDO.MK Enhancement
-// @version      55.2
+// @version      56
 // @namespace    mendo-mk-enhancement
 // @description  Adds dark mode, search in tasks and other stuff to MENDO.MK
 // @author       EntityPlantt
@@ -12,8 +12,8 @@
 // @icon         https://mendo.mk/img/favicon.ico
 // @grant        none
 // @license      CC-BY-ND
-// @downloadURL  https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.user.js
-// @updateURL    https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
+// @downloadURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.user.js
+// @updateURL https://update.greasyfork.org/scripts/450985/MENDOMK%20Enhancement.meta.js
 // ==/UserScript==
 
 // FOUC prevention
@@ -21,7 +21,7 @@ const fouc = document.createElement("style");
 fouc.innerHTML = "html,*{opacity:0 !important;}";
 document.head.prepend(fouc);
 
-const VERSION = 55.2, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 13 26").getTime(), USERSCRIPT_LINK = "https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement";
+const VERSION = 56, AprilFools = new Date().getMonth() == 3 && new Date().getDate() < 3, EventDeadline = new Date("apr 13 26").getTime(), USERSCRIPT_LINK = "https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement";
 console.log("%cMENDO.MK Enhancement", "color:magenta;text-decoration:underline;font-size:20px");
 function localize(en, mk) {
 	return document.cookie.includes("mkjudge_language=en") ? en : mk;
@@ -804,6 +804,7 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 				["Learn C++", "Научи C++", "/Training.do", "🎓️"],
 				["Algorithms", "Алгоритми", "/Training.do?cid=6", "📊"],
 				["Introductory tasks", "Воведни задачи", "/Training.do?cid=3", "🔰"],
+				["Leaderboard", "Ранг листа", "/Leaderboard.do", "🏆"],
 				["Competitions", "Натпревари", "/Competitions.do", "⚽️"],
 				registered ? ["Profile", "Профил", "/User_EditProfile.do", "📝"] : ["Registration", "Регистрација", "/Register.do", "📝"],
 				["Submissions", "Решенија", "/User_ListSubmissions.do", "✅️"],
@@ -895,8 +896,11 @@ transition: transform 3s cubic-bezier(0.45, 0, 0.55, 1);
 			}
 			logFinish("olympiad results coloring");
 		}
-		if (document.getElementById("LoginForm").textContent.includes(localize("Username:", "Корисник:"))) {
+		if ((document.getElementById("LoginForm")?.textContent ?? "").includes(localize("Username:", "Корисник:"))) {
 			document.querySelector("#LoginForm p").innerHTML += ` (<a href=/User_Logoff.do>${localize("Log out", "Одјави се")}</a>)`;
+		}
+		if (document.URL.endsWith("/Leaderboard.do") && localStorage.getItem("mendo-mk-enhancement-theme") == "dark") {
+			document.querySelector("tbody").style.color = "white";
 		}
 	}
 	catch (_) {

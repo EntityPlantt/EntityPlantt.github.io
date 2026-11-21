@@ -1,0 +1,279 @@
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@400&family=Coiny:wght@400&display=swap");
+
+@property --vrx {
+	syntax: "<angle>";
+	initial-value: 0deg;
+	inherits: true;
+}
+
+@property --vry {
+	syntax: "<angle>";
+	initial-value: 0deg;
+	inherits: true;
+}
+
+@property --tscale {
+	syntax: "<number>";
+	initial-value: 1;
+	inherits: true;
+}
+
+@property --x1 {
+	syntax: "<length>";
+	initial-value: 0px;
+	inherits: false;
+}
+
+@property --y1 {
+	syntax: "<length>";
+	initial-value: 0px;
+	inherits: false;
+}
+
+@property --z1 {
+	syntax: "<length>";
+	initial-value: 0px;
+	inherits: false;
+}
+
+@property --x2 {
+	syntax: "<length>";
+	initial-value: 0px;
+	inherits: false;
+}
+
+@property --y2 {
+	syntax: "<length>";
+	initial-value: 0px;
+	inherits: false;
+}
+
+@property --z2 {
+	syntax: "<length>";
+	initial-value: 0px;
+	inherits: false;
+}
+
+body {
+	margin: 0;
+	background: #04040b;
+	color: #fff;
+	font-size: 20px;
+	font-family: "Fredoka", sans-serif;
+	overflow: hidden;
+	user-select: none;
+	max-width: 100vw;
+	max-height: 100vh;
+	animation: tscale ease-out 1s 1;
+	--perspective: 1200px;
+}
+
+@keyframes tscale {
+	0% {
+		--tscale: 0;
+		opacity: 0;
+	}
+}
+
+body.smoothrot {
+	transition: --vrx .5s, --vry .5s;
+}
+
+.coiny {
+	font-family: "Coiny", cursive;
+	font-size: 50px;
+}
+
+.float {
+	position: absolute;
+	transform: translate(50vw, 50vh) translate(-50%, -50%) scale(var(--tscale)) perspective(var(--perspective)) translateZ(var(--perspective))
+		rotateX(var(--vry)) rotateY(var(--vrx)) rotateY(var(--rx)) rotateX(var(--ry)) translateZ(calc(-1 * var(--perspective)));
+	transition: --tscale .5s;
+}
+
+.card {
+	background: #0588;
+	padding: .5em 1em;
+	max-width: 600px;
+	outline: solid 3px transparent;
+	transition-property: --tscale, outline-color;
+}
+
+.card:hover {
+	outline-color: #0f08;
+}
+
+.card.nearest {
+	outline-color: #0f0;
+}
+
+img {
+	pointer-events: none;
+}
+
+.flashing>* {
+	animation: fl 1s step-start infinite;
+	text-shadow: 0 0 10px currentColor;
+}
+
+.flashing>:nth-child(even) {
+	animation-delay: -.5s;
+}
+
+@keyframes fl {
+	0%, to {
+		color: red;
+	}
+	50% {
+		color: #ff0;
+	}
+}
+
+.muted {
+	color: #999;
+	transition-property: --tscale, opacity;
+}
+
+.center {
+	text-align: center;
+}
+
+.setting {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 3em;
+	padding: .5em 1em;
+	margin: .25em -1em;
+}
+
+.setting:is(:active, :hover, :focus) {
+	background-color: #0008;
+}
+
+.setting button {
+	background-color: #c40;
+	border: none;
+	cursor: pointer;
+	color: white;
+	font: inherit;
+	padding: .25em .5em;
+}
+
+.setting button:is(:active, :hover, :focus) {
+	background-color: #c80;
+	outline: solid 2px white;
+}
+
+noscript {
+	position: absolute;
+	top: 50vh;
+	left: 50vw;
+	translate: -50% -50%;
+}
+
+#stars {
+	display: contents;
+}
+
+#stars>* {
+	padding: 5px;
+	border-radius: 5px;
+	background-color: #fff;
+	animation: stars var(--time) var(--delay) linear infinite;
+	position: absolute;
+}
+
+@keyframes stars {
+	0% {
+		opacity: 0;
+		transform: translate(50vw, 50vh) translate(-50%, -50%) perspective(var(--perspective)) translateZ(var(--perspective))
+			rotateX(var(--vry)) rotateY(var(--vrx))
+			translateX(var(--x1)) translateY(var(--y1)) translateZ(var(--z1))
+			rotateY(calc(-1 * var(--vrx))) rotateX(calc(-1 * var(--vry)));
+	}
+	50% {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+		transform: translate(50vw, 50vh) translate(-50%, -50%) perspective(var(--perspective)) translateZ(var(--perspective))
+			rotateX(var(--vry)) rotateY(var(--vrx))
+			translateX(var(--x2)) translateY(var(--y2)) translateZ(var(--z2))
+			rotateY(calc(-1 * var(--vrx))) rotateX(calc(-1 * var(--vry)));
+	}
+}
+
+.imggrid {
+	display: grid;
+	grid-template-columns: repeat(3, auto);
+	gap: 1em;
+	margin: 1em auto;
+	align-items: center;
+}
+
+.medal {
+	border-radius: 50%;
+	padding: 20px;
+	width: 100px;
+	height: 100px;
+	display: flex;
+	border: inset 10px transparent;
+	justify-content: center;
+	align-items: center;
+	animation: medal ease 3s infinite;
+	transition: scale .5s;
+	background: linear-gradient(-45deg, #aaa 45%, #ccc 50%, #aaa 55%);
+	background-size: 500px 500px;
+}
+
+@keyframes medal {
+	0% {
+		background-position: -220px -300px;
+	}
+	30%, to {
+		background-position: -220px 50px;
+	}
+}
+
+.medal>img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+.medal:hover {
+	scale: 1.5;
+	z-index: 5;
+}
+
+.bronze {
+	border-color: #cd7f32;
+}
+
+.silver {
+	border-color: #c0c0c0;
+}
+
+.gold {
+	border-color: #ffd700;
+}
+
+.hm, .participation {
+	border-radius: 0;
+	width: 115px;
+	height: 90px;
+	padding: 5px;
+}
+
+.hm {
+	border-color: #44a;
+}
+
+#controls {
+	display: grid;
+	gap: 1em;
+	grid-template:
+		". u ." auto
+		"l o r" auto
+		". d ." auto / auto auto auto;
+}

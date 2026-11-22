@@ -86,8 +86,7 @@ body.smoothrot {
 
 .float {
 	position: absolute;
-	transform: translate(50vw, 50vh) translate(-50%, -50%) scale(var(--tscale)) perspective(var(--perspective)) translateZ(var(--perspective))
-		rotateX(var(--vry)) rotateY(var(--vrx)) rotateY(var(--rx)) rotateX(var(--ry)) translateZ(calc(-1 * var(--perspective)));
+	transform: translate(50vw, 50vh) translate(-50%, -50%) scale(var(--tscale)) perspective(var(--perspective)) translateZ(var(--perspective)) rotateX(var(--vry)) rotateY(var(--vrx)) rotateY(var(--rx)) rotateX(var(--ry)) translateZ(calc(-1 * var(--perspective)));
 	transition: --tscale .5s;
 }
 
@@ -121,9 +120,12 @@ img {
 }
 
 @keyframes fl {
-	0%, to {
+
+	0%,
+	to {
 		color: red;
 	}
+
 	50% {
 		color: #ff0;
 	}
@@ -187,29 +189,38 @@ noscript {
 @keyframes stars {
 	0% {
 		opacity: 0;
-		transform: translate(50vw, 50vh) translate(-50%, -50%) perspective(var(--perspective)) translateZ(var(--perspective))
-			rotateX(var(--vry)) rotateY(var(--vrx))
-			translateX(var(--x1)) translateY(var(--y1)) translateZ(var(--z1))
-			rotateY(calc(-1 * var(--vrx))) rotateX(calc(-1 * var(--vry)));
+		transform: translate(50vw, 50vh) translate(-50%, -50%) perspective(var(--perspective)) translateZ(var(--perspective)) rotateX(var(--vry)) rotateY(var(--vrx)) translateX(var(--x1)) translateY(var(--y1)) translateZ(var(--z1)) rotateY(calc(-1 * var(--vrx))) rotateX(calc(-1 * var(--vry)));
 	}
+
 	50% {
 		opacity: 1;
 	}
+
 	to {
 		opacity: 0;
-		transform: translate(50vw, 50vh) translate(-50%, -50%) perspective(var(--perspective)) translateZ(var(--perspective))
-			rotateX(var(--vry)) rotateY(var(--vrx))
-			translateX(var(--x2)) translateY(var(--y2)) translateZ(var(--z2))
-			rotateY(calc(-1 * var(--vrx))) rotateX(calc(-1 * var(--vry)));
+		transform: translate(50vw, 50vh) translate(-50%, -50%) perspective(var(--perspective)) translateZ(var(--perspective)) rotateX(var(--vry)) rotateY(var(--vrx)) translateX(var(--x2)) translateY(var(--y2)) translateZ(var(--z2)) rotateY(calc(-1 * var(--vrx))) rotateX(calc(-1 * var(--vry)));
 	}
 }
 
-.imggrid {
+#medalrack {
 	display: grid;
 	grid-template-columns: repeat(3, auto);
 	gap: 1em;
 	margin: 1em auto;
 	align-items: center;
+}
+
+.imggrid {
+	display: grid;
+	grid-template-columns: repeat(6, auto);
+	gap: 1em;
+	max-width: 100%;
+	justify-content: center;
+}
+
+.imggrid>* {
+	max-width: 60px;
+	max-height: 60px;
 }
 
 .medal {
@@ -231,7 +242,9 @@ noscript {
 	0% {
 		background-position: -220px -300px;
 	}
-	30%, to {
+
+	30%,
+	to {
 		background-position: -220px 50px;
 	}
 }
@@ -258,9 +271,10 @@ noscript {
 	border-color: #ffd700;
 }
 
-.hm, .participation {
+.hm,
+.participation {
 	border-radius: 0;
-	width: 115px;
+	width: 130px;
 	height: 90px;
 	padding: 5px;
 }

@@ -10,7 +10,7 @@ const settings = {
 			["Enabled", true],
 			["Disabled", false],
 		],
-		selected: 0,
+		selected: 1,
 		onchange: v => document.getElementById("stars").style.display = v ? "" : "none",
 	},
 	sound: {

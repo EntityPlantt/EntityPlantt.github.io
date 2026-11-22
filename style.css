@@ -174,10 +174,6 @@ noscript {
 	translate: -50% -50%;
 }
 
-#stars {
-	display: contents;
-}
-
 #stars>* {
 	padding: 5px;
 	border-radius: 5px;
@@ -212,10 +208,10 @@ noscript {
 
 .imggrid {
 	display: grid;
-	grid-template-columns: repeat(6, auto);
+	grid-template-columns: repeat(8, auto);
 	gap: 1em;
 	max-width: 100%;
-	justify-content: center;
+	place-content: center;
 }
 
 .imggrid>* {

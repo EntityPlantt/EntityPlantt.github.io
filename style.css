@@ -86,7 +86,7 @@ body.smoothrot {
 
 .float {
 	position: absolute;
-	transform: translate(50vw, 50vh) translate(-50%, -50%) scale(var(--tscale)) perspective(var(--perspective)) translateZ(var(--perspective)) rotateX(var(--vry)) rotateY(var(--vrx)) rotateY(var(--rx)) rotateX(var(--ry)) translateZ(calc(-1 * var(--perspective)));
+	transform: translate(50vw, 50vh) translate(-50%, -50%) scale(var(--tscale)) perspective(var(--perspective)) translateZ(var(--perspective)) rotateX(var(--vry)) rotateY(var(--vrx)) rotateY(var(--rx)) rotateX(var(--ry)) translateZ(calc(0px - var(--perspective)));
 	transition: --tscale .5s;
 }
 
@@ -185,7 +185,7 @@ noscript {
 @keyframes stars {
 	0% {
 		opacity: 0;
-		transform: translate(50vw, 50vh) translate(-50%, -50%) perspective(var(--perspective)) translateZ(var(--perspective)) rotateX(var(--vry)) rotateY(var(--vrx)) translateX(var(--x1)) translateY(var(--y1)) translateZ(var(--z1)) rotateY(calc(-1 * var(--vrx))) rotateX(calc(-1 * var(--vry)));
+		transform: translate(50vw, 50vh) translate(-50%, -50%) perspective(var(--perspective)) translateZ(var(--perspective)) rotateX(var(--vry)) rotateY(var(--vrx)) translateX(var(--x1)) translateY(var(--y1)) translateZ(var(--z1)) rotateY(calc(0deg - var(--vrx))) rotateX(calc(0deg - var(--vry)));
 	}
 
 	50% {
@@ -194,7 +194,7 @@ noscript {
 
 	to {
 		opacity: 0;
-		transform: translate(50vw, 50vh) translate(-50%, -50%) perspective(var(--perspective)) translateZ(var(--perspective)) rotateX(var(--vry)) rotateY(var(--vrx)) translateX(var(--x2)) translateY(var(--y2)) translateZ(var(--z2)) rotateY(calc(-1 * var(--vrx))) rotateX(calc(-1 * var(--vry)));
+		transform: translate(50vw, 50vh) translate(-50%, -50%) perspective(var(--perspective)) translateZ(var(--perspective)) rotateX(var(--vry)) rotateY(var(--vrx)) translateX(var(--x2)) translateY(var(--y2)) translateZ(var(--z2)) rotateY(calc(0deg - var(--vrx))) rotateX(calc(0deg - var(--vry)));
 	}
 }
 
@@ -286,4 +286,27 @@ noscript {
 		". u ." auto
 		"l o r" auto
 		". d ." auto / auto auto auto;
+}
+
+.wave {
+	display: inline-block;
+	animation: wave .4s ease-in-out infinite alternate;
+}
+
+@keyframes wave {
+	0% {
+		rotate: 0deg;
+	}
+
+	to {
+		rotate: 50deg;
+	}
+}
+
+a {
+	color: #c40;
+}
+
+a:is(:active, :hover, :focus) {
+	color: #c80;
 }

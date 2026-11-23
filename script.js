@@ -101,14 +101,13 @@ addEventListener("DOMContentLoaded", () => {
 			x.textContent = getSettingName(x.name);
 		});
 	}
-	document.getElementById("stars").innerHTML = Array(200).fill(0).map(() => `<span style="${
-		["x1", "y1", "z1", "x2", "y2", "z2"].map(x => `--${x}:${Math.random() * 5e3 - 2500}px`).join(";")
-	};--time:${Math.random() * 30 + 10}s;--delay:-${Math.random() * 20}s"></span>`).join("");
+	document.getElementById("stars").innerHTML = Array(200).fill(0).map(() => `<span style="${["x1", "y1", "z1", "x2", "y2", "z2"].map(x => `--${x}:${Math.random() * 5e3 - 2500}px`).join(";")
+		};--time:${Math.random() * 30 + 10}s;--delay:-${Math.random() * 20}s"></span>`).join("");
 });
 
-addEventListener("mousedown", () => void(mousedown = true, moved = false));
-addEventListener("dragstart", () => void(mousedown = false));
-addEventListener("mouseup", () => void(mousedown = false));
+addEventListener("mousedown", () => void (mousedown = true, moved = false));
+addEventListener("dragstart", () => void (mousedown = false));
+addEventListener("mouseup", () => void (mousedown = false));
 addEventListener("mousemove", ev => {
 	if (!mousedown) return;
 	moved = true;

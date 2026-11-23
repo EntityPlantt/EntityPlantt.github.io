@@ -24,12 +24,14 @@
 		<span>!</span>
 	</div>
 	<div class="float card nearest" rx="0" ry="0">
-		<p>Hi! I am Nikola (pseudoname <i>Plantt</i>), a programmer from Macedonia. This is my personal website with information about me, my achievements and cool stuff that I've made.</p>
+		<p>Hi! <span class="wave">👋</span></p>
+		<p>I am Nikola (pseudoname <i>Plantt</i>), a programmer from Macedonia. This is my personal website with information about me, my achievements and cool stuff that I've made.</p>
 		<p>On the left I have stuff about myself. If you're just looking for interactive stuff I recommend you check out the right side.</p>
 		<p class="center muted">[WEBSITE IS WIP]</p>
 	</div>
 	<img class="float" rx="22.5" ry="0" width="256" height="256" src="favicon.ico">
-	<div class="float muted center" rx="0" ry="10" id="controls">
+	<img class="float" rx="-22.5" ry="0" width="256" height="256" src="favicon.ico">
+	<div class="float muted center" rx="0" ry="11" id="controls">
 		<div style="grid-area: u;">↑</div>
 		<div style="grid-area: l;">←</div>
 		<div style="grid-area: o;">Use the arrow keys / WASD, drag the screen with your mouse/finger or click on the floating cards to navigate<br>
@@ -46,9 +48,6 @@
 		<div class="setting">Save these settings <button name="save"></button></div>
 	</div>
 	<div class="float muted" rx="0" ry="35" id="settings-saved" style="opacity:0">Saved to localStorage!</div>
-	<div class="float card" rx="-35" ry="20">
-		Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam, quaerat laborum, culpa repellat consequatur odio delectus, a nesciunt recusandae asperiores ipsa optio quam? Aliquid veniam perferendis id nesciunt voluptatem at?
-	</div>
 	<div class="float card" rx="45" ry="0">
 		<p>I love programming and maths and I participate on numerous competitions throughout my days in primary and secondary school. I usually get #1 or top places on national informatics and math competitions and Olympiads, so I haven't included those achievements here.</p>
 		<p>I'd say my biggest achievement on a competition yet is on the International Olympiad in Informatics on which I got a bronze medal.</p>
@@ -98,6 +97,34 @@
 			<img src="assets/skills/nodejs.webp" title="Node.JS">
 		</div>
 	</div>
+	<div class="float card" rx="-45" ry="0">
+		<p>I love creating pet projects! Unfortunately not much of them have been published somewhere, but those that are can be found around here.</p>
+	</div>
+	<video class="float" rx="-45" ry="-22" src="assets/projects/shaders.webm" loop autoplay width="480"></video>
+	<div class="float card" rx="-45" ry="-10">
+		<h2>Shaders</h2>
+		<p>I got interested in doing graphics & rendering using OpenGL shaders. Check out my profile on <a href="https://www.shadertoy.com/user/Plantt" target="_blank">ShaderToy!</a></p>
+	</div>
+	<video class="float" rx="-45" ry="27" src="assets/projects/brojle.webm" loop autoplay width="480"></video>
+	<div class="float card" rx="-45" ry="10">
+		<h2>Бројле</h2>
+		<p>Numberle, but in Macedonian. Made for a Macedonian website. You can play it <a href="https://entityplantt.github.io/host/html/Matematika+%20widget%20-%20Brojle/" target="_blank">here</a>.</p>
+	</div>
+	<video class="float" rx="-80" ry="-22" src="assets/projects/numsequick.webm" loop autoplay width="480"></video>
+	<div class="float card" rx="-80" ry="-7">
+		<h2>NumSeQuick</h2>
+		<p>Made a small game I don't even remember making. The help is in Macedonian, so I can explain the rulesh here: there is a sequence of shapes and numbers on them, you have to click each shape as many times as its number. Click <a href="https://entityplantt.github.io/host/html/Matematika+%20widget%20-%20NumSeQuick/" target="_blank">here</a> to try it. It's even playable on mobile!</p>
+	</div>
+	<video class="float" rx="-115" ry="-22" src="assets/projects/rubikscube.webm" loop autoplay width="480"></video>
+	<div class="float card" rx="-115" ry="-7">
+		<h2>Rubik's Cube</h2>
+		<p>A Rubik's Cube simulator & solver that failed to get promoted on Three.JS' homepage. <a href="https://entityplantt.github.io/host/html/Matematika+%20widget%20-%20NumSeQuick/" target="_blank">Go see it!</a></p>
+	</div>
+	<div class="float card" rx="-80" ry="7">
+		<h2>MENDO Enhancement</h2>
+		<p>I've been continuously developing a userscript for the Macedonian official competitive programming website called МЕНДО. It adds tons of new features. Download it <a href="https://greasyfork.org/en/scripts/450985-mendo-mk-enhancement">here</a>! Requires Tampermonkey</p>
+	</div>
+	<img class="float" rx="-80" ry="25" width="480" src="assets/projects/mendoenhancement.png">
 	<script src="script.js"></script>
 	<noscript class="center">This website works with JavaScript enabled because it has cool-ass effects.<br>I promise, the script is not performance-heavy!</noscript>
 </body>
